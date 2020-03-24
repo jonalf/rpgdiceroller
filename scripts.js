@@ -1,29 +1,48 @@
 var DICE_SIZE = 25;
 var OFFSET = 2;
 
+var SUCCESS = 0;
+var ADVANTAGE = 1;
+var TRIUMPH = 2;
+var FAILURE = 0;
+var THREAT = 1;
+var DESPAIR = 2;
+
+var successImg = new Image();
+successImg.src = "img/success.png";
+var advantageImg = new Image();
+advantageImg.src = "img/advantage.png";
+var triumphImg = new Image();
+triumphImg.src = "img/triumph.png";
+var failureImg = new Image();
+failureImg.src = "img/failure.png";
+var threatImg = new Image();
+threatImg.src = "img/threat.png";
+var despairImg = new Image();
+despairImg.src = "img/despair.png";
+
+var posImages = [successImg, advantageImg, triumphImg];
+var negImages = [failureImg, threatImg, despairImg];
+
 var posDicePool = {'green': 0, 'yellow': 0, 'boost': 0};
 var negDicePool = {'purple': 0, 'red': 0, 'setback': 0};
 
-var posResults = {'S' : 0, 'A' : 0, 'R' : 0};
-var negResults = {'F' : 0, 'T' : 0, 'D' : 0};
+var posResults = [0, 0, 0];
+var negResults = [0, 0, 0];
 
-var greenDie = [ [], [], ['S'], ['A'], ['S', 'S'], ['A', 'A'], ['S', 'A'], ['S', 'A']];
-var purpleDie =  [ [], [], ['F'], ['T'], ['F', 'F'], ['T', 'T'], ['F', 'T'], ['F', 'T']];
-var yellowDie = [ [], [], ['S'], ['A'], ['S', 'S'], ['A', 'A'], ['S', 'A'], ['S', 'A']];
-var redDie = [ [], [], ['F'], ['T'], ['F', 'F'], ['T', 'T'], ['F', 'T'], ['F', 'T']];
-var boostDie = [ [], [], ['S'], ['A'], ['S', 'A'], ['A', 'A']];
-var setbackDie = [ [], [], ['F'], ['T'], ['F', 'T'], ['F', 'F']];
+var greenDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE]];
+var yellowDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [TRIUMPH]];
+var boostDie = [ [], [], [SUCCESS], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE]];
+
+var purpleDie =  [ [], [FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [THREAT], [FAILURE, THREAT]];
+var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [FAILURE, THREAT], [FAILURE, THREAT], [THREAT, THREAT], [THREAT, THREAT], [DESPAIR]];
+var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
 
 var rollDice = function() {
   updatePool();
-  posResults['S'] = 0;
-  posResults['A'] = 0;
-  posResults['R'] = 0;
-
-  negResults['F'] = 0;
-  negResults['T'] = 0;
-  negResults['D'] = 0;
+  posResults = [0,0, 0];
+  negResults = [0, 0, 0];
 
   var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff']};
   var posResultDisplay = document.getElementById('posresultc');
@@ -36,24 +55,23 @@ var rollDice = function() {
 
     var dtype = keys[i];
     var die = posDiceTypes[dtype][0];
-
     for (var j=0; j<posDicePool[dtype]; j++) {
       var result = die[Math.floor(Math.random() * die.length)];
-      var r = '' + result;
+
       ctx.fillStyle = posDiceTypes[dtype][1];
       ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-      if (r.length == 1) {
-        ctx.font = "25px Georgia";
-        posResults[r]+= 1;
+      if (result.length == 1) {
+        posResults[result]+= 1;
+        ctx.drawImage(posImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
       }
-      else if (r.length == 3) {
-        ctx.font = "15px Georgia";
-        var rs = r.split(',');
-        posResults[rs[0]]+= 1;
-        posResults[rs[1]]+= 1;
+      else if (result.length == 2) {
+
+        posResults[result[0]]+= 1;
+        posResults[result[1]]+= 1;
+
+        ctx.drawImage(posImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
+        ctx.drawImage(posImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
       }
-      ctx.fillStyle = "#000000";
-      ctx.fillText(r, startx+1, 20);
       startx+= DICE_SIZE + OFFSET;
     }
   }
@@ -71,24 +89,23 @@ var rollDice = function() {
     var die = negDiceTypes[dtype][0];
 
     for (var j=0; j<negDicePool[dtype]; j++) {
-      var r = '' + die[Math.floor(Math.random() * die.length)];
+      result = die[Math.floor(Math.random() * die.length)];
       ctx.fillStyle = negDiceTypes[dtype][1];
       ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-      if (r.length == 1) {
-        ctx.font = "20px Georgia";
-        negResults[r]+= 1;
+
+      if (result.length == 1) {
+        negResults[result]+= 1;
+        ctx.drawImage(negImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
       }
-      else if (r.length == 3) {
-        ctx.font = "12px Georgia";
-        var rs = r.split(',');
-        negResults[rs[0]]+= 1;
-        negResults[rs[1]]+= 1;
+      else if (result.length == 2) {
+        negResults[result[0]]+= 1;
+        negResults[result[1]]+= 1;
+        ctx.drawImage(negImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
+        ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
       }
       if (dtype == 'setback' || dtype == "purple")
         ctx.fillStyle = "#FFFFFF";
-      else
-        ctx.fillStyle = "#000000";
-      ctx.fillText(r, startx+1, 18);
+
       startx+= DICE_SIZE + OFFSET;
     }
   }
@@ -96,13 +113,23 @@ var rollDice = function() {
 };
 
 var updateResultTotals = function() {
-  document.getElementById("scount").innerText = posResults['S'];
-  document.getElementById("acount").innerText = posResults['A'];
-  document.getElementById("fcount").innerText = negResults['F'];
-  document.getElementById("tcount").innerText = negResults['T'];
+  var u = posResults[TRIUMPH];
+  var s = posResults[SUCCESS] + u;
+  var a = posResults[ADVANTAGE];
+  var d = negResults[DESPAIR];
+  var f = negResults[FAILURE] + d;
+  var t = negResults[THREAT];
 
-  document.getElementById("snet").innerText = (posResults['S'] - negResults['F']);
-  document.getElementById("anet").innerText = (posResults['A'] - negResults['T']);
+  document.getElementById("scount").innerText = s;
+  document.getElementById("acount").innerText = a;
+  document.getElementById("fcount").innerText = f;
+  document.getElementById("tcount").innerText = t;
+
+  document.getElementById("ucount").innerText = u;
+  document.getElementById("dcount").innerText = d;
+
+  document.getElementById("snet").innerText = (s - f);
+  document.getElementById("anet").innerText = (a - t);
 };
 
 
