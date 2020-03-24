@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>SW Dice Roller</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
 
   <body>
@@ -37,14 +38,13 @@
       <br>
       <button id="roll">Roll</button>
       <br>
-      Result:
-      <div id="posresult"></div>
-      <div id="negresult"></div>
+      Result:<br>
       <br>
       <canvas width="300" height="25" id="posresultc" style="border: solid 1px black;"></canvas>
       <br>
       <canvas width="300" height="25" id="negresultc" style="border:solid 1px black"></canvas>
-
+      <br>
+      Net results include Triumph and Despair
       <table>
         <tr>
           <th>Success</th><td id="scount"></td>
@@ -56,6 +56,10 @@
         </tr>
         <tr>
           <th>Net Success</th><th id="snet"></th><th>Net Advantage</th><th id="anet"></th>
+        </tr>
+        <tr>
+          <th>Triumph</th><td id="ucount"></td>
+          <th>Despair</th><td id="dcount"></td>
         </tr>
       </table>
       <script src="scripts.js"></script>
