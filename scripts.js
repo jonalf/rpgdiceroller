@@ -38,6 +38,97 @@ var purpleDie =  [ [], [FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [THREA
 var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [FAILURE, THREAT], [FAILURE, THREAT], [THREAT, THREAT], [THREAT, THREAT], [DESPAIR]];
 var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
+var check_table = {
+  'astrogation' : 'intellect',
+  'athletics' : 'brawn',
+  'charm' : 'presuasion',
+  'coercion' : 'willpower',
+  'computers' : 'intellect',
+  'cool' : 'pressence',
+  'coordination' : 'agility',
+  'deception' : 'cunning',
+  'discipline' : 'willpower',
+  'leadership' : 'pressence',
+  'mechanics' : 'intellect',
+  'medicine' : 'intellect',
+  'negotiation' : 'pressence',
+  'perception' : 'cunning',
+  'pilot-planet' : 'agility',
+  'pilot-space' : 'agility',
+  'resilience' : 'brawn',
+  'skullduggery' : 'cunning',
+  'stealth' : 'agility',
+  'streetwise' : 'cunning',
+  'survival' : 'cunning',
+  'vigilance' : 'willpower',
+  'brawl' : 'brawn',
+  'melee' : 'brawn',
+  'ranged-light' : 'agility',
+  'ranged-heavy' : 'agility',
+  'gunnery' : 'agility'
+};
+
+var deegray_stats = {
+  'brawn' : 5,
+  'agility' : 3,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 3,
+  'pressence' : 1,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 1,
+  'computers' : 0,
+  'cool' : 0,
+  'coordination' : 1,
+  'deception' : 0,
+  'discipline' :1,
+  'leadership' : 0,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 0,
+  'perception' : 0,
+  'pilot-planet' : 2,
+  'pilot-space' : 0,
+  'resilience' : 1,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl' : 1,
+  'melee' : 3,
+  'ranged-light' : 0,
+  'ranged-heavy' : 1,
+  'gunnery' : 0
+};
+
+var load_deegray = function() {
+  var stat_keys = Object.keys(deegray_stats);
+  for (var i=0; i<stat_keys.length; i++) {
+    var e = document.getElementById( stat_keys[i] );
+    console.log(stat_keys[i]);
+    e.value = deegray_stats[ stat_keys[i] ];
+  }
+};
+
+var get_check = function( e ) {
+  var skill = e.target.id.split('_')[0];
+  set_dice(skill);
+};
+
+var set_dice = function( skill ) {
+  var chara = check_table[skill];
+  var num_skill = document.getElementById(skill).value;
+  var num_char = document.getElementById(chara).value;
+  var num_dice = Math.max(num_skill, num_char);
+  var num_yellow = Math.min(num_skill, num_char);
+  document.getElementById('numgreen').value = (num_dice - num_yellow);
+  document.getElementById('numyellow').value = num_yellow;
+
+  updatePool();
+};
 
 var rollDice = function() {
   updatePool();
@@ -213,3 +304,8 @@ document.getElementById('numpurple').addEventListener('change', updatePool);
 document.getElementById('numred').addEventListener('change', updatePool);
 document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
+
+var checks = document.getElementsByName('check_type');
+for (var i=0; i<checks.length; i++) {
+  checks[i].addEventListener('click', get_check);
+}
