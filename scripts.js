@@ -38,10 +38,17 @@ var purpleDie =  [ [], [FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [THREA
 var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [FAILURE, THREAT], [FAILURE, THREAT], [THREAT, THREAT], [THREAT, THREAT], [DESPAIR]];
 var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
+var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
+
 var check_table = {
+  'brawl' : 'brawn',
+  'melee' : 'brawn',
+  'ranged-light' : 'agility',
+  'ranged-heavy' : 'agility',
+  'gunnery' : 'agility',
   'astrogation' : 'intellect',
   'athletics' : 'brawn',
-  'charm' : 'presuasion',
+  'charm' : 'pressence',
   'coercion' : 'willpower',
   'computers' : 'intellect',
   'cool' : 'pressence',
@@ -60,12 +67,7 @@ var check_table = {
   'stealth' : 'agility',
   'streetwise' : 'cunning',
   'survival' : 'cunning',
-  'vigilance' : 'willpower',
-  'brawl' : 'brawn',
-  'melee' : 'brawn',
-  'ranged-light' : 'agility',
-  'ranged-heavy' : 'agility',
-  'gunnery' : 'agility'
+  'vigilance' : 'willpower'
 };
 
 var deegray_stats = {
@@ -113,6 +115,34 @@ var load_deegray = function() {
   }
 };
 
+var setup_skills = function() {
+  var table = document.createElement("table");
+
+  var skills = Object.keys(check_table);
+  for (i=0; i<skills.length; i++) {
+    //console.log(skills[i]);
+    var row = document.createElement('tr');
+    var tdr = document.createElement('td');
+    var radio = document.createElement('input');
+    radio.type = "radio";
+    radio.name="check_type";
+    radio.id = skills[i] + "_check";
+    tdr.appendChild(radio);
+    tdr.innerHTML+= skills[i];
+    var tdi = document.createElement('td');
+    var input = document.createElement('input');
+    input.type = "number";
+    input.id = skills[i];
+    input.min = "0";
+    input.style.width = "50px";
+    tdi.appendChild(input);
+    row.appendChild(tdr);
+    row.appendChild(tdi);
+    table.appendChild(row);
+  }
+  document.getElementById("skills").appendChild( table );
+};
+
 var get_check = function( e ) {
   var skill = e.target.id.split('_')[0];
   set_dice(skill);
@@ -136,7 +166,8 @@ var rollDice = function() {
   negResults = [0, 0, 0];
 
   var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff']};
-  var posResultDisplay = document.getElementById('posresultc');
+  //var posResultDisplay = document.getElementById('posresultc');
+  var posResultDisplay = document.getElementById('pospool');
   var ctx = posResultDisplay.getContext('2d');
 
   ctx.clearRect(0, 0, 300, DICE_SIZE);
@@ -168,7 +199,8 @@ var rollDice = function() {
   }
 
   var negDiceTypes = {'purple': [purpleDie, "#5c00e6"], 'red' : [redDie, '#FF0000'], 'setback': [setbackDie, '#000000']};
-  var negResultDisplay = document.getElementById('negresultc');
+  //var negResultDisplay = document.getElementById('negresultc');
+  var negResultDisplay = document.getElementById('negpool');
   ctx = negResultDisplay.getContext('2d');
 
   ctx.clearRect(0, 0, 300, DICE_SIZE);
@@ -305,7 +337,10 @@ document.getElementById('numred').addEventListener('change', updatePool);
 document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
-var checks = document.getElementsByName('check_type');
-for (var i=0; i<checks.length; i++) {
-  checks[i].addEventListener('click', get_check);
-}
+var setup = function() {
+  setup_skills();
+  var checks = document.getElementsByName('check_type');
+  for (var i=0; i<checks.length; i++) {
+    checks[i].addEventListener('click', get_check);
+  }
+};
