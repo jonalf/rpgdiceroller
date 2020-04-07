@@ -40,6 +40,9 @@ var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
 var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
 
+var combat_skills = ['brawl', 'melee', 'ranged-light', 'ranged-heavy', 'gunnery'];
+var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
+
 var check_table = {
   'brawl' : 'brawn',
   'melee' : 'brawn',
@@ -67,7 +70,13 @@ var check_table = {
   'stealth' : 'agility',
   'streetwise' : 'cunning',
   'survival' : 'cunning',
-  'vigilance' : 'willpower'
+  'vigilance' : 'willpower',
+  'core worlds' : 'intellect',
+  'education' : 'intellect',
+  'lore' : 'intellect',
+  'outer rim' : 'intellect',
+  'underworld' : 'intellect',
+  'xenology' : 'intellect'
 };
 
 var deegray_stats = {
@@ -116,10 +125,17 @@ var load_deegray = function() {
 };
 
 var setup_skills = function() {
+
+  var combat_table = document.createElement("table");
+  var knowledge_table = document.createElement("table");
   var table = document.createElement("table");
+  table.style.float = "left";
+  table.style.border = "1px solid";
+  combat_table.style.border = "1px solid";
+  knowledge_table.style.border = "1px solid";
 
   var skills = Object.keys(check_table);
-  for (i=0; i<skills.length; i++) {
+  for (var i=0; i<skills.length; i++) {
     //console.log(skills[i]);
     var row = document.createElement('tr');
     var tdr = document.createElement('td');
@@ -128,7 +144,8 @@ var setup_skills = function() {
     radio.name="check_type";
     radio.id = skills[i] + "_check";
     tdr.appendChild(radio);
-    tdr.innerHTML+= skills[i];
+    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
+    tdr.innerHTML+= name;
     var tdi = document.createElement('td');
     var input = document.createElement('input');
     input.type = "number";
@@ -138,9 +155,16 @@ var setup_skills = function() {
     tdi.appendChild(input);
     row.appendChild(tdr);
     row.appendChild(tdi);
-    table.appendChild(row);
+    if ( combat_skills.includes(skills[i]))
+      combat_table.appendChild(row);
+    else if (knowledge_skills.includes(skills[i]))
+      knowledge_table.appendChild(row);
+    else
+      table.appendChild(row);
   }
   document.getElementById("skills").appendChild( table );
+  document.getElementById("skills").appendChild( combat_table );
+  document.getElementById("skills").appendChild( knowledge_table );
 };
 
 var get_check = function( e ) {
