@@ -30,6 +30,9 @@ var negDicePool = {'purple': 0, 'red': 0, 'setback': 0};
 var posResults = [0, 0, 0];
 var negResults = [0, 0, 0];
 
+var netsuccess = 0;
+var netfailure = 0;
+
 var greenDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE]];
 var yellowDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [TRIUMPH]];
 var boostDie = [ [], [], [SUCCESS], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE]];
@@ -80,7 +83,7 @@ var check_table = {
 };
 
 var deegray_stats = {
-  'brawn' : 5,
+  'brawn' : 6,
   'agility' : 3,
   'intellect' : 2,
   'cunning' : 2,
@@ -277,6 +280,23 @@ var updateResultTotals = function() {
 
   document.getElementById("snet").innerText = (s - f);
   document.getElementById("anet").innerText = (a - t);
+
+  if ( (s-f) > 0 )
+    netsuccess+= 1;
+  else
+    netfailure+= 1;
+};
+
+var multi_roll = function(n) {
+  netsuccess = 0;
+  netfailure = 0;
+  while (n > 0) {
+    rollDice();
+    n-= 1;
+  }
+
+  console.log( "success: " + netsuccess);
+  console.log( "failure: " + netfailure);
 };
 
 
