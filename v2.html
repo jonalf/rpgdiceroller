@@ -3,6 +3,12 @@
   <head>
     <title>SW Dice Roller</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+      th {
+        text-align: left;
+      }
+    </style>
   </head>
 
   <body>
@@ -29,14 +35,6 @@
       <canvas width="300" height="25" id="negpool" style="border:solid 1px black"></canvas>
       <br>
       <button id="roll" style="width: 100px; height: 25px">Roll</button>
-      <!-- <br>
-           Result:<br>
-           <br>
-           <canvas width="300" height="25" id="posresultc" style="border: solid 1px black;"></canvas>
-           <br>
-           <canvas width="300" height="25" id="negresultc" style="border:solid 1px black"></canvas>
-           <br> -->
-      <br>
       Net results include Triumph and Despair
       <table>
         <tr>
@@ -79,9 +77,10 @@
 
       <div id="skills">
       </div>
-      </div>
-
-       <script src="scripts.js"></script>
-      <script>document.load = setup()</script>
+    </div>
+    <hr>
+    <button onclick="load_deegray()">Load Deegray</button>
+    <script src="scripts.js"></script>
+    <script>document.load = setup()</script>
   </body>
 </html>
