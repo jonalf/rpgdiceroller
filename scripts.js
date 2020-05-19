@@ -115,7 +115,7 @@ var deegray_stats = {
   'melee' : 3,
   'ranged-light' : 0,
   'ranged-heavy' : 1,
-  'gunnery' : 0
+  'gunnery' : 1
 };
 
 var load_deegray = function() {
