@@ -98,7 +98,7 @@ var deegray_stats = {
   'coordination' : 1,
   'deception' : 0,
   'discipline' :1,
-  'leadership' : 0,
+  'leadership' : 1,
   'mechanics' : 0,
   'medicine' : 0,
   'negotiation' : 0,
