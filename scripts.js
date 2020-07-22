@@ -84,7 +84,7 @@ var check_table = {
 
 var deegray_stats = {
   'brawn' : 6,
-  'agility' : 3,
+  'agility' : 4,
   'intellect' : 2,
   'cunning' : 2,
   'willpower' : 3,
