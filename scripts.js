@@ -141,7 +141,15 @@ var weapons = {
     accurate : 2,
     pierce : 0,
     damage : 14
-  }
+  },
+  'bo_rifle_ranged' : {
+    name : 'Bo Rifle',
+    type : 'ranged',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 8
+  },
 };
 
 var load_deegray = function() {
@@ -178,20 +186,20 @@ var load_weapons = function() {
     rad_cell.appendChild(rad);
     var weapon_info = Object.keys(weapon);
     for (var j=0; j<weapon_info.length; j++) {
-        var weapon_stat = weapon[weapon_info[j]];
-        var cell = weapon_row.insertCell(-1);
-        if (typeof(weapon_stat) == 'string') {
-          cell.innerHTML = weapon_stat;
-        }
-        else {
-          var input = document.createElement("input");
-          input.type = "number";
-          input.name = weapon_info[i];
-          input.id = weapon_info[i];
-          input.value = weapon_stat;
-          input.style.width = "50px";
-          cell.appendChild(input);
-        }
+      var weapon_stat = weapon[weapon_info[j]];
+      var cell = weapon_row.insertCell(-1);
+      if (typeof(weapon_stat) == 'string') {
+        cell.innerHTML = weapon_stat;
+      }
+      else {
+        var input = document.createElement("input");
+        input.type = "number";
+        input.name = weapon_info[i];
+        input.id = weapon_info[i];
+        input.value = weapon_stat;
+        input.style.width = "50px";
+        cell.appendChild(input);
+      }
     }//weapon info
   }//weapons
 };
