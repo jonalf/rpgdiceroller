@@ -194,8 +194,8 @@ var load_weapons = function() {
       else {
         var input = document.createElement("input");
         input.type = "number";
-        input.name = weapon_info[i];
-        input.id = weapon_info[i];
+        input.name = weapon_keys[i] + '_' + weapon_info[j];
+        input.id = weapon_keys[i] + '_' + weapon_info[j];
         input.value = weapon_stat;
         input.style.width = "50px";
         cell.appendChild(input);
@@ -361,10 +361,26 @@ var updateResultTotals = function() {
   document.getElementById("snet").innerText = (s - f);
   document.getElementById("anet").innerText = (a - t);
 
-  if ( (s-f) > 0 )
-  netsuccess+= 1;
-  else
-  netfailure+= 1;
+  if ( (s-f) > 0 ) {
+    netsuccess+= 1;
+  }
+  else {
+    netfailure+= 1;
+  }
+  var check_type  = document.querySelector('input[name="check_type"]:checked').id;
+  if (check_type == 'melee_check' ||
+      check_type == 'ranged-heavy_check' ||
+      check_type == 'ranged-light_check') {
+
+    var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
+    weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
+    var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+
+    if ((s-f) > 0) {
+      damage+= (s-f);
+      document.getElementById("total_damage").value = damage;
+    }
+}
 };
 
 var multi_roll = function(n) {
