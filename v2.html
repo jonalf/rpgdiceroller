@@ -1,86 +1,115 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>SW Dice Roller</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>
+  <title>SW Dice Roller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-      th {
-        text-align: left;
-      }
-    </style>
-  </head>
+  <style>
+  th {
+    text-align: left;
+  }
+  </style>
+</head>
 
-  <body>
-    <div>
-      Dice:<br>
-      <table>
-        <tr>
-          <td>Green:</td><td><input type="number" style="width: 50px;" min="0" id="numgreen"></td>
-          <td>Purple:</td><td><input type="number" style="width: 50px;" min="0" id="numpurple"></td>
-        </tr>
-        <tr>
-          <td>Yellow:</td><td><input type="number" style="width: 50px;" min="0" id="numyellow"></td>
-          <td>Red:</td><td><input type="number" style="width: 50px;" min="0" id="numred"></td>
-        </tr>
-        <tr>
-          <td>Boost:</td><td><input type="number" style="width: 50px;" min="0" id="numboost"></td>
-          <td>Setback:</td><td><input type="number" style="width: 50px;" min="0" id="numsetback"></td>
-        </tr>
-      </table>
-      Pool:<br>
-      <!-- <div id="pool"></div> -->
-      <canvas width="300" height="25" id="pospool" style="border: solid 1px black;"></canvas>
-      <br>
-      <canvas width="300" height="25" id="negpool" style="border:solid 1px black"></canvas>
-      <br>
-      <button id="roll" style="width: 100px; height: 25px">Roll</button>
-      Net results include Triumph and Despair
-      <table>
-        <tr>
-          <th>Success</th><td id="scount"></td>
-          <th>Advantage</th><td id="acount"></td>
-        </tr>
-        <tr>
-          <th>Failure</th><td id="fcount"></td>
-          <th>Threat</th><td id="tcount"></td>
-        </tr>
-        <tr>
-          <th>Net Success</th><th id="snet"></th><th>Net Advantage</th><th id="anet"></th>
-        </tr>
-        <tr>
-          <th>Triumph</th><td id="ucount"></td>
-          <th>Despair</th><td id="dcount"></td>
-        </tr>
-      </table>
-    </div>
-<hr>
-    <div>
-      Characteristics:<br>
-      <table>
-        <tr>
-          <th>Brawn</th><th>Agility</th><th>Intellect</th><th>Cunning</th><th>Willpower</th><th>Pressence</th>
-        </tr>
-        <tr>
-          <td><input type="number" style="width: 50px;" min="0" id="brawn"></td>
-          <td><input type="number" style="width: 50px;" min="0" id="agility"></td>
-          <td><input type="number" style="width: 50px;" min="0" id="intellect"></td>
-          <td><input type="number" style="width: 50px;" min="0" id="cunning"></td>
-          <td><input type="number" style="width: 50px;" min="0" id="willpower"></td>
-          <td><input type="number" style="width: 50px;" min="0" id="pressence"></td>
-        </tr>
-      </table>
-    </div>
-    <hr>
-    <div>
-      Skills:<br>
+<body>
+  <div>
+    Dice:<br>
+    <table>
+      <tr>
+        <td>Green:</td><td><input type="number" style="width: 50px;" min="0" id="numgreen"></td>
+        <td>Purple:</td><td><input type="number" style="width: 50px;" min="0" id="numpurple"></td>
+      </tr>
+      <tr>
+        <td>Yellow:</td><td><input type="number" style="width: 50px;" min="0" id="numyellow"></td>
+        <td>Red:</td><td><input type="number" style="width: 50px;" min="0" id="numred"></td>
+      </tr>
+      <tr>
+        <td>Boost:</td><td><input type="number" style="width: 50px;" min="0" id="numboost"></td>
+        <td>Setback:</td><td><input type="number" style="width: 50px;" min="0" id="numsetback"></td>
+      </tr>
+    </table>
+    Pool:<br>
+    <!-- <div id="pool"></div> -->
+    <canvas width="300" height="25" id="pospool" style="border: solid 1px black;"></canvas>
+    <br>
+    <canvas width="300" height="25" id="negpool" style="border:solid 1px black"></canvas>
+    <br>
+    <button id="roll" style="width: 100px; height: 25px">Roll</button>
+    Net results include Triumph and Despair
+    <table>
+      <tr>
+        <th>Success</th><td id="scount"></td>
+        <th>Advantage</th><td id="acount"></td>
+      </tr>
+      <tr>
+        <th>Failure</th><td id="fcount"></td>
+        <th>Threat</th><td id="tcount"></td>
+      </tr>
+      <tr>
+        <th>Net Success</th><th id="snet"></th><th>Net Advantage</th><th id="anet"></th>
+      </tr>
+      <tr>
+        <th>Triumph</th><td id="ucount"></td>
+        <th>Despair</th><td id="dcount"></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <div>
+    Characteristics:<br>
+    <table>
+      <tr>
+        <th>Brawn</th><th>Agility</th><th>Intellect</th><th>Cunning</th><th>Willpower</th><th>Pressence</th>
+      </tr>
+      <tr>
+        <td><input type="number" style="width: 50px;" min="0" id="brawn"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="agility"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="intellect"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="cunning"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="willpower"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="pressence"></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <div>
+    Stats:<br>
+    <table>
+      <tr>
+        <th>Soak</th><th>Wound Thresh</th><th>Wounds</th><th>Strain Thresh</th><th>Strain</th><th>Ranged Def</th><th>Melee Def</th>
+      </tr>
+      <tr>
+        <td><input type="number" style="width: 50px;" min="0" id="soak"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="woundthresh"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="wounds"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="strainthresh"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="strain"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="rangeddef"></td>
+        <td><input type="number" style="width: 50px;" min="0" id="meleeddef"></td>
+      </tr>
+    </table>
+  </div>
+  <hr>
+  <div>
+    Weapons:<br>
+    <table id="weapons">
+      <tr>
+        <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
+      </tr>
+    </table>
 
-      <div id="skills">
-      </div>
+  </div>
+
+  <hr>
+  <div>
+    Skills:<br>
+
+    <div id="skills">
     </div>
-    <hr>
-    <button onclick="load_deegray()">Load Deegray</button>
-    <script src="scripts.js"></script>
-    <script>document.load = setup()</script>
-  </body>
+  </div>
+  <hr>
+  <button onclick="load_deegray()">Load Deegray</button>
+  <script src="scripts.js"></script>
+  <script>document.load = setup()</script>
+</body>
 </html>

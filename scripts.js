@@ -83,6 +83,13 @@ var check_table = {
 };
 
 var deegray_stats = {
+  'wounds' : 4,
+  'strain' : 4,
+  'soak' : 10,
+  'woundthresh' : 22,
+  'strainthresh' : 13,
+  'rangeddef' : 1,
+  'meleeddef' : 1,
   'brawn' : 6,
   'agility' : 4,
   'intellect' : 2,
@@ -118,6 +125,25 @@ var deegray_stats = {
   'gunnery' : 1
 };
 
+var weapons = {
+  'ichor_sword' : {
+    name : 'Ichor Sword',
+    type : 'melee',
+    crit : 1,
+    accurate : 2,
+    pierce : 1,
+    damage : 16
+  },
+  'bo_rifle' : {
+    name : 'Bo Rifle',
+    type : 'melee',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 14
+  }
+};
+
 var load_deegray = function() {
   var stat_keys = Object.keys(deegray_stats);
   for (var i=0; i<stat_keys.length; i++) {
@@ -125,7 +151,53 @@ var load_deegray = function() {
     console.log(stat_keys[i]);
     e.value = deegray_stats[ stat_keys[i] ];
   }
+
+  load_weapons();
 };
+
+
+
+
+// <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
+var load_weapons = function() {
+  var weapon_table = document.getElementById("weapons");
+
+  var weapon_keys = Object.keys(weapons);
+  for (var i=0; i < weapon_keys.length; i++) {
+    var weapon = weapons[weapon_keys[i]];
+    //console.log(weapon);
+    var weapon_row = weapon_table.insertRow(-1);
+
+    //add radio button
+    var rad = document.createElement("input");
+    rad.type = "radio";
+    rad.name = "weapon";
+    rad.id = "weapon_" + weapon_keys[i];
+
+    var rad_cell = weapon_row.insertCell(-1);
+    rad_cell.appendChild(rad);
+    var weapon_info = Object.keys(weapon);
+    for (var j=0; j<weapon_info.length; j++) {
+        var weapon_stat = weapon[weapon_info[j]];
+        var cell = weapon_row.insertCell(-1);
+        if (typeof(weapon_stat) == 'string') {
+          cell.innerHTML = weapon_stat;
+        }
+        else {
+          var input = document.createElement("input");
+          input.type = "number";
+          input.name = weapon_info[i];
+          input.id = weapon_info[i];
+          input.value = weapon_stat;
+          input.style.width = "50px";
+          cell.appendChild(input);
+        }
+    }//weapon info
+  }//weapons
+};
+
+
+
 
 var setup_skills = function() {
 
@@ -159,11 +231,11 @@ var setup_skills = function() {
     row.appendChild(tdr);
     row.appendChild(tdi);
     if ( combat_skills.includes(skills[i]))
-      combat_table.appendChild(row);
+    combat_table.appendChild(row);
     else if (knowledge_skills.includes(skills[i]))
-      knowledge_table.appendChild(row);
+    knowledge_table.appendChild(row);
     else
-      table.appendChild(row);
+    table.appendChild(row);
   }
   document.getElementById("skills").appendChild( table );
   document.getElementById("skills").appendChild( combat_table );
@@ -254,7 +326,7 @@ var rollDice = function() {
         ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
       }
       if (dtype == 'setback' || dtype == "purple")
-        ctx.fillStyle = "#FFFFFF";
+      ctx.fillStyle = "#FFFFFF";
 
       startx+= DICE_SIZE + OFFSET;
     }
@@ -282,9 +354,9 @@ var updateResultTotals = function() {
   document.getElementById("anet").innerText = (a - t);
 
   if ( (s-f) > 0 )
-    netsuccess+= 1;
+  netsuccess+= 1;
   else
-    netfailure+= 1;
+  netfailure+= 1;
 };
 
 var multi_roll = function(n) {
