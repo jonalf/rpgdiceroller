@@ -83,10 +83,10 @@ var check_table = {
 };
 
 var deegray_stats = {
-  'wounds' : 4,
-  'strain' : 4,
+  'wounds' : 0,
+  'strain' : 0,
   'soak' : 10,
-  'woundthresh' : 22,
+  'woundthresh' : 26,
   'strainthresh' : 13,
   'rangeddef' : 1,
   'meleeddef' : 1,
