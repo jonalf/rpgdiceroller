@@ -376,6 +376,7 @@ var updateResultTotals = function() {
     weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
     var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
 
+    document.getElementById("total_damage").value = 0;
     if ((s-f) > 0) {
       damage+= (s-f);
       document.getElementById("total_damage").value = damage;
