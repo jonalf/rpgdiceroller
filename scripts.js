@@ -43,12 +43,13 @@ var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
 var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
 
-var combat_skills = ['brawl', 'melee', 'ranged-light', 'ranged-heavy', 'gunnery'];
+var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
 var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
 var check_table = {
   'brawl' : 'brawn',
   'melee' : 'brawn',
+  'lightsaber' : 'brawn',
   'ranged-light' : 'agility',
   'ranged-heavy' : 'agility',
   'gunnery' : 'agility',
@@ -120,6 +121,7 @@ var deegray_stats = {
   'vigilance' : 1,
   'brawl' : 1,
   'melee' : 3,
+  'lightsaber' : 3,
   'ranged-light' : 0,
   'ranged-heavy' : 1,
   'gunnery' : 1
@@ -128,7 +130,7 @@ var deegray_stats = {
 var weapons = {
   'ls_pike' : {
     name : 'Lightsaber Pike',
-    type : 'melee',
+    type : 'lightsaber',
     crit : 1,
     accurate : 0,
     pierce : 10,
