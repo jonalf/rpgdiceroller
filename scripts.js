@@ -126,6 +126,14 @@ var deegray_stats = {
 };
 
 var weapons = {
+  'ls_pike' : {
+    name : 'Lightsaber Pike',
+    type : 'melee',
+    crit : 1,
+    accurate : 0,
+    pierce : 10,
+    damage : 6
+  },
   'ichor_sword' : {
     name : 'Ichor Sword',
     type : 'melee',
