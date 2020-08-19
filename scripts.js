@@ -246,6 +246,7 @@ var load_deegray = function() {
   for (var i=0; i<stat_keys.length; i++) {
     var e = document.getElementById( stat_keys[i] );
     console.log(stat_keys[i]);
+    console.log(deegray_stats[ stat_keys[i] );
     e.value = deegray_stats[ stat_keys[i] ];
   }
 
