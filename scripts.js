@@ -1,6 +1,6 @@
 var deegray_stats = {
-  'wounds' : 20,
-  'strain' : 3,
+  'wounds' : 22,
+  'strain' : 5,
   'soak' : 10,
   'woundthresh' : 26,
   'strainthresh' : 13,
@@ -49,7 +49,7 @@ var weapons = {
     crit : 2,
     accurate : 0,
     pierce : 10,
-    damage : 6
+    damage : 9
   },
   'ichor_sword' : {
     name : 'Ichor Sword',
@@ -458,6 +458,7 @@ var updateResultTotals = function() {
   }
   var check_type  = document.querySelector('input[name="check_type"]:checked').id;
   if (check_type == 'melee_check' ||
+      check_type == 'lightsaber' ||
       check_type == 'ranged-heavy_check' ||
       check_type == 'ranged-light_check') {
 
