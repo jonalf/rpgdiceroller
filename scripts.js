@@ -167,8 +167,8 @@ var load_deegray = function() {
   var stat_keys = Object.keys(deegray_stats);
   for (var i=0; i<stat_keys.length; i++) {
     var e = document.getElementById( stat_keys[i] );
-    console.log(stat_keys[i]);
-    console.log(deegray_stats[ stat_keys[i]] );
+    //console.log(stat_keys[i]);
+    //console.log(deegray_stats[ stat_keys[i]] );
     e.value = deegray_stats[ stat_keys[i] ];
   }
 
@@ -380,14 +380,17 @@ var updateResultTotals = function() {
     netfailure+= 1;
   }
   var check_type  = document.querySelector('input[name="check_type"]:checked').id;
+      //console.log(check_type);
   if (check_type == 'melee_check' ||
-      check_type == 'lightsaber' ||
+      check_type == 'lightsaber_check' ||
       check_type == 'ranged-heavy_check' ||
       check_type == 'ranged-light_check') {
 
     var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
     weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
     var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+
+    //console.log(weapon_name);
 
     document.getElementById("total_damage").value = 0;
     if ((s-f) > 0) {
