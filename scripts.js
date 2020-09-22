@@ -74,7 +74,7 @@ var weapons = {
     accurate : 3,
     pierce : 3,
     damage : 10
-  }
+  },
   'bo_rifle' : {
     name : 'Bo Rifle',
     type : 'melee',
