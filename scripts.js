@@ -38,7 +38,7 @@ var deegray_stats = {
   'melee' : 3,
   'lightsaber' : 5,
   'ranged-light' : 0,
-  'ranged-heavy' : 1,
+  'ranged-heavy' : 2,
   'gunnery' : 1
 };
 
