@@ -36,7 +36,7 @@ var deegray_stats = {
   'vigilance' : 1,
   'brawl' : 1,
   'melee' : 3,
-  'lightsaber' : 3,
+  'lightsaber' : 5,
   'ranged-light' : 0,
   'ranged-heavy' : 1,
   'gunnery' : 1
@@ -59,6 +59,22 @@ var weapons = {
     pierce : 1,
     damage : 16
   },
+  'bo_rifle2' : {
+    name : 'Ancient Bo Rifle',
+    type : 'melee',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 19
+  },
+  'bo_rifle2_ranged' : {
+    name : 'Ancient Bo Rifle',
+    type : 'ranged-heavy',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 10
+  }
   'bo_rifle' : {
     name : 'Bo Rifle',
     type : 'melee',
@@ -69,7 +85,7 @@ var weapons = {
   },
   'bo_rifle_ranged' : {
     name : 'Bo Rifle',
-    type : 'ranged',
+    type : 'ranged-heavy',
     crit : 4,
     accurate : 2,
     pierce : 0,
