@@ -38,7 +38,7 @@ var deegray_stats = {
   'melee' : 3,
   'lightsaber' : 5,
   'ranged-light' : 0,
-  'ranged-heavy' : 2,
+  'ranged-heavy' : 3,
   'gunnery' : 1
 };
 
@@ -65,7 +65,7 @@ var weapons = {
     crit : 3,
     accurate : 3,
     pierce : 3,
-    damage : 19
+    damage : 15
   },
   'bo_rifle2_ranged' : {
     name : 'Ancient Bo Rifle',
