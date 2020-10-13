@@ -102,6 +102,8 @@ var TRIUMPH = 2;
 var FAILURE = 0;
 var THREAT = 1;
 var DESPAIR = 2;
+var DARK = 3;
+var LIGHT = 4;
 
 var successImg = new Image();
 successImg.src = "img/success.png";
@@ -115,11 +117,15 @@ var threatImg = new Image();
 threatImg.src = "img/threat.png";
 var despairImg = new Image();
 despairImg.src = "img/despair.png";
+var lightImg = new Image();
+lightImg.src = "img/light.png";
+var darkImg = new Image();
+darkImg.src = "img/dark.png";
 
-var posImages = [successImg, advantageImg, triumphImg];
+var posImages = [successImg, advantageImg, triumphImg, lightImg, darkImg];
 var negImages = [failureImg, threatImg, despairImg];
 
-var posDicePool = {'green': 0, 'yellow': 0, 'boost': 0};
+var posDicePool = {'green': 0, 'yellow': 0, 'boost': 0, 'force': 0};
 var negDicePool = {'purple': 0, 'red': 0, 'setback': 0};
 
 var posResults = [0, 0, 0];
@@ -131,6 +137,8 @@ var netfailure = 0;
 var greenDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE]];
 var yellowDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [TRIUMPH]];
 var boostDie = [ [], [], [SUCCESS], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE]];
+
+var forceDie = [[DARK], [DARK], [DARK], [DARK], [DARK], [DARK], [DARK, DARK], [LIGHT], [LIGHT], [LIGHT, LIGHT], [LIGHT, LIGHT], [LIGHT, LIGHT]];
 
 var purpleDie =  [ [], [FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [THREAT], [FAILURE, THREAT]];
 var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [FAILURE, THREAT], [FAILURE, THREAT], [THREAT, THREAT], [THREAT, THREAT], [DESPAIR]];
@@ -297,10 +305,10 @@ var set_dice = function( skill ) {
 
 var rollDice = function() {
   updatePool();
-  posResults = [0,0, 0];
+  posResults = [0,0, 0, 0];
   negResults = [0, 0, 0];
 
-  var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff']};
+  var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff'], 'force': [forceDie, '#FFFFFF']};
   //var posResultDisplay = document.getElementById('posresultc');
   var posResultDisplay = document.getElementById('pospool');
   var ctx = posResultDisplay.getContext('2d');
@@ -454,6 +462,12 @@ var updateDiceDisplay = function() {
     ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
     startx+= DICE_SIZE + OFFSET;
   }
+  amt = posDicePool['force'];
+  ctx.fillStyle = "#fff8dc";
+  for (var i=0; i<amt; i++) {
+    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
+    startx+= DICE_SIZE + OFFSET;
+  }
 
   var negPoolDisplay = document.getElementById('negpool');
   ctx = negPoolDisplay.getContext('2d');
@@ -489,10 +503,12 @@ var updatePool = function() {
   var r = document.getElementById('numred').value;
   var b = document.getElementById('numboost').value;
   var s = document.getElementById('numsetback').value;
+  var f = document.getElementById('numforce').value;
 
   posDicePool['green'] = g;
   posDicePool['yellow'] = y;
   posDicePool['boost'] = b;
+  posDicePool['force'] = f;
 
   negDicePool['purple'] = p;
   negDicePool['red'] = r;
@@ -508,6 +524,7 @@ document.getElementById('numboost').addEventListener('change', updatePool);
 document.getElementById('numpurple').addEventListener('change', updatePool);
 document.getElementById('numred').addEventListener('change', updatePool);
 document.getElementById('numsetback').addEventListener('change', updatePool);
+document.getElementById('numforce').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
 var setup = function() {
