@@ -3,7 +3,7 @@ var deegray_stats = {
   'strain' : 0,
   'soak' : 10,
   'woundthresh' : 26,
-  'strainthresh' : 14,
+  'strainthresh' : 16,
   'rangeddef' : 1,
   'meleeddef' : 1,
   'brawn' : 6,
