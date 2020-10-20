@@ -1,7 +1,7 @@
 var deegray_stats = {
   'wounds' : 0,
   'strain' : 0,
-  'soak' : 10,
+  'soak' : 11,
   'woundthresh' : 26,
   'strainthresh' : 16,
   'rangeddef' : 1,
