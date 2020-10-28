@@ -21,12 +21,12 @@ var deegray_stats = {
   'coordination' : 1,
   'deception' : 0,
   'discipline' :1,
-  'leadership' : 1,
+  'leadership' : 3,
   'mechanics' : 0,
   'medicine' : 0,
   'negotiation' : 0,
   'perception' : 0,
-  'pilot-planet' : 2,
+  'pilot-planet' : 3,
   'pilot-space' : 0,
   'resilience' : 1,
   'skullduggery' : 0,
@@ -39,7 +39,7 @@ var deegray_stats = {
   'lightsaber' : 5,
   'ranged-light' : 0,
   'ranged-heavy' : 3,
-  'gunnery' : 1
+  'gunnery' : 2
 };
 
 var weapons = {
