@@ -1,11 +1,11 @@
 var deegray_stats = {
   'wounds' : 0,
   'strain' : 0,
-  'soak' : 11,
+  'soak' : 12,
   'woundthresh' : 34,
   'strainthresh' : 16,
-  'rangeddef' : 1,
-  'meleeddef' : 1,
+  'rangeddef' : 2,
+  'meleeddef' : 2,
   'brawn' : 6,
   'agility' : 4,
   'intellect' : 2,
@@ -43,6 +43,15 @@ var deegray_stats = {
 };
 
 var weapons = {
+  'great_ls' : {
+    name : 'Great Lightsaber',
+    type : 'lightsaber',
+    crit : 3,
+    accurate : 0,
+    pierce : 10,
+    damage : 12,
+    burn : 1
+  },
   'ls_pike' : {
     name : 'Lightsaber Pike',
     type : 'lightsaber',
