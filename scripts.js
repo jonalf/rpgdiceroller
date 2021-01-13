@@ -7,7 +7,7 @@ var deegray_stats = {
   'rangeddef' : 2,
   'meleeddef' : 2,
   'brawn' : 6,
-  'agility' : 4,
+  'agility' : 5,
   'intellect' : 2,
   'cunning' : 2,
   'willpower' : 3,
