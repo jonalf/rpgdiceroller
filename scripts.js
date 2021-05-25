@@ -1,3 +1,58 @@
+var teru_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' : 2,
+  'woundthresh' : 13,
+  'strainthresh' : 17,
+  'rangeddef' : 0,
+  'meleeddef' : 0,
+  'brawn' : 1,
+  'agility' : 2,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 4,
+  'pressence' : 4,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 0,
+  'computers' : 0,
+  'cool' : 1,
+  'coordination' : 0,
+  'deception' : 0,
+  'discipline' :1,
+  'leadership' : 1,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 2,
+  'perception' : 0,
+  'pilot-planet' : 0,
+  'pilot-space' : 0,
+  'resilience' : 0,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl' : 0,
+  'melee' : 0,
+  'lightsaber' : 1,
+  'ranged-light' : 0,
+  'ranged-heavy' : 0,
+  'gunnery' : 0
+};
+
+var weapons = {
+  'training_saber' : {
+    name: 'Training Saber',
+    type: 'lightsaber',
+    crit: 0,
+    accurate: 0,
+    pierce: 0,
+    damage: 6
+  }
+};
+
 var deegray_stats = {
   'wounds' : 0,
   'strain' : 0,
@@ -42,7 +97,7 @@ var deegray_stats = {
   'gunnery' : 2
 };
 
-var weapons = {
+var deegray_weapons = {
   'great_ls' : {
     name : 'Great Lightsaber',
     type : 'lightsaber',
@@ -196,6 +251,18 @@ var check_table = {
 };
 
 
+var load_teru = function() {
+  var stat_keys = Object.keys(deegray_stats);
+  for (var i=0; i<stat_keys.length; i++) {
+    var e = document.getElementById( stat_keys[i] );
+    //console.log(stat_keys[i]);
+    //console.log(deegray_stats[ stat_keys[i]] );
+    e.value = teru_stats[ stat_keys[i] ];
+  }
+
+  load_weapons();
+};
+
 var load_deegray = function() {
   var stat_keys = Object.keys(deegray_stats);
   for (var i=0; i<stat_keys.length; i++) {
@@ -250,6 +317,54 @@ var load_weapons = function() {
 };
 
 
+//var check_table = {
+var setup_skills_div = function() {
+
+  //create a div for each check type
+  var skill_divs = {};
+  for (var i=0; i< charateristics.length; i++) {
+    var char_type = charateristics[i];
+    var skill_div = document.createElement("div");
+    skill_div.classList.add("vertical");
+    //skill_div.classList.add("item-left");
+
+    skill_divs[char_type] = skill_div;
+  }
+
+  var skills = Object.keys(check_table);
+  for (i=0; i< skills.length; i++) {
+    var skill = skills[i];
+    var charateristic = check_table[skill];
+    //create input
+    var span = document.createElement('div');
+    span.classList.add("self-stretch");
+    var radio = document.createElement('input');
+    radio.type = "radio";
+    radio.name="check_type";
+    radio.id = skills[i] + "_check";
+    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
+    var input = document.createElement('input');
+    input.classList.add("self-right");
+    input.type = "number";
+    input.id = skills[i];
+    input.min = "0";
+    input.style.width = "50px";
+    span.appendChild(radio);
+    span.innerHTML += name;
+    span.appendChild(input);
+
+    console.log(span);
+    console.log(skill);
+    skill_divs[charateristic].appendChild(span);
+  }
+
+  document.getElementById("skills").innerHTML = '';
+  var sds = Object.keys(skill_divs);
+  for (i=0; i< sds.length; i++) {
+    document.getElementById("skills").appendChild( skill_divs[sds[i]] );
+  }
+  return skill_divs;
+};
 
 
 var setup_skills = function() {
@@ -537,7 +652,7 @@ document.getElementById('numforce').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
 var setup = function() {
-  setup_skills();
+  setup_skills_div();
   var checks = document.getElementsByName('check_type');
   for (var i=0; i<checks.length; i++) {
     checks[i].addEventListener('click', get_check);

@@ -1,0 +1,47 @@
+body {
+    font-family: sans-serif;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+hr {
+    flex-basis: 100%;
+    width: 0;
+}
+
+.innerbreak {
+    border: none;
+    margin: 1px;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+    padding-right: 5px;
+}
+
+.item-center {
+    align-items: center;
+}
+
+.item-left {
+    align-items: start;
+}
+
+item-right {
+    align-items: end;
+}
+
+self-right {
+    align-self: end;
+}
+
+
+self-stetch {
+    align-self: stretch;
+}
