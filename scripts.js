@@ -281,7 +281,7 @@ var load_deegray = function() {
 // <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
 var load_weapons = function() {
   var weapon_table = document.getElementById("weapons");
-
+  weapon_table.innerHTML = "";
   var weapon_keys = Object.keys(weapons);
   for (var i=0; i < weapon_keys.length; i++) {
     var weapon = weapons[weapon_keys[i]];
