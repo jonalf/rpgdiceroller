@@ -326,8 +326,15 @@ var setup_skills_div = function() {
     var char_type = charateristics[i];
     var skill_div = document.createElement("div");
     skill_div.classList.add("vertical");
-    //skill_div.classList.add("item-left");
-
+    skill_div.style.paddingBottom = "5px";
+    var skill_type = document.createElement("h4");
+    skill_type.innerHTML = char_type;
+    skill_type.style.padding = "0px";
+    skill_type.style.borderBottom = "1px solid gray";
+    skill_type.style.margin = "0px";
+    skill_type.style.marginBottom = "2px";
+    skill_type.style.alignSelf = "center";
+    skill_div.appendChild(skill_type);
     skill_divs[char_type] = skill_div;
   }
 
@@ -337,7 +344,10 @@ var setup_skills_div = function() {
     var charateristic = check_table[skill];
     //create input
     var span = document.createElement('div');
-    span.classList.add("self-stretch");
+    span.style.display = "flex";
+    span.style.flexDirection = "row";
+    span.style.alignSelf = "stretch";
+    span.style.justifyContent = "space-between";
     var radio = document.createElement('input');
     radio.type = "radio";
     radio.name="check_type";
@@ -352,9 +362,6 @@ var setup_skills_div = function() {
     span.appendChild(radio);
     span.innerHTML += name;
     span.appendChild(input);
-
-    console.log(span);
-    console.log(skill);
     skill_divs[charateristic].appendChild(span);
   }
 
