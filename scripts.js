@@ -36,7 +36,7 @@ var teru_stats = {
   'vigilance' : 1,
   'brawl' : 0,
   'melee' : 0,
-  'lightsaber' : 1,
+  'lightsaber' : 0,
   'ranged-light' : 0,
   'ranged-heavy' : 0,
   'gunnery' : 0
@@ -216,7 +216,7 @@ var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underw
 var check_table = {
   'brawl' : 'brawn',
   'melee' : 'brawn',
-  'lightsaber' : 'brawn',
+  'lightsaber' : 'willpower',
   'ranged-light' : 'agility',
   'ranged-heavy' : 'agility',
   'gunnery' : 'agility',
