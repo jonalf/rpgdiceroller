@@ -46,23 +46,24 @@ var weapons = {
   'dual_saber' : {
     name: 'Dual Bladed Saber',
     type: 'lightsaber',
+    damage: 6,
     crit: 2,
     accurate: 0,
-    pierce: 0,
-    damage: 6,
+    pierce: 10,
     breach: 1,
     linked: 1,
     sunder: 1,
-    unweildy: 3
+    unweildy: 3,
+    hp: 2
   },
 
   'training_saber' : {
     name: 'Training Saber',
     type: 'lightsaber',
+    damage: 6,
     crit: 0,
     accurate: 0,
-    pierce: 0,
-    damage: 6
+    pierce: 0
   }
 };
 
