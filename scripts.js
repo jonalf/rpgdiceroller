@@ -1,5 +1,5 @@
 var teru_stats = {
-  'wounds' : 0,
+  'wounds' : 7,
   'strain' : 0,
   'soak' : 2,
   'woundthresh' : 13,
@@ -7,7 +7,7 @@ var teru_stats = {
   'rangeddef' : 0,
   'meleeddef' : 0,
   'brawn' : 1,
-  'agility' : 2,
+  'agility' : 3,
   'intellect' : 2,
   'cunning' : 2,
   'willpower' : 4,
