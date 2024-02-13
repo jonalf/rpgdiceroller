@@ -5,24 +5,24 @@ var OFFSET = 2;
 var results = [];
 var num_dice = 0;
 
-var milton_stats =  {'audacity': 2,
-                     'benevolence': 0,
-                     'cunning': 1,
+var milton_stats =  {'audacity': 0,
+                     'benevolence': 1,
+                     'cunning': 2,
                      'decorum': 0,
-                     'defiance': 0,
-                     'loyalty': 1,
+                     'defiance': 1,
+                     'loyalty': 0,
                      'ingenuity': 3,
                      'obsession': 2,
-                     'sensitivity': 0,
-                     'craft': 2,
+                     'sensitivity': 1,
+                     'craft': 3,
                      'express': 0,
                      'fight': 0,
                      'foster': 0,
                      'intrigue': 0,
                      'intuit': 1,
-                     'observe': 0,
-                     'physicality': 0,
-                     'transgress': 1};
+                     'observe': 2,
+                     'physicality': 1,
+                     'transgress': 0};
 
 
 var personality = ['audacity', 'benevolence', 'cunning', 'decorum', 'defiance', 'loyalty', 'ingenuity', 'obsession', 'sensitivity'];
