@@ -1,3 +1,5 @@
+
+var dice_pallete;
 var DICE_SIZE = 50;
 var OFFSET = 2;
 var results = [];
@@ -56,14 +58,16 @@ var set_dice_num = function() {
 
 var updateDiceDisplay = function() {
   set_dice_num();
+  dice_pallete = createScientificPalettes(baseColor)['tetradic'];
   var posPoolDisplay = document.getElementById('pospool');
   var ctx = posPoolDisplay.getContext('2d');
 
   ctx.clearRect(0, 0, 300, DICE_SIZE);
 
   var startx = 0;
-  ctx.fillStyle = "#00FF00";
+  //ctx.fillStyle = "#00FF00";
   for (var i=0; i<num_dice; i++) {
+    ctx.fillStyle = dice_pallete[i % dice_pallete.length];
     ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
     startx+= DICE_SIZE + OFFSET;
   }
@@ -80,29 +84,87 @@ var setup = function() {
     skill_elements[i].addEventListener('click', updateDiceDisplay);
   }
   document.getElementById("roll").addEventListener('click', roll_dice);
+  load_milton();
 };
 
 var roll_dice = function() {
   updateDiceDisplay();
   results = [];
+  var glooms = 0;
+  var brills = 0;
   for (var j=0; j<num_dice; j++) {
     results.push(Math.floor(Math.random()*6)+1);
+    if (results[j] == 1) {
+      glooms++;
+    }
+    else if (results[j] == 6) {
+      brills++;
+    }
   }
+  if (glooms > brills) {
+    document.getElementById('glooms').style = "color: red";
+    document.getElementById('brills').style = "";
+  }
+  else {
+    document.getElementById('brills'). style = "color: green";
+    document.getElementById('glooms').style = "";
+  }
+  document.getElementById('brills').innerText = brills;
+  document.getElementById('glooms').innerText = glooms;
   console.log(results);
 
   var posResultDisplay = document.getElementById('pospool');
   var ctx = posResultDisplay.getContext('2d');
   ctx.clearRect(0, 0, 300, DICE_SIZE);
-  ctx.fillStyle = "#00FFFF";
   ctx.font = "25px serif";
   ctx.textBaseline = "middle";
   ctx.textAlign = "center";
   var startx = 0;
   for (var i=0; i<num_dice; i++) {
+    ctx.fillStyle = dice_pallete[i % dice_pallete.length];
     ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    ctx.strokeText( results[i], startx+(DICE_SIZE/2), DICE_SIZE/2);
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText( results[i], startx+(DICE_SIZE/2), DICE_SIZE/2);
     startx+= DICE_SIZE + OFFSET;
   }
+};
+
+
+var adjustHue = function(val) {
+  if (val < 0) val += Math.ceil(-val / 360) * 360;
+
+  return val % 360;
+};
+
+const baseColor = {
+  l: 50,
+  c: 75,
+  h: 60,
+  mode: "lch"
+};
+
+var createScientificPalettes = function(baseColor) {
+  const targetHueSteps = {
+    analogous: [0, 30, 60],
+    triadic: [0, 120, 240],
+    tetradic: [0, 90, 180, 270],
+    complementary: [0, 180],
+    splitComplementary: [0, 150, 210]
+  };
+
+  const palettes = {};
+
+  for (const type of Object.keys(targetHueSteps)) {
+    var pallete = [];
+    for (const step of targetHueSteps[type]) {
+    var color = "lch(" + baseColor.l + " ";
+    color+= baseColor.c + " ";
+    color+= adjustHue(baseColor.h + step) + ")";
+    pallete.push(color);
+    }
+    palettes[type] = pallete;
+  }
+  return palettes;
 };
 
 
