@@ -80,14 +80,8 @@ var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'obse
 
 
 var load_milton = function() {
-  var stat_keys = Object.keys(milton_stats['personskills']);
-  for (var i=0; i<stat_keys.length; i++) {
-    var e = document.getElementById( stat_keys[i] );
-    e.value = milton_stats['personskills'][stat_keys[i]];
-  }
-  make_boxes('vitality');
-  make_boxes('distress');
-  make_boxes('passion');
+  char_stats = milton_stats;
+  load_stats();
 };
 
 var load_stats = function() {
