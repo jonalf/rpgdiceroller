@@ -1,6 +1,7 @@
 
 var dice_pallete;
 var DICE_SIZE = 50;
+var BOX_SIZE = 20;
 var OFFSET = 2;
 var results = [];
 var num_dice = 0;
@@ -40,6 +41,39 @@ var milton_stats = {'personskills': {
                       'wealth': 0 }
                      };
 
+var char_stats = {'personskills': {
+                      'audacity': 0,
+                      'benevolence': 0,
+                      'cunning': 0,
+                      'decorum': 0,
+                      'defiance': 0,
+                      'loyalty': 0,
+                      'ingenuity': 0,
+                      'obsession': 0,
+                      'sensitivity': 0,
+                      'craft': 0,
+                      'express': 0,
+                      'fight': 0,
+                      'foster': 0,
+                      'intrigue': 0,
+                      'intuit': 0,
+                      'observe': 0,
+                      'physicality': 0,
+                      'transgress': 0 },
+                    'vitality' : { 'marked' : 0, 'total' : 5},
+                    'distress': { 'marked' : 0, 'total' : 5},
+                    'passion': {'marked': 0, 'total' : 5},
+                    'portfolio': {
+                      'access': 0,
+                      'information': 0,
+                      'entourage': 0,
+                      'mentor': 0,
+                      'reputation': 0,
+                      'title': 0,
+                      'gear': 0,
+                      'wardrobe': 0,
+                      'wealth': 0 }
+                    };
 var personality = ['audacity', 'benevolence', 'cunning', 'decorum', 'defiance', 'loyalty', 'ingenuity', 'obsession', 'sensitivity'];
 var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'observe', 'physicality', 'transgress'];
 
@@ -56,15 +90,26 @@ var load_milton = function() {
   make_boxes('passion');
 };
 
+var load_stats = function() {
+  var stat_keys = Object.keys(char_stats['personskills']);
+  for (var i=0; i<stat_keys.length; i++) {
+    var e = document.getElementById( stat_keys[i] );
+    e.value = char_stats['personskills'][stat_keys[i]];
+  }
+  make_boxes('vitality');
+  make_boxes('distress');
+  make_boxes('passion');
+};
+
 var make_boxes = function(type) {
-  var num_boxes = milton_stats[type]['total'];
+  var num_boxes = char_stats[type]['total'];
   var container = document.getElementById(type);
   container.innerHTML = "";
   for (var nb=0; nb<num_boxes; nb++) {
     var box = document.createElement('span');
     box.classList.add(type+'-box');
 
-    if (nb < milton_stats[type]['marked']) {
+    if (nb < char_stats[type]['marked']) {
       box.classList.add('marked');
     }
     box.addEventListener('click', mark_box);
@@ -128,7 +173,10 @@ var setup = function() {
   }
   document.getElementById("roll").addEventListener('click', roll_dice);
   document.getElementById("passionroll").addEventListener('click', passion_roll);
-  load_milton();
+  if ( window.location.hash ) {
+    set_stats( window.location.hash );
+  }
+  load_stats();
 };
 
 var passion_roll = function() {
@@ -228,245 +276,49 @@ var createScientificPalettes = function(baseColor) {
 };
 
 
-
-/*
-
-
-var rollDice = function() {
-  updatePool();
-  posResults = [0,0, 0, 0];
-  negResults = [0, 0, 0];
-
-  var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff'], 'force': [forceDie, '#FFFFFF']};
-  //var posResultDisplay = document.getElementById('posresultc');
-  var posResultDisplay = document.getElementById('pospool');
-  var ctx = posResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, 300, DICE_SIZE);
-  var startx = 0;
-  var keys = Object.keys(posDiceTypes);
-  for (var i=0; i<keys.length; i++) {
-
-    var dtype = keys[i];
-    var die = posDiceTypes[dtype][0];
-    for (var j=0; j<posDicePool[dtype]; j++) {
-      var result = die[Math.floor(Math.random() * die.length)];
-
-      ctx.fillStyle = posDiceTypes[dtype][1];
-      ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-      if (result.length == 1) {
-        posResults[result]+= 1;
-        ctx.drawImage(posImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-      }
-      else if (result.length == 2) {
-
-        posResults[result[0]]+= 1;
-        posResults[result[1]]+= 1;
-
-        ctx.drawImage(posImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-        ctx.drawImage(posImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-      }
-      startx+= DICE_SIZE + OFFSET;
-    }
+var get_stats = function() {
+  var personskills = {};
+  for (const ps of personality) {
+    var psval = parseInt(document.getElementById(ps).value)
+    personskills[ps] = psval;
   }
-
-  var negDiceTypes = {'purple': [purpleDie, "#5c00e6"], 'red' : [redDie, '#FF0000'], 'setback': [setbackDie, '#000000']};
-  //var negResultDisplay = document.getElementById('negresultc');
-  var negResultDisplay = document.getElementById('negpool');
-  ctx = negResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, 300, DICE_SIZE);
-  startx = 0;
-  keys = Object.keys(negDiceTypes);
-  for (var i=0; i<keys.length; i++) {
-
-    var dtype = keys[i];
-    var die = negDiceTypes[dtype][0];
-
-    for (var j=0; j<negDicePool[dtype]; j++) {
-      result = die[Math.floor(Math.random() * die.length)];
-      ctx.fillStyle = negDiceTypes[dtype][1];
-      ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-
-      if (result.length == 1) {
-        negResults[result]+= 1;
-        ctx.drawImage(negImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-      }
-      else if (result.length == 2) {
-        negResults[result[0]]+= 1;
-        negResults[result[1]]+= 1;
-        ctx.drawImage(negImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-        ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-      }
-      if (dtype == 'setback' || dtype == "purple")
-      ctx.fillStyle = "#FFFFFF";
-
-      startx+= DICE_SIZE + OFFSET;
-    }
+  for (const ps of skills) {
+    var psval = parseInt(document.getElementById(ps).value)
+    personskills[ps] = psval;
   }
-  updateResultTotals();
+  var vitality = {};
+  vitality['total'] = document.getElementsByClassName('vitality-box').length;
+  vitality['marked'] = document.getElementsByClassName('vitality-box marked').length;
+
+  var distress = {};
+  distress['total'] = document.getElementsByClassName('distress-box').length;
+  distress['marked'] = document.getElementsByClassName('distress-box marked').length;
+
+  var passion = {};
+  passion['total'] = document.getElementsByClassName('passion-box').length;
+  passion['marked'] = document.getElementsByClassName('passion-box marked').length;
+
+  var new_stats = {'personskills' : personskills,
+                   'vitality' : vitality,
+                   'distress' : distress,
+                   'passion' : passion};
+
+  return new_stats;
 };
 
-var updateResultTotals = function() {
-  var u = posResults[TRIUMPH];
-  var s = posResults[SUCCESS] + u;
-  var a = posResults[ADVANTAGE];
-  var d = negResults[DESPAIR];
-  var f = negResults[FAILURE] + d;
-  var t = negResults[THREAT];
-
-  document.getElementById("scount").innerText = s;
-  document.getElementById("acount").innerText = a;
-  document.getElementById("fcount").innerText = f;
-  document.getElementById("tcount").innerText = t;
-
-  document.getElementById("ucount").innerText = u;
-  document.getElementById("dcount").innerText = d;
-
-  document.getElementById("snet").innerText = (s - f);
-  document.getElementById("anet").innerText = (a - t);
-
-  if ( (s-f) > 0 ) {
-    netsuccess+= 1;
-  }
-  else {
-    netfailure+= 1;
-  }
-  var check_type  = document.querySelector('input[name="check_type"]:checked').id;
-      //console.log(check_type);
-  if (check_type == 'melee_check' ||
-      check_type == 'lightsaber_check' ||
-      check_type == 'ranged-heavy_check' ||
-      check_type == 'ranged-light_check') {
-
-    var weapon_name = document.querySelector('input[name="genderS"]:checked').value;.id;
-    weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
-    var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
-
-    //console.log(weapon_name);
-
-    document.getElementById("total_damage").value = 0;
-    if ((s-f) > 0) {
-      damage+= (s-f);
-      document.getElementById("total_damage").value = damage;
-    }
-}
+var encode_stats = function() {
+  var new_stats = get_stats();
+  var encode_string = btoa(JSON.stringify(new_stats));
+  return encode_string;
 };
 
-var multi_roll = function(n) {
-  netsuccess = 0;
-  netfailure = 0;
-  while (n > 0) {
-    rollDice();
-    n-= 1;
-  }
-
-  console.log( "success: " + netsuccess);
-  console.log( "failure: " + netfailure);
+var set_stats = function() {
+  var stat_string = window.location.hash.substr(1);
+  char_stats =  JSON.parse(atob(stat_string));
 };
 
-
-
-
-/*below  probably not needed
-
-//var check_table = {
-var setup_skills_div = function() {
-
-  //create a div for each check type
-  var skill_divs = {};
-  for (var i=0; i< charateristics.length; i++) {
-    var char_type = charateristics[i];
-    var skill_div = document.createElement("div");
-    skill_div.classList.add("vertical");
-    skill_div.style.paddingBottom = "5px";
-    var skill_type = document.createElement("h4");
-    skill_type.innerHTML = char_type;
-    skill_type.style.padding = "0px";
-    skill_type.style.borderBottom = "1px solid gray";
-    skill_type.style.margin = "0px";
-    skill_type.style.marginBottom = "2px";
-    skill_type.style.alignSelf = "center";
-    skill_div.appendChild(skill_type);
-    skill_divs[char_type] = skill_div;
-  }
-
-  var skills = Object.keys(check_table);
-  for (i=0; i< skills.length; i++) {
-    var skill = skills[i];
-    var charateristic = check_table[skill];
-    //create input
-    var span = document.createElement('div');
-    span.style.display = "flex";
-    span.style.flexDirection = "row";
-    span.style.alignSelf = "stretch";
-    span.style.justifyContent = "space-between";
-    var radio = document.createElement('input');
-    radio.type = "radio";
-    radio.name="check_type";
-    radio.id = skills[i] + "_check";
-    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
-    var input = document.createElement('input');
-    input.classList.add("self-right");
-    input.type = "number";
-    input.id = skills[i];
-    input.min = "0";
-    input.style.width = "50px";
-    span.appendChild(radio);
-    span.innerHTML += name;
-    span.appendChild(input);
-    skill_divs[charateristic].appendChild(span);
-  }
-
-  document.getElementById("skills").innerHTML = '';
-  var sds = Object.keys(skill_divs);
-  for (i=0; i< sds.length; i++) {
-    document.getElementById("skills").appendChild( skill_divs[sds[i]] );
-  }
-  return skill_divs;
+var make_data_url = function() {
+  //return "data:text/plain;base64," + encode_stats();
+  window.location.hash = encode_stats();
+  document.getElementById('data-url').innerText = window.location;
 };
-
-
-var setup_skills = function() {
-
-  var combat_table = document.createElement("table");
-  var knowledge_table = document.createElement("table");
-  var table = document.createElement("table");
-  table.style.float = "left";
-  table.style.border = "1px solid";
-  combat_table.style.border = "1px solid";
-  knowledge_table.style.border = "1px solid";
-
-  var skills = Object.keys(check_table);
-  for (var i=0; i<skills.length; i++) {
-    //console.log(skills[i]);
-    var row = document.createElement('tr');
-    var tdr = document.createElement('td');
-    var radio = document.createElement('input');
-    radio.type = "radio";
-    radio.name="check_type";
-    radio.id = skills[i] + "_check";
-    tdr.appendChild(radio);
-    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
-    tdr.innerHTML+= name;
-    var tdi = document.createElement('td');
-    var input = document.createElement('input');
-    input.type = "number";
-    input.id = skills[i];
-    input.min = "0";
-    input.style.width = "50px";
-    tdi.appendChild(input);
-    row.appendChild(tdr);
-    row.appendChild(tdi);
-    if ( combat_skills.includes(skills[i]))
-    combat_table.appendChild(row);
-    else if (knowledge_skills.includes(skills[i]))
-    knowledge_table.appendChild(row);
-    else
-    table.appendChild(row);
-  }
-  document.getElementById("skills").appendChild( table );
-  document.getElementById("skills").appendChild( combat_table );
-  document.getElementById("skills").appendChild( knowledge_table );
-};
-*/

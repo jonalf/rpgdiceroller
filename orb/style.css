@@ -58,27 +58,33 @@ hr {
 }
 
 .distress-box,
-.vitality-box {
-  width: 25px;
-  height: 25px;
+.vitality-box,
+.passion-box {
+  width: 1.25em;
+  height: 1.25em;
   border: 2px solid black;
   margin-left: 2px;
   display: inline-block;
 }
 
 .passion-box {
-  margin-left: 2px;
-  border: 2px solid black;
-  width: 25px;
-  height: 25px;
   border-radius: 50%;
-  display: inline-block;
 }
 
+.box-label {
+  margin-left: 5px;
+  font-size: 1.25em;
+}
 .marked {
   background-color: purple;
 }
 
-/* .box-holder {
-  display: flex;
-} */
+.box-holder {
+  /* display: flex;
+  align-items: center; */
+}
+
+#data-url {
+  width=100%;
+  overflow: auto;
+}
