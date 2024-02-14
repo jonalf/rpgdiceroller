@@ -6,29 +6,39 @@ var results = [];
 var num_dice = 0;
 var use_passion = false;
 
-var milton_stats = {'personskills': {'audacity': 0,
-                     'benevolence': 1,
-                     'cunning': 2,
-                     'decorum': 0,
-                     'defiance': 1,
-                     'loyalty': 0,
-                     'ingenuity': 3,
-                     'obsession': 2,
-                     'sensitivity': 1,
-                     'craft': 3,
-                     'express': 0,
-                     'fight': 0,
-                     'foster': 0,
-                     'intrigue': 0,
-                     'intuit': 1,
-                     'observe': 2,
-                     'physicality': 1,
-                     'transgress': 0 },
+var milton_stats = {'personskills': {
+                       'audacity': 0,
+                       'benevolence': 1,
+                       'cunning': 2,
+                       'decorum': 0,
+                       'defiance': 1,
+                       'loyalty': 0,
+                       'ingenuity': 3,
+                       'obsession': 2,
+                       'sensitivity': 1,
+                       'craft': 3,
+                       'express': 0,
+                       'fight': 0,
+                       'foster': 0,
+                       'intrigue': 0,
+                       'intuit': 1,
+                       'observe': 2,
+                       'physicality': 1,
+                       'transgress': 0 },
                     'vitality' : { 'marked' : 0, 'total' : 7},
-                     'distress': { 'marked' : 0, 'total' : 7},
-                    'passion': {'marked': 0, 'total' : 5}
+                    'distress': { 'marked' : 0, 'total' : 7},
+                    'passion': {'marked': 0, 'total' : 5},
+                    'portfolio': {
+                      'access': 0,
+                      'information': 1,
+                      'entourage': 0,
+                      'mentor': 0,
+                      'reputation': 1,
+                      'title': 0,
+                      'gear': 2,
+                      'wardrobe': 0,
+                      'wealth': 0 }
                      };
-
 
 var personality = ['audacity', 'benevolence', 'cunning', 'decorum', 'defiance', 'loyalty', 'ingenuity', 'obsession', 'sensitivity'];
 var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'observe', 'physicality', 'transgress'];
