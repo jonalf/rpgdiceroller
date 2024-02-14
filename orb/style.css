@@ -59,7 +59,8 @@ hr {
 
 .distress-box,
 .vitality-box,
-.passion-box {
+.passion-box,
+.portfolio-box {
   width: 1.25em;
   height: 1.25em;
   border: 2px solid black;
@@ -67,8 +68,14 @@ hr {
   display: inline-block;
 }
 
-.passion-box {
+.passion-box,
+.portfolio-box {
   border-radius: 50%;
+}
+
+.portfolio-box {
+  width: .75em;
+  height: .75em;
 }
 
 .box-label {

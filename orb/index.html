@@ -147,6 +147,18 @@
             <input type="number" style="width: 50px;" min="0" id="transgress">
             <input type="radio" name="skill" value="transgress_button">
           </div>
+        <hr>
+
+        <div class="container box-holder">
+          <span class="box-label">access<span id="access"></span></span>
+          <span class="box-label">information<span id="information"></span></span>
+          <span class="box-label">entourage<span id="entourage"></span></span>
+          <span class="box-label">mentor<span id="mentor"></span></span>
+          <span class="box-label">reputation<span id="reputation"></span></span>
+          <span class="box-label">title<span id="title"></span></span>
+          <span class="box-label">Gear<span id="gear"></span></span>
+          <span class="box-label">wardrobe<span id="wardrobe"></span></span>
+          <span class="box-label">wealth<span id="wealth"></span></span>
         </div>
 
         <hr>
@@ -156,6 +168,27 @@
   <hr class="innerbreak">
   <div class="container"><textarea id="data-url"></textarea></div>
   </div>
+
+  <div class="container">
+    <h3>Level Up Area</h3>
+    <div class="container">
+      <button onclick="add_stat('vitality')">+ vitality</button>
+      <button onclick="add_stat('distress')">+ distress</button>
+    </div>
+    <div class="container">
+      <button onclick="add_portfolio('access')">+ access</button>
+      <button onclick="add_portfolio('information')">+ information</button>
+      <button onclick="add_portfolio('entourage')">+ entourage</button>
+      <button onclick="add_portfolio('mentor')">+ mentor</button>
+      <button onclick="add_portfolio('reputation')">+ reputation</button>
+      <button onclick="add_portfolio('title')">+ title</button>
+      <button onclick="add_portfolio('gear')">+ gear</button>
+      <button onclick="add_portfolio('wardrobe')">+ wardrobe</button>
+      <button onclick="add_portfolio('wealth')">+ wealth</button>
+    </div>
+  </div>
+
+</div>
 
   <script src="scripts.js"></script>
   <script>document.load = setup()</script>

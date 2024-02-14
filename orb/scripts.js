@@ -30,16 +30,17 @@ var milton_stats = {'personskills': {
                     'distress': { 'marked' : 0, 'total' : 7},
                     'passion': {'marked': 0, 'total' : 5},
                     'portfolio': {
-                      'access': 0,
-                      'information': 1,
-                      'entourage': 0,
-                      'mentor': 0,
-                      'reputation': 1,
-                      'title': 0,
-                      'gear': 2,
-                      'wardrobe': 0,
-                      'wealth': 0 }
-                     };
+                      'access': { 'marked' : 0, 'total' : 0},
+                      'information': { 'marked' : 0, 'total' : 1},
+                      'entourage': { 'marked' : 0, 'total' : 0},
+                      'mentor': { 'marked' : 0, 'total' : 0},
+                      'reputation': { 'marked' : 0, 'total' : 1},
+                      'title': { 'marked' : 0, 'total' : 0},
+                      'gear': { 'marked' : 0, 'total' : 2},
+                      'wardrobe': { 'marked' : 0, 'total' : 0},
+                      'wealth': { 'marked' : 0, 'total' : 0}
+                    }
+                  };
 
 var char_stats = {'personskills': {
                       'audacity': 0,
@@ -64,15 +65,16 @@ var char_stats = {'personskills': {
                     'distress': { 'marked' : 0, 'total' : 5},
                     'passion': {'marked': 0, 'total' : 5},
                     'portfolio': {
-                      'access': 0,
-                      'information': 0,
-                      'entourage': 0,
-                      'mentor': 0,
-                      'reputation': 0,
-                      'title': 0,
-                      'gear': 0,
-                      'wardrobe': 0,
-                      'wealth': 0 }
+                      'access': { 'marked' : 0, 'total' : 1},
+                      'information': { 'marked' : 0, 'total' : 1},
+                      'entourage': { 'marked' : 0, 'total' : 1},
+                      'mentor': { 'marked' : 0, 'total' : 1},
+                      'reputation': { 'marked' : 0, 'total' : 1},
+                      'title': { 'marked' : 0, 'total' : 1},
+                      'gear': { 'marked' : 0, 'total' : 1},
+                      'wardrobe': { 'marked' : 0, 'total' : 1},
+                      'wealth': { 'marked' : 0, 'total' : 1}
+                    }
                     };
 var personality = ['audacity', 'benevolence', 'cunning', 'decorum', 'defiance', 'loyalty', 'ingenuity', 'obsession', 'sensitivity'];
 var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'observe', 'physicality', 'transgress'];
@@ -90,20 +92,34 @@ var load_stats = function() {
     var e = document.getElementById( stat_keys[i] );
     e.value = char_stats['personskills'][stat_keys[i]];
   }
-  make_boxes('vitality');
-  make_boxes('distress');
-  make_boxes('passion');
+  make_boxes('vitality', false);
+  make_boxes('distress', false);
+  make_boxes('passion', false);
+
+  for (const type of Object.keys(char_stats['portfolio'])) {
+    make_boxes(type, true);
+  }
 };
 
-var make_boxes = function(type) {
-  var num_boxes = char_stats[type]['total'];
+var make_boxes = function(type, is_portfolio) {
+  var type_info;
+  if (is_portfolio) {
+    type_info = char_stats['portfolio'][type];
+  }
+  else {
+    var type_info = char_stats[type];
+  }
+  var num_boxes = type_info['total'];
   var container = document.getElementById(type);
   container.innerHTML = "";
   for (var nb=0; nb<num_boxes; nb++) {
     var box = document.createElement('span');
     box.classList.add(type+'-box');
+    if (is_portfolio) {
+      box.classList.add('portfolio-box');
+    }
 
-    if (nb < char_stats[type]['marked']) {
+    if (nb <type_info['marked']) {
       box.classList.add('marked');
     }
     box.addEventListener('click', mark_box);
@@ -292,10 +308,19 @@ var get_stats = function() {
   passion['total'] = document.getElementsByClassName('passion-box').length;
   passion['marked'] = document.getElementsByClassName('passion-box marked').length;
 
+  var portfolio = {}
+  for (const ps of Object.keys(char_stats['portfolio'])) {
+    portfolio[ps] = {};
+    portfolio[ps]['total'] = document.getElementsByClassName(ps+"-box").length;
+    portfolio[ps]['marked'] = document.getElementsByClassName(ps+"-box marked").length;
+  }
+  console.log(portfolio);
+
   var new_stats = {'personskills' : personskills,
                    'vitality' : vitality,
                    'distress' : distress,
-                   'passion' : passion};
+                   'passion' : passion,
+                   'portfolio' : portfolio};
 
   return new_stats;
 };
@@ -316,3 +341,17 @@ var make_data_url = function() {
   window.location.hash = encode_stats();
   document.getElementById('data-url').innerText = window.location;
 };
+
+var add_stat = function(stat) {
+  if (char_stats[stat]['total'] < 7) {
+    char_stats[stat]['total']++;
+    make_boxes(stat, false);
+  }
+}
+
+var add_portfolio = function(stat) {
+  if (char_stats['portfolio'][stat]['total'] < 5) {
+    char_stats['portfolio'][stat]['total']++;
+    make_boxes(stat, true);
+  }
+}
