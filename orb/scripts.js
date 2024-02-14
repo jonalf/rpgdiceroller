@@ -105,7 +105,7 @@ var updateDiceDisplay = function() {
   var posPoolDisplay = document.getElementById('pospool');
   var ctx = posPoolDisplay.getContext('2d');
 
-  ctx.clearRect(0, 0, 300, DICE_SIZE);
+  ctx.clearRect(0, 0, 600, DICE_SIZE);
 
   var startx = 0;
   //ctx.fillStyle = "#00FF00";
