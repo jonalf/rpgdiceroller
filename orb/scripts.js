@@ -4,8 +4,9 @@ var DICE_SIZE = 50;
 var OFFSET = 2;
 var results = [];
 var num_dice = 0;
+var use_passion = false;
 
-var milton_stats =  {'audacity': 0,
+var milton_stats = {'personskills': {'audacity': 0,
                      'benevolence': 1,
                      'cunning': 2,
                      'decorum': 0,
@@ -22,7 +23,11 @@ var milton_stats =  {'audacity': 0,
                      'intuit': 1,
                      'observe': 2,
                      'physicality': 1,
-                     'transgress': 0};
+                     'transgress': 0 },
+                    'vitality' : { 'marked' : 0, 'total' : 7},
+                     'distress': { 'marked' : 0, 'total' : 7},
+                    'passion': {'marked': 0, 'total' : 5}
+                     };
 
 
 var personality = ['audacity', 'benevolence', 'cunning', 'decorum', 'defiance', 'loyalty', 'ingenuity', 'obsession', 'sensitivity'];
@@ -31,13 +36,41 @@ var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'obse
 
 
 var load_milton = function() {
-  var stat_keys = Object.keys(milton_stats);
+  var stat_keys = Object.keys(milton_stats['personskills']);
   for (var i=0; i<stat_keys.length; i++) {
     var e = document.getElementById( stat_keys[i] );
-    e.value = milton_stats[ stat_keys[i] ];
+    e.value = milton_stats['personskills'][stat_keys[i]];
+  }
+  make_boxes('vitality');
+  make_boxes('distress');
+  make_boxes('passion');
+};
+
+var make_boxes = function(type) {
+  var num_boxes = milton_stats[type]['total'];
+  var container = document.getElementById(type);
+  container.innerHTML = "";
+  for (var nb=0; nb<num_boxes; nb++) {
+    var box = document.createElement('span');
+    box.classList.add(type+'-box');
+
+    if (nb < milton_stats[type]['marked']) {
+      box.classList.add('marked');
+    }
+    box.addEventListener('click', mark_box);
+    container.appendChild(box);
   }
 };
 
+var mark_box = function(e) {
+  var clist = e.target.classList;
+  if (clist.contains('marked') ) {
+    clist.remove('marked');
+  }
+  else {
+    clist.add('marked');
+  }
+};
 
 var set_dice_num = function() {
   var personality_value = 0;
@@ -84,20 +117,36 @@ var setup = function() {
     skill_elements[i].addEventListener('click', updateDiceDisplay);
   }
   document.getElementById("roll").addEventListener('click', roll_dice);
+  document.getElementById("passionroll").addEventListener('click', passion_roll);
   load_milton();
 };
+
+var passion_roll = function() {
+  if (  milton_stats['passion']['marked'] !=
+        milton_stats['passion']['total']) {
+    milton_stats['passion']['marked']++;
+    make_boxes('passion');
+    use_passion = true;
+    roll_dice();
+  }
+}
 
 var roll_dice = function() {
   updateDiceDisplay();
   results = [];
   var glooms = 0;
   var brills = 0;
+  var brill_threshold = 6;
+  if (use_passion) {
+    num_dice+= 2;
+    brill_threshold = 5;
+  }
   for (var j=0; j<num_dice; j++) {
     results.push(Math.floor(Math.random()*6)+1);
     if (results[j] == 1) {
       glooms++;
     }
-    else if (results[j] == 6) {
+    else if (results[j] >= brill_threshold) {
       brills++;
     }
   }
@@ -127,6 +176,7 @@ var roll_dice = function() {
     ctx.fillText( results[i], startx+(DICE_SIZE/2), DICE_SIZE/2);
     startx+= DICE_SIZE + OFFSET;
   }
+  use_passion = false;
 };
 
 

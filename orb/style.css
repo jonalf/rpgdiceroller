@@ -33,19 +33,28 @@ hr {
     align-items: start;
 }
 
-item-right {
-    align-items: end;
+.distress-box,
+.vitality-box {
+  width: 25px;
+  height: 25px;
+  border: 2px solid black;
+  margin-left: 2px;
+  display: inline-block;
 }
 
-self-right {
-    align-self: end;
+.passion-box {
+  margin-left: 2px;
+  border: 2px solid black;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-
-skill-line {
-    border: 1px solid black;
-    display: flex;
-    flex-direction: row;
-    align-self: stretch;
-    justify-content: space-around;
+.marked {
+  background-color: purple;
 }
+
+/* .box-holder {
+  display: flex;
+} */
