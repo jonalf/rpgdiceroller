@@ -209,6 +209,20 @@ var passion_roll = function() {
   }
 }
 
+var roll_animation = function(die) {
+  var cycles = 50;
+  let timer = setInterval( function() {
+    if (cycles == 0) {
+      clearInterval(timer);
+    }
+    else {
+      die.innerText = Math.floor(Math.random()*6)+1;
+      cycles--;
+    }
+  }, 2);
+
+}//roll_animation
+
 var roll_dice = function() {
   updateDiceDisplay();
   results = [];
@@ -247,8 +261,10 @@ var roll_dice = function() {
     var die = document.createElement('span'); //new
     die.classList.add('die');//new
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
-    die.innerText = results[i];
+    //die.innerText = results[i];
     dicePoolDisplay.appendChild(die);//new
+    roll_animation(die);
+    die.innerText = results[i];
   }
 
   // var posResultDisplay = document.getElementById('pospool');
