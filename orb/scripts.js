@@ -82,9 +82,9 @@ var skills = ['craft', 'express', 'fight', 'foster', 'intrigue', 'intuit', 'obse
 
 
 var load_milton = function() {
-  char_stats = milton_stats;
+  char_stats = JSON.parse(JSON.stringify(milton_stats));
   load_stats();
-};
+};//load_milton
 
 var load_stats = function() {
   var stat_keys = Object.keys(char_stats['personskills']);
@@ -99,7 +99,7 @@ var load_stats = function() {
   for (const type of Object.keys(char_stats['portfolio'])) {
     make_boxes(type, true);
   }
-};
+};//load_stats
 
 var make_boxes = function(type, is_portfolio) {
   var type_info;
@@ -125,7 +125,7 @@ var make_boxes = function(type, is_portfolio) {
     box.addEventListener('click', mark_box);
     container.appendChild(box);
   }
-};
+};//make_boxes
 
 var mark_box = function(e) {
   var clist = e.target.classList;
@@ -135,7 +135,7 @@ var mark_box = function(e) {
   else {
     clist.add('marked');
   }
-};
+};//mark_box
 
 var set_dice_num = function() {
   var personality_value = 0;
@@ -152,7 +152,7 @@ var set_dice_num = function() {
     skill_value = parseInt(document.getElementById(skill_name).value);
   }
   num_dice =  personality_value + skill_value;
-};
+};//set_dice_num
 
 var updateDiceDisplay = function() {
   set_dice_num();
@@ -179,7 +179,7 @@ var updateDiceDisplay = function() {
     die.innerText = "?";
     dicePoolDisplay.appendChild(die);//new
   }
-};
+};//updateDiceDisplay
 
 
 var setup = function() {
@@ -197,17 +197,17 @@ var setup = function() {
     set_stats( window.location.hash );
   }
   load_stats();
-};
+};//setup
 
 var passion_roll = function() {
   if (  char_stats['passion']['marked'] !=
         char_stats['passion']['total']) {
     char_stats['passion']['marked']++;
-    make_boxes('passion');
+    make_boxes('passion', false);
     use_passion = true;
     roll_dice();
   }
-}
+};//passion_roll
 
 var roll_animation = function(die) {
   var cycles = 50;
@@ -220,8 +220,7 @@ var roll_animation = function(die) {
       cycles--;
     }
   }, 2);
-
-}//roll_animation
+};//roll_animation
 
 var roll_dice = function() {
   updateDiceDisplay();
@@ -282,14 +281,14 @@ var roll_dice = function() {
   //   startx+= DICE_SIZE + OFFSET;
   // }
   use_passion = false;
-};
+};//roll_dice
 
 
 var adjustHue = function(val) {
   if (val < 0) val += Math.ceil(-val / 360) * 360;
 
   return val % 360;
-};
+};//adjustHue
 
 const baseColor = {
   l: 60,
@@ -385,11 +384,18 @@ var add_stat = function(stat) {
     char_stats[stat]['total']++;
     make_boxes(stat, false);
   }
-}
+};//add_stat
+var remove_passion = function() {
+  if (char_stats['passion']['marked'] > 0) {
+    char_stats['passion']['marked']--;
+    make_boxes('passion', false);
+  }
+};
+
 
 var add_portfolio = function(stat) {
   if (char_stats['portfolio'][stat]['total'] < 5) {
     char_stats['portfolio'][stat]['total']++;
     make_boxes(stat, true);
   }
-}
+};
