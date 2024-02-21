@@ -209,11 +209,12 @@ var passion_roll = function() {
   }
 };//passion_roll
 
-var roll_animation = function(die) {
+var roll_animation = function(die, result) {
   var cycles = 50;
   let timer = setInterval( function() {
     if (cycles == 0) {
       clearInterval(timer);
+      die.innerText = result;
     }
     else {
       die.innerText = Math.floor(Math.random()*6)+1;
@@ -262,8 +263,8 @@ var roll_dice = function() {
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
     //die.innerText = results[i];
     dicePoolDisplay.appendChild(die);//new
-    roll_animation(die);
-    die.innerText = results[i];
+    roll_animation(die, results[i]);
+    //die.innerText = results[i];
   }
 
   // var posResultDisplay = document.getElementById('pospool');
