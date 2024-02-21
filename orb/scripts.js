@@ -157,17 +157,26 @@ var set_dice_num = function() {
 var updateDiceDisplay = function() {
   set_dice_num();
   dice_pallete = createScientificPalettes(baseColor)['tetradic'];
-  var posPoolDisplay = document.getElementById('pospool');
-  var ctx = posPoolDisplay.getContext('2d');
 
-  ctx.clearRect(0, 0, 600, DICE_SIZE);
-
-  var startx = 0;
+  var dicePoolDisplay = document.getElementById('dicepool');//new
+  dicePoolDisplay.innerHTML="";
+  //
+  // var posPoolDisplay = document.getElementById('pospool');
+  // var ctx = posPoolDisplay.getContext('2d');
+  //
+  // ctx.clearRect(0, 0, 600, DICE_SIZE);
+  //
+  // var startx = 0;
   //ctx.fillStyle = "#00FF00";
   for (var i=0; i<num_dice; i++) {
-    ctx.fillStyle = dice_pallete[i % dice_pallete.length];
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
+    // ctx.fillStyle = dice_pallete[i % dice_pallete.length];
+    // ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
+    // startx+= DICE_SIZE + OFFSET;
+
+    var die = document.createElement('span'); //new
+    die.classList.add('die');//new
+    die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
+    dicePoolDisplay.appendChild(die);//new
   }
 };
 
@@ -190,9 +199,9 @@ var setup = function() {
 };
 
 var passion_roll = function() {
-  if (  milton_stats['passion']['marked'] !=
-        milton_stats['passion']['total']) {
-    milton_stats['passion']['marked']++;
+  if (  char_stats['passion']['marked'] !=
+        char_stats['passion']['total']) {
+    char_stats['passion']['marked']++;
     make_boxes('passion');
     use_passion = true;
     roll_dice();
@@ -230,20 +239,31 @@ var roll_dice = function() {
   document.getElementById('glooms').innerText = glooms;
   console.log(results);
 
-  var posResultDisplay = document.getElementById('pospool');
-  var ctx = posResultDisplay.getContext('2d');
-  ctx.clearRect(0, 0, 300, DICE_SIZE);
-  ctx.font = "25px serif";
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "center";
-  var startx = 0;
+  //dom version of dice
+  var dicePoolDisplay = document.getElementById('dicepool');
+  dicePoolDisplay.innerHTML = "";
   for (var i=0; i<num_dice; i++) {
-    ctx.fillStyle = dice_pallete[i % dice_pallete.length];
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillText( results[i], startx+(DICE_SIZE/2), DICE_SIZE/2);
-    startx+= DICE_SIZE + OFFSET;
+    var die = document.createElement('span'); //new
+    die.classList.add('die');//new
+    die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
+    die.innerText = results[i];
+    dicePoolDisplay.appendChild(die);//new
   }
+
+  // var posResultDisplay = document.getElementById('pospool');
+  // var ctx = posResultDisplay.getContext('2d');
+  // ctx.clearRect(0, 0, 300, DICE_SIZE);
+  // ctx.font = "25px serif";
+  // ctx.textBaseline = "middle";
+  // ctx.textAlign = "center";
+  // var startx = 0;
+  // for (var i=0; i<num_dice; i++) {
+  //   ctx.fillStyle = dice_pallete[i % dice_pallete.length];
+  //   ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
+  //   ctx.fillStyle = "#FFFFFF";
+  //   ctx.fillText( results[i], startx+(DICE_SIZE/2), DICE_SIZE/2);
+  //   startx+= DICE_SIZE + OFFSET;
+  // }
   use_passion = false;
 };
 
