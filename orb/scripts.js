@@ -156,7 +156,7 @@ var set_dice_num = function() {
 
 var updateDiceDisplay = function() {
   set_dice_num();
-  dice_pallete = createScientificPalettes(baseColor)['tetradic'];
+  dice_pallete = createScientificPalettes(baseColor)['unknown'];
 
   var dicePoolDisplay = document.getElementById('dicepool');//new
   dicePoolDisplay.innerHTML="";
@@ -176,6 +176,7 @@ var updateDiceDisplay = function() {
     var die = document.createElement('span'); //new
     die.classList.add('die');//new
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
+    die.innerText = "?";
     dicePoolDisplay.appendChild(die);//new
   }
 };
@@ -275,9 +276,9 @@ var adjustHue = function(val) {
 };
 
 const baseColor = {
-  l: 50,
-  c: 75,
-  h: 60,
+  l: 60,
+  c: 132,
+  h: 184,
   mode: "lch"
 };
 
@@ -287,7 +288,8 @@ var createScientificPalettes = function(baseColor) {
     triadic: [0, 120, 240],
     tetradic: [0, 90, 180, 270],
     complementary: [0, 180],
-    splitComplementary: [0, 150, 210]
+    splitComplementary: [0, 150, 210],
+    unknown: [0, 72, 144, 216, 288]
   };
 
   const palettes = {};
