@@ -3,12 +3,16 @@
 <head>
   <title>SW Dice Roller</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div class="container">
-    <h2>ORB Dice Roller</h2>
+    <h1>ORB Dice Roller</h1>
 
     <div class="container">
       <hr class="innerbreak">
@@ -30,29 +34,23 @@
         <hr class="innerbreak">
 
         <div class="container">
-          <span>Brills: <strong id="brills"></strong></span>
-        </div>
-        <hr class="innerbreak">
-        <div class="container">
-          <span>Glooms: <strong id="glooms"></strong></span>
-        </div>
+          <div>Brills: <strong id="brills"></strong></div>
+
+          <div style="margin-left: 5px;">Glooms: <strong id="glooms"></strong></div>
         </div>
 
         <hr>
         <div class="container box-holder">
-          <!-- <div class="container box-holder"> -->
-            <span class="box-label">Vitality<span id="vitality"></span></span>
-          <!-- </div> -->
-          <!-- <div class="container box-holder"> -->
-            <span class="box-label">Distress<span id="distress"></span></span>
-          <!-- </div>
-          <div class="container box-holder"> -->
-            <span class="box-label">Passion<span id="passion"></span></span>
-          <!-- </div> -->
+          <span class="box-label">Vitality<span id="vitality"></span></span>
+          <span class="box-label">Distress<span id="distress"></span></span>
+          <span class="box-label">Passion<span id="passion"></span></span>
         </div>
         <hr>
 
         <div class="container">
+
+          <div class="type-label">Personality</div>
+
           <div class="vertical item-center">
             Audacity
             <input type="number" style="width: 50px;" min="0" id="audacity">
@@ -98,12 +96,14 @@
             <input type="number" style="width: 50px;" min="0" id="sensitivity">
             <input type="radio" name="personality" value="sensitivity_button">
           </div>
-        </div>
+        </div> <!--personality section -->
 
 
         <hr>
 
         <div class="container">
+          <div class="type-label">Skill</div>
+
           <div class="vertical item-center">
             Craft
             <input type="number" style="width: 50px;" min="0" id="craft">
@@ -149,10 +149,11 @@
             <input type="number" style="width: 50px;" min="0" id="transgress">
             <input type="radio" name="skill" value="transgress_button">
           </div>
-        </div>
+        </div> <!-- skill secion -->
         <hr>
 
         <div class="container box-holder">
+          <div class="type-label">Portfolio</div>
 
           <div class="vertical item-center">
             <span class="box-label">Access</span>
@@ -189,7 +190,7 @@
           <div class="vertical item-center">
             <span class="box-label">Wealth</span>
             <div id="wealth"></div>
-          </div>
+          </div> <!-- portfolio section -->
 
         </div>
 

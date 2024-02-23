@@ -243,11 +243,11 @@ var roll_dice = function() {
     }
   }
   if (glooms > brills) {
-    document.getElementById('glooms').style = "color: red";
+    document.getElementById('glooms').style = "color: red; font-size: 1.5em";
     document.getElementById('brills').style = "";
   }
   else {
-    document.getElementById('brills'). style = "color: green";
+    document.getElementById('brills'). style = "color: green; font-size: 1.5em";
     document.getElementById('glooms').style = "";
   }
   document.getElementById('brills').innerText = brills;

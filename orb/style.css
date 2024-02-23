@@ -1,5 +1,13 @@
 body {
-    font-family: sans-serif;
+    font-family: cursive;
+    /* background-image: url("img/orb.jpg"),
+                      radial-gradient(white, rgb(33 42 82));
+    background-repeat: no-repeat;
+    background-position: center; */
+    background: radial-gradient(rgb(200, 200, 200), rgb(33 42 82));
+    color: white;
+    text-shadow: 1px 1px 2px black;
+    font-size: 24px;
 }
 
 .container {
@@ -31,6 +39,12 @@ body {
     width: 1170px;
   }
 }
+
+h1 {
+  font-family: "Pinyon Script", cursive;
+  font-size: 2.25em;
+}
+
 
 
 hr {
@@ -80,7 +94,7 @@ hr {
 
 .box-label {
   margin-left: 5px;
-  font-size: 1.25em;
+  font-size: 1em;
 }
 .marked {
   background-color: purple;
@@ -106,8 +120,8 @@ hr {
   display: inline-block;
   text-align: center;
   color: white;
-  font-size: 2em;
-  line-height: 2em;
+  font-size: 1.5em;
+  line-height: 1.5em;
 }
 
 #dicepool {
@@ -115,4 +129,10 @@ hr {
   margin-right:auto;
   padding-bottom: 5px;
   /* border: 1px solid black; */
+}
+
+.type-label {
+  margin-right: 50px;
+  font-family: "Pinyon Script", cursive;
+  font-size: 2em;
 }
