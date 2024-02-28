@@ -4,7 +4,7 @@ body {
                       radial-gradient(white, rgb(33 42 82));
     background-repeat: no-repeat;
     background-position: center; */
-    background: radial-gradient(rgb(200, 200, 200), rgb(33 42 82));
+    background: radial-gradient(rgb(112, 111, 179), rgb(56, 48, 71));
     color: white;
     text-shadow: 1px 1px 2px black;
     font-size: 24px;

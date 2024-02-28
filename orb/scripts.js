@@ -292,9 +292,9 @@ var adjustHue = function(val) {
 };//adjustHue
 
 const baseColor = {
-  l: 60,
-  c: 132,
-  h: 184,
+  l: 46,
+  c: 41,
+  h: 309,
   mode: "lch"
 };
 
