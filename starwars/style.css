@@ -49,3 +49,8 @@ skill-line {
     align-self: stretch;
     justify-content: space-around;
 }
+
+#data-url {
+  width: 100%;
+  overflow: auto;
+}

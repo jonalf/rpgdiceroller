@@ -1,3 +1,51 @@
+var char_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' :0,
+  'woundthresh' : 0,
+  'strainthresh' : 0,
+  'rangeddef' :0,
+  'meleeddef' :0,
+  'brawn' :0,
+  'agility' :0,
+  'intellect' :0,
+  'cunning' :0,
+  'willpower' :0,
+  'pressence' :0,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 0,
+  'computers' : 0,
+  'cool' : 0,
+  'coordination' : 0,
+  'deception' : 0,
+  'discipline' :0,
+  'leadership' : 0,
+  'lore': 0,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 0,
+  'outer-rim' : 0,
+  'perception' : 0,
+  'pilot-planet' : 0,
+  'pilot-space' : 0,
+  'resilience' : 0,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'underworld' : 0,
+  'vigilance' : 0,
+  'xenology' : 0,
+  'brawl' : 0,
+  'melee' : 0,
+  'lightsaber' : 0,
+  'ranged-light' : 0,
+  'ranged-heavy' : 0,
+  'gunnery' : 0
+};
+
 var teru_stats = {
   'wounds' : 0,
   'strain' : 0,
@@ -259,14 +307,14 @@ var check_table = {
   'core worlds' : 'intellect',
   'education' : 'intellect',
   'lore' : 'intellect',
-  'outer rim' : 'intellect',
+  'outer-rim' : 'intellect',
   'underworld' : 'intellect',
   'xenology' : 'intellect'
 };
 
 
 var load_teru = function() {
-  var stat_keys = Object.keys(deegray_stats);
+  var stat_keys = Object.keys(teru_stats);
   for (var i=0; i<stat_keys.length; i++) {
     var e = document.getElementById( stat_keys[i] );
     //console.log(stat_keys[i]);
@@ -671,6 +719,32 @@ document.getElementById('numred').addEventListener('change', updatePool);
 document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById('numforce').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
+
+//Data saving
+var get_stats = function() {
+  let stat_keys = Object.keys(char_stats);
+  new_stats = {}
+  for (var i=0; i<stat_keys.length; i++) {
+    let key = stat_keys[i];
+    new_stats[key] = document.getElementById(key).value;
+  }
+  return new_stats;
+};
+var encode_stats = function() {
+  var new_stats = get_stats();
+  var encode_string = btoa(JSON.stringify(new_stats));
+  return encode_string;
+};
+var make_data_url = function() {
+  //return "data:text/plain;base64," + encode_stats();
+  window.location.hash = encode_stats();
+  document.getElementById('data-url').innerText = window.location;
+};
+
+var set_stats = function() {
+  var stat_string = window.location.hash.substr(1);
+  char_stats =  JSON.parse(atob(stat_string));
+};
 
 var setup = function() {
   setup_skills_div();
