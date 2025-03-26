@@ -46,178 +46,23 @@ var char_stats = {
   'gunnery' : 0
 };
 
-var teru_stats = {
-  'wounds' : 0,
-  'strain' : 0,
-  'soak' : 2,
-  'woundthresh' : 13,
-  'strainthresh' : 18,
-  'rangeddef' : 1,
-  'meleeddef' : 1,
-  'brawn' : 1,
-  'agility' : 3,
-  'intellect' : 2,
-  'cunning' : 2,
-  'willpower' : 5,
-  'pressence' : 4,
-  'astrogation' : 0,
-  'athletics' : 0,
-  'charm' : 0,
-  'coercion' : 0,
-  'computers' : 0,
-  'cool' : 1,
-  'coordination' : 0,
-  'deception' : 0,
-  'discipline' :1,
-  'leadership' : 1,
-  'mechanics' : 0,
-  'medicine' : 0,
-  'negotiation' : 2,
-  'perception' : 0,
-  'pilot-planet' : 0,
-  'pilot-space' : 0,
-  'resilience' : 0,
-  'skullduggery' : 0,
-  'stealth' : 0,
-  'streetwise' : 0,
-  'survival' : 0,
-  'vigilance' : 1,
-  'brawl' : 0,
-  'melee' : 0,
-  'lightsaber' : 1,
-  'ranged-light' : 0,
-  'ranged-heavy' : 0,
-  'gunnery' : 0
-};
-
 var weapons = {
-  'dual_saber' : {
-    name: 'Dual Bladed Saber',
-    type: 'lightsaber',
-    damage: 6,
-    crit: 2,
-    accurate: 0,
-    pierce: 10,
-    breach: 1,
-    linked: 1,
-    sunder: 1,
-    unweildy: 3,
-    hp: 2
-  },
-
-  'training_saber' : {
-    name: 'Training Saber',
-    type: 'lightsaber',
-    damage: 6,
+  'w0' : {
+    name: '',
+    type: '',
+    range: '',
+    damage: 0,
     crit: 0,
     accurate: 0,
-    pierce: 0
+    pierce: 0,
+    breach: 0,
+    linked: 0,
+    sunder: 0,
+    unweildy: 0,
+    hp: 0
   }
 };
 
-var deegray_stats = {
-  'wounds' : 0,
-  'strain' : 0,
-  'soak' : 13,
-  'woundthresh' : 34,
-  'strainthresh' : 16,
-  'rangeddef' : 2,
-  'meleeddef' : 2,
-  'brawn' : 6,
-  'agility' : 5,
-  'intellect' : 2,
-  'cunning' : 2,
-  'willpower' : 3,
-  'pressence' : 1,
-  'astrogation' : 0,
-  'athletics' : 0,
-  'charm' : 0,
-  'coercion' : 1,
-  'computers' : 0,
-  'cool' : 0,
-  'coordination' : 1,
-  'deception' : 0,
-  'discipline' :2,
-  'leadership' : 3,
-  'mechanics' : 0,
-  'medicine' : 0,
-  'negotiation' : 0,
-  'perception' : 0,
-  'pilot-planet' : 3,
-  'pilot-space' : 0,
-  'resilience' : 1,
-  'skullduggery' : 0,
-  'stealth' : 0,
-  'streetwise' : 0,
-  'survival' : 0,
-  'vigilance' : 1,
-  'brawl' : 1,
-  'melee' : 3,
-  'lightsaber' : 5,
-  'ranged-light' : 0,
-  'ranged-heavy' : 3,
-  'gunnery' : 2
-};
-
-var deegray_weapons = {
-  'great_ls' : {
-    name : 'Great Lightsaber',
-    type : 'lightsaber',
-    crit : 3,
-    accurate : 0,
-    pierce : 10,
-    damage : 12,
-    burn : 1
-  },
-  'ls_pike' : {
-    name : 'Lightsaber Pike',
-    type : 'lightsaber',
-    crit : 2,
-    accurate : 0,
-    pierce : 10,
-    damage : 9
-  },
-  'ichor_sword' : {
-    name : 'Ichor Sword',
-    type : 'melee',
-    crit : 1,
-    accurate : 2,
-    pierce : 1,
-    damage : 16
-  },
-  'bo_rifle2' : {
-    name : 'Ancient Bo Rifle',
-    type : 'melee',
-    crit : 3,
-    accurate : 3,
-    pierce : 3,
-    damage : 15
-  },
-  'bo_rifle2_ranged' : {
-    name : 'Ancient Bo Rifle',
-    type : 'ranged-heavy',
-    crit : 3,
-    accurate : 3,
-    pierce : 3,
-    damage : 10
-  },
-  'bo_rifle' : {
-    name : 'Bo Rifle',
-    type : 'melee',
-    crit : 4,
-    accurate : 2,
-    pierce : 0,
-    damage : 14
-  },
-  'bo_rifle_ranged' : {
-    name : 'Bo Rifle',
-    type : 'ranged-heavy',
-    crit : 4,
-    accurate : 2,
-    pierce : 0,
-    damage : 8
-  }
-};
 
 var DICE_SIZE = 25;
 var OFFSET = 2;
@@ -325,13 +170,13 @@ var load_teru = function() {
   load_weapons();
 };
 
-var load_deegray = function() {
-  var stat_keys = Object.keys(deegray_stats);
+var load_stats = function() {
+  var stat_keys = Object.keys(char_stats);
   for (var i=0; i<stat_keys.length; i++) {
     var e = document.getElementById( stat_keys[i] );
     //console.log(stat_keys[i]);
     //console.log(deegray_stats[ stat_keys[i]] );
-    e.value = deegray_stats[ stat_keys[i] ];
+    e.value = char_stats[ stat_keys[i] ];
   }
 
   load_weapons();
@@ -751,5 +596,185 @@ var setup = function() {
   var checks = document.getElementsByName('check_type');
   for (var i=0; i<checks.length; i++) {
     checks[i].addEventListener('click', get_check);
+  }
+  if ( window.location.hash ) {
+    set_stats( window.location.hash );
+  }
+  load_stats();
+};
+
+
+//LEGACY
+
+var weapons_backup = {
+  'dual_saber' : {
+    name: 'Dual Bladed Saber',
+    type: 'lightsaber',
+    damage: 6,
+    crit: 2,
+    accurate: 0,
+    pierce: 10,
+    breach: 1,
+    linked: 1,
+    sunder: 1,
+    unweildy: 3,
+    hp: 2
+  },
+
+  'training_saber' : {
+    name: 'Training Saber',
+    type: 'lightsaber',
+    damage: 6,
+    crit: 0,
+    accurate: 0,
+    pierce: 0
+  }
+};
+
+var teru_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' : 2,
+  'woundthresh' : 13,
+  'strainthresh' : 18,
+  'rangeddef' : 1,
+  'meleeddef' : 1,
+  'brawn' : 1,
+  'agility' : 3,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 5,
+  'pressence' : 4,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 0,
+  'computers' : 0,
+  'cool' : 1,
+  'coordination' : 0,
+  'deception' : 0,
+  'discipline' :1,
+  'leadership' : 1,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 2,
+  'perception' : 0,
+  'pilot-planet' : 0,
+  'pilot-space' : 0,
+  'resilience' : 0,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl' : 0,
+  'melee' : 0,
+  'lightsaber' : 1,
+  'ranged-light' : 0,
+  'ranged-heavy' : 0,
+  'gunnery' : 0
+};
+
+var deegray_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' : 13,
+  'woundthresh' : 34,
+  'strainthresh' : 16,
+  'rangeddef' : 2,
+  'meleeddef' : 2,
+  'brawn' : 6,
+  'agility' : 5,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 3,
+  'pressence' : 1,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 1,
+  'computers' : 0,
+  'cool' : 0,
+  'coordination' : 1,
+  'deception' : 0,
+  'discipline' :2,
+  'leadership' : 3,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 0,
+  'perception' : 0,
+  'pilot-planet' : 3,
+  'pilot-space' : 0,
+  'resilience' : 1,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl' : 1,
+  'melee' : 3,
+  'lightsaber' : 5,
+  'ranged-light' : 0,
+  'ranged-heavy' : 3,
+  'gunnery' : 2
+};
+
+var deegray_weapons = {
+  'great_ls' : {
+    name : 'Great Lightsaber',
+    type : 'lightsaber',
+    crit : 3,
+    accurate : 0,
+    pierce : 10,
+    damage : 12,
+    burn : 1
+  },
+  'ls_pike' : {
+    name : 'Lightsaber Pike',
+    type : 'lightsaber',
+    crit : 2,
+    accurate : 0,
+    pierce : 10,
+    damage : 9
+  },
+  'ichor_sword' : {
+    name : 'Ichor Sword',
+    type : 'melee',
+    crit : 1,
+    accurate : 2,
+    pierce : 1,
+    damage : 16
+  },
+  'bo_rifle2' : {
+    name : 'Ancient Bo Rifle',
+    type : 'melee',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 15
+  },
+  'bo_rifle2_ranged' : {
+    name : 'Ancient Bo Rifle',
+    type : 'ranged-heavy',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 10
+  },
+  'bo_rifle' : {
+    name : 'Bo Rifle',
+    type : 'melee',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 14
+  },
+  'bo_rifle_ranged' : {
+    name : 'Bo Rifle',
+    type : 'ranged-heavy',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 8
   }
 };
