@@ -47,22 +47,6 @@ var char_stats = {
 };
 
 var weapons = {
-  // 'none' : {
-  //   name: '',
-  //   type: '',
-  //   range: '',
-  //   damage: 0,
-  //   crit: 0,
-  //   accurate: 0,
-  //   pierce: 0,
-  //   breach: 0,
-  //   linked: 0,
-  //   sunder: 0,
-  //   burn: 0,
-  //   blast: 0,
-  //   unweildy: 0,
-  //   hp: 0
-  // }
 };
 
 
@@ -596,26 +580,6 @@ document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById('numforce').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
-/*
-var weapons = {
-  'none' : {
-    name: '',
-    type: '',
-    range: '',
-    damage: 0,
-    crit: 0,
-    accurate: 0,
-    pierce: 0,
-    breach: 0,
-    linked: 0,
-    sunder: 0,
-    burn: 0,
-    blast: 0,
-    unweildy: 0,
-    hp: 0
-  }
-};
-*/
 //Data saving
 var get_weapons = function() {
   var weapon_table = document.getElementById("weapons");
