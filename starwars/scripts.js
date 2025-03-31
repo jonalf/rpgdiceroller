@@ -38,29 +38,31 @@ var char_stats = {
   'underworld' : 0,
   'vigilance' : 0,
   'xenology' : 0,
-  'brawl' : 0,
-  'melee' : 0,
-  'lightsaber' : 0,
-  'ranged-light' : 0,
-  'ranged-heavy' : 0,
-  'gunnery' : 0
+  'brawl_skill' : 0,
+  'melee_skill' : 0,
+  'lightsaber_skill' : 0,
+  'ranged-light_skill' : 0,
+  'ranged-heavy_skill' : 0,
+  'gunnery_skill' : 0
 };
 
 var weapons = {
-  'w0' : {
-    name: '',
-    type: '',
-    range: '',
-    damage: 0,
-    crit: 0,
-    accurate: 0,
-    pierce: 0,
-    breach: 0,
-    linked: 0,
-    sunder: 0,
-    unweildy: 0,
-    hp: 0
-  }
+  // 'none' : {
+  //   name: '',
+  //   type: '',
+  //   range: '',
+  //   damage: 0,
+  //   crit: 0,
+  //   accurate: 0,
+  //   pierce: 0,
+  //   breach: 0,
+  //   linked: 0,
+  //   sunder: 0,
+  //   burn: 0,
+  //   blast: 0,
+  //   unweildy: 0,
+  //   hp: 0
+  // }
 };
 
 
@@ -121,12 +123,12 @@ var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-hea
 var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
 var check_table = {
-  'brawl' : 'brawn',
-  'melee' : 'brawn',
-  'lightsaber' : 'willpower',
-  'ranged-light' : 'agility',
-  'ranged-heavy' : 'agility',
-  'gunnery' : 'agility',
+  'brawl_skill' : 'brawn',
+  'melee_skill' : 'brawn',
+  'lightsaber_skill' : 'willpower',
+  'ranged-light_skill' : 'agility',
+  'ranged-heavy_skill' : 'agility',
+  'gunnery_skill' : 'agility',
   'astrogation' : 'intellect',
   'athletics' : 'brawn',
   'charm' : 'pressence',
@@ -178,11 +180,75 @@ var load_stats = function() {
     //console.log(deegray_stats[ stat_keys[i]] );
     e.value = char_stats[ stat_keys[i] ];
   }
-
-  load_weapons();
 };
 
+var add_weapon = function() {
+  //get weapon table
+  var weapon_table = document.getElementById("weapons");
+  //create & return new row:
+  var weapon_row = weapon_table.insertRow(-1);
 
+  //var weapon_id = "w" + (Object.keys(weapons).length-1);
+  var weapon_id = 'w' + (document.getElementById("weapons").rows.length-1);
+
+
+  //create weapon select button
+  var rad = document.createElement("input");
+  rad.type = "radio";
+  rad.name = "weapon";
+  rad.id = weapon_id;
+  //make cell and insert radio button
+  var rad_cell = weapon_row.insertCell(-1);
+  rad_cell.appendChild(rad);
+
+  //name entry
+  var name_input = document.createElement("input");
+  name_input.id = weapon_id + '_name';//more figuring.
+  var name_cell = weapon_row.insertCell(-1);
+  name_cell.appendChild(name_input);
+
+
+  //weapon type selector
+  var weapon_types = ['ranged-light', 'ranged-heavy', 'gunnery', 'melee', 'lightsaber', 'brawl'];
+  var type_selector = document.createElement("select");
+  type_selector.id= weapon_id + '_type';//more figuring
+  for (var i=0; i<weapon_types.length; i++) {
+    var type_option = document.createElement("option");
+    type_option.id = weapon_types[i];
+    type_option.text = weapon_types[i];
+    type_option.value = weapon_types[i];
+    type_selector.appendChild(type_option);
+  }//add weapon types
+  var type_cell = weapon_row.insertCell(-1);
+  type_cell.appendChild(type_selector);
+
+  //weapon range selector
+  var weapon_ranges = ['engaged', 'short', 'medium', 'long', 'extreme'];
+  var range_selector = document.createElement("select");
+  range_selector.id = weapon_id + '_range';
+  for (var i=0; i<weapon_ranges.length; i++) {
+    var range_option = document.createElement("option");
+    range_option.id = weapon_ranges[i];
+    range_option.text = weapon_ranges[i];
+    range_option.value = weapon_ranges[i];
+    range_selector.appendChild(range_option);
+  }//add weapon ranges
+  var range_cell = weapon_row.insertCell(-1);
+  range_cell.appendChild(range_selector);
+
+  //number stat entries:
+  var num_stats = ['damage', 'crit', 'accurate', `pierce`, `breach`, `linked`, `sunder`, 'burn', `blast`, `unweildy`, `hp`];
+  for (var i=0; i<num_stats.length; i++) {
+    var input = document.createElement("input");
+    input.type = "number";
+    input.name = weapon_id + "_" + num_stats[i];//weapon_keys[i] + '_' + weapon_info[j];
+    input.id = weapon_id + "_" + num_stats[i];
+    input.value = 0;
+    input.style.width = "50px";
+    var cell = weapon_row.insertCell(-1);
+    cell.appendChild(input);
+  }//add numeric stats
+};
 
 
 // <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
@@ -191,35 +257,37 @@ var load_weapons = function() {
   weapon_table.innerHTML = "";
   var weapon_keys = Object.keys(weapons);
   for (var i=0; i < weapon_keys.length; i++) {
-    var weapon = weapons[weapon_keys[i]];
-    //console.log(weapon);
-    var weapon_row = weapon_table.insertRow(-1);
+    if (weapon_keys[i] != 'none') {
+      var weapon = weapons[weapon_keys[i]];
+      //console.log(weapon);
+      var weapon_row = weapon_table.insertRow(-1);
 
-    //add radio button
-    var rad = document.createElement("input");
-    rad.type = "radio";
-    rad.name = "weapon";
-    rad.id = "weapon_" + weapon_keys[i];
+      //add radio button
+      var rad = document.createElement("input");
+      rad.type = "radio";
+      rad.name = "weapon";
+      rad.id = "weapon_" + weapon_keys[i];
+      var rad_cell = weapon_row.insertCell(-1);
+      rad_cell.appendChild(rad);
 
-    var rad_cell = weapon_row.insertCell(-1);
-    rad_cell.appendChild(rad);
-    var weapon_info = Object.keys(weapon);
-    for (var j=0; j<weapon_info.length; j++) {
-      var weapon_stat = weapon[weapon_info[j]];
-      var cell = weapon_row.insertCell(-1);
-      if (typeof(weapon_stat) == 'string') {
-        cell.innerHTML = weapon_stat;
-      }
-      else {
-        var input = document.createElement("input");
-        input.type = "number";
-        input.name = weapon_keys[i] + '_' + weapon_info[j];
-        input.id = weapon_keys[i] + '_' + weapon_info[j];
-        input.value = weapon_stat;
-        input.style.width = "50px";
-        cell.appendChild(input);
-      }
-    }//weapon info
+      var weapon_info = Object.keys(weapon);
+      for (var j=0; j<weapon_info.length; j++) {
+        var weapon_stat = weapon[weapon_info[j]];
+        var cell = weapon_row.insertCell(-1);
+        if ( isNaN(weapon_stat) ) {//typeof(weapon_stat) == 'string') {
+          cell.innerHTML = weapon_stat;
+        }
+        else {
+          var input = document.createElement("input");
+          input.type = "number";
+          input.name = weapon_keys[i] + '_' + weapon_info[j];
+          input.id = weapon_keys[i] + '_' + weapon_info[j];
+          input.value = weapon_stat;
+          input.style.width = "50px";
+          cell.appendChild(input);
+        }
+      }//weapon info
+    }
   }//weapons
 };
 
@@ -260,6 +328,7 @@ var setup_skills_div = function() {
     radio.name="check_type";
     radio.id = skills[i] + "_check";
     var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
+    name = name.split('_')[0];
     var input = document.createElement('input');
     input.classList.add("self-right");
     input.type = "number";
@@ -281,51 +350,10 @@ var setup_skills_div = function() {
 };
 
 
-var setup_skills = function() {
-
-  var combat_table = document.createElement("table");
-  var knowledge_table = document.createElement("table");
-  var table = document.createElement("table");
-  table.style.float = "left";
-  table.style.border = "1px solid";
-  combat_table.style.border = "1px solid";
-  knowledge_table.style.border = "1px solid";
-
-  var skills = Object.keys(check_table);
-  for (var i=0; i<skills.length; i++) {
-    //console.log(skills[i]);
-    var row = document.createElement('tr');
-    var tdr = document.createElement('td');
-    var radio = document.createElement('input');
-    radio.type = "radio";
-    radio.name="check_type";
-    radio.id = skills[i] + "_check";
-    tdr.appendChild(radio);
-    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
-    tdr.innerHTML+= name;
-    var tdi = document.createElement('td');
-    var input = document.createElement('input');
-    input.type = "number";
-    input.id = skills[i];
-    input.min = "0";
-    input.style.width = "50px";
-    tdi.appendChild(input);
-    row.appendChild(tdr);
-    row.appendChild(tdi);
-    if ( combat_skills.includes(skills[i]))
-    combat_table.appendChild(row);
-    else if (knowledge_skills.includes(skills[i]))
-    knowledge_table.appendChild(row);
-    else
-    table.appendChild(row);
-  }
-  document.getElementById("skills").appendChild( table );
-  document.getElementById("skills").appendChild( combat_table );
-  document.getElementById("skills").appendChild( knowledge_table );
-};
 
 var get_check = function( e ) {
-  var skill = e.target.id.split('_')[0];
+  var c = e.target.id.lastIndexOf('_');
+  var skill = e.target.id.substr(0, c);
   set_dice(skill);
 };
 
@@ -341,6 +369,9 @@ var set_dice = function( skill ) {
   updatePool();
 };
 
+/*===========================
+  DICE FUNCTIONS
+  ===========================*/
 var rollDice = function() {
   updatePool();
   posResults = [0,0, 0, 0];
@@ -415,7 +446,6 @@ var rollDice = function() {
   }
   updateResultTotals();
 };
-
 var updateResultTotals = function() {
   var u = posResults[TRIUMPH];
   var s = posResults[SUCCESS] + u;
@@ -442,14 +472,17 @@ var updateResultTotals = function() {
     netfailure+= 1;
   }
   var check_type  = document.querySelector('input[name="check_type"]:checked').id;
-      //console.log(check_type);
-  if (check_type == 'melee_check' ||
-      check_type == 'lightsaber_check' ||
-      check_type == 'ranged-heavy_check' ||
-      check_type == 'ranged-light_check') {
-
+  //console.log(check_type);
+  if (check_type == 'melee_skill_check' ||
+      check_type == 'lightsaber_skill_check' ||
+      check_type == 'ranged-heavy_skill_check' ||
+      check_type == 'ranged-light_skill_check' ||
+      check_type == 'gunnery_skill_check' ||
+      check_type == 'brawl_skill_check') {
+    console.log('combat check');
     var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
     weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
+    console.log(weapon_name);
     var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
 
     //console.log(weapon_name);
@@ -461,7 +494,6 @@ var updateResultTotals = function() {
     }
 }
 };
-
 var multi_roll = function(n) {
   netsuccess = 0;
   netfailure = 0;
@@ -473,8 +505,6 @@ var multi_roll = function(n) {
   console.log( "success: " + netsuccess);
   console.log( "failure: " + netfailure);
 };
-
-
 var updateDiceDisplay = function() {
   var posPoolDisplay = document.getElementById('pospool');
   var ctx = posPoolDisplay.getContext('2d');
@@ -533,7 +563,6 @@ var updateDiceDisplay = function() {
   }
 
 };
-
 var updatePool = function() {
   var g = document.getElementById('numgreen').value;
   var p = document.getElementById('numpurple').value;
@@ -554,7 +583,9 @@ var updatePool = function() {
 
   updateDiceDisplay();
 };
-
+/*===========================
+  END DICE FUNCTIONS
+  ===========================*/
 
 document.getElementById('numgreen').addEventListener('change', updatePool);
 document.getElementById('numyellow').addEventListener('change', updatePool);
@@ -565,7 +596,45 @@ document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById('numforce').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
+/*
+var weapons = {
+  'none' : {
+    name: '',
+    type: '',
+    range: '',
+    damage: 0,
+    crit: 0,
+    accurate: 0,
+    pierce: 0,
+    breach: 0,
+    linked: 0,
+    sunder: 0,
+    burn: 0,
+    blast: 0,
+    unweildy: 0,
+    hp: 0
+  }
+};
+*/
 //Data saving
+var get_weapons = function() {
+  var weapon_table = document.getElementById("weapons");
+  var new_weapons = {};
+  for (var w=0; w < weapon_table.rows.length; w++) {
+    var weapon_row = weapon_table.rows[w];
+
+    //get weapong identifier from first entry
+    var weapon_id = weapon_row.cells[0].firstChild.id;
+    var weapon = {}
+    for (var i=1; i<weapon_row.cells.length; i++) {
+      var weapon_data = weapon_row.cells[i].firstChild;
+      var stat_id = weapon_data.id.split('_')[1];
+      weapon[stat_id] = weapon_data.value;
+    }//individual cell
+    new_weapons[weapon_id] = weapon;
+  }//each row
+  return new_weapons;
+};//get_weapons
 var get_stats = function() {
   let stat_keys = Object.keys(char_stats);
   new_stats = {}
@@ -577,18 +646,25 @@ var get_stats = function() {
 };
 var encode_stats = function() {
   var new_stats = get_stats();
-  var encode_string = btoa(JSON.stringify(new_stats));
+  var new_weapons = get_weapons();
+  var encode_data = {stats: new_stats, weapons: new_weapons};
+  //console.log(encode_data);
+  var encode_string = btoa(JSON.stringify(encode_data));
   return encode_string;
 };
 var make_data_url = function() {
   //return "data:text/plain;base64," + encode_stats();
+  //console.log(encode_stats().length);
   window.location.hash = encode_stats();
   document.getElementById('data-url').innerText = window.location;
 };
 
 var set_stats = function() {
   var stat_string = window.location.hash.substr(1);
-  char_stats =  JSON.parse(atob(stat_string));
+  var data = JSON.parse(atob(stat_string));
+  //console.log(data);
+  char_stats =  data['stats'];
+  weapons = data['weapons'];
 };
 
 var setup = function() {
@@ -598,9 +674,11 @@ var setup = function() {
     checks[i].addEventListener('click', get_check);
   }
   if ( window.location.hash ) {
+    //console.log("getting stats");
     set_stats( window.location.hash );
   }
   load_stats();
+  load_weapons();
 };
 
 
@@ -667,12 +745,12 @@ var teru_stats = {
   'streetwise' : 0,
   'survival' : 0,
   'vigilance' : 1,
-  'brawl' : 0,
-  'melee' : 0,
-  'lightsaber' : 1,
-  'ranged-light' : 0,
-  'ranged-heavy' : 0,
-  'gunnery' : 0
+  'brawl_skill' : 0,
+  'melee_skill' : 0,
+  'lightsaber_skill' : 1,
+  'ranged-light_skill' : 0,
+  'ranged-heavy_skill' : 0,
+  'gunnery_skill' : 0
 };
 
 var deegray_stats = {
@@ -711,12 +789,12 @@ var deegray_stats = {
   'streetwise' : 0,
   'survival' : 0,
   'vigilance' : 1,
-  'brawl' : 1,
-  'melee' : 3,
-  'lightsaber' : 5,
-  'ranged-light' : 0,
-  'ranged-heavy' : 3,
-  'gunnery' : 2
+  'brawl_skill' : 1,
+  'melee_skill' : 3,
+  'lightsaber_skill' : 5,
+  'ranged-light_skill' : 0,
+  'ranged-heavy_skill' : 3,
+  'gunnery_skill' : 2
 };
 
 var deegray_weapons = {
@@ -777,4 +855,50 @@ var deegray_weapons = {
     pierce : 0,
     damage : 8
   }
+};
+
+//Dont think this is actually used anymore
+var setup_skills_old = function() {
+
+  var combat_table = document.createElement("table");
+  var knowledge_table = document.createElement("table");
+  var table = document.createElement("table");
+  table.style.float = "left";
+  table.style.border = "1px solid";
+  combat_table.style.border = "1px solid";
+  knowledge_table.style.border = "1px solid";
+
+  var skills = Object.keys(check_table);
+  for (var i=0; i<skills.length; i++) {
+    //console.log(skills[i]);
+    var row = document.createElement('tr');
+    var tdr = document.createElement('td');
+    var radio = document.createElement('input');
+    radio.type = "radio";
+    radio.name="check_type";
+    radio.id = skills[i] + "_check";
+    tdr.appendChild(radio);
+    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
+    name = name.split('_')[0];
+    console.log(name);
+    tdr.innerHTML+= name;
+    var tdi = document.createElement('td');
+    var input = document.createElement('input');
+    input.type = "number";
+    input.id = skills[i];
+    input.min = "0";
+    input.style.width = "50px";
+    tdi.appendChild(input);
+    row.appendChild(tdr);
+    row.appendChild(tdi);
+    if ( combat_skills.includes(skills[i]))
+    combat_table.appendChild(row);
+    else if (knowledge_skills.includes(skills[i]))
+    knowledge_table.appendChild(row);
+    else
+    table.appendChild(row);
+  }
+  document.getElementById("skills").appendChild( table );
+  document.getElementById("skills").appendChild( combat_table );
+  document.getElementById("skills").appendChild( knowledge_table );
 };
