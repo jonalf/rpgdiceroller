@@ -188,7 +188,7 @@ var add_weapon = function() {
 
   //name entry
   var name_input = document.createElement("input");
-  name_input.id = weapon_id + '_name';//more figuring.
+  name_input.id = weapon_id + '_name';
   var name_cell = weapon_row.insertCell(-1);
   name_cell.appendChild(name_input);
 
@@ -357,7 +357,7 @@ var set_dice = function( skill ) {
 /*===========================
   DICE FUNCTIONS
   ===========================*/
-var rollDice = function() {
+var rollDiceOld = function() {
   updatePool();
   posResults = [0,0, 0, 0];
   negResults = [0, 0, 0];
@@ -431,6 +431,181 @@ var rollDice = function() {
   }
   updateResultTotals();
 };
+var displayDiceResults = function(posDice, negDice) {
+
+  var posDiceTypes = {'green': "#00FF00", 'yellow' : '#FFFF00', 'boost': '#80dfff', 'force':'#FFFFFF'};
+  var posResultDisplay = document.getElementById('pospool');
+  var ctx = posResultDisplay.getContext('2d');
+
+  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
+  var startx = 0;
+
+  for (var i=0; i<posDice.length; i++) {
+
+    var dtype = posDice[i][0];
+    var result = posDice[i][1];
+
+    ctx.fillStyle = posDiceTypes[dtype];
+    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
+    if (result.length == 1) {
+      ctx.drawImage(posImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
+    }
+    else if (result.length == 2) {
+
+      ctx.drawImage(posImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
+      ctx.drawImage(posImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
+    }
+    startx+= DICE_SIZE + OFFSET;
+  }
+
+  var negDiceTypes = {'purple': "#5c00e6", 'red' : '#FF0000', 'setback': '#000000'};
+  var negResultDisplay = document.getElementById('negpool');
+  ctx = negResultDisplay.getContext('2d');
+
+  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
+  startx = 0;
+  for (var i=0; i<negDice.length; i++) {
+
+    var dtype = negDice[i][0];
+    var result = negDice[i][1];
+
+    ctx.fillStyle = negDiceTypes[dtype];
+    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
+
+    if (result.length == 1) {
+      ctx.drawImage(negImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
+    }
+    else if (result.length == 2) {
+      ctx.drawImage(negImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
+      ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
+    }
+    startx+= DICE_SIZE + OFFSET;
+  }
+};
+var rollDice = function() {
+  updatePool();
+  posResults = [0,0, 0, 0];
+  negResults = [0, 0, 0];
+  posDice = [];
+  negDice = [];
+  var posDiceTypes = {'green': greenDie, 'yellow' : yellowDie, 'boost': boostDie, 'force': forceDie};
+  var keys = Object.keys(posDiceTypes);
+  for (var i=0; i<keys.length; i++) {
+
+    var dtype = keys[i];
+    var die = posDiceTypes[dtype];
+    for (var j=0; j<posDicePool[dtype]; j++) {
+      var result = die[Math.floor(Math.random() * die.length)];
+      posDice.push([dtype, result]);
+
+      if (result.length == 1) {
+        posResults[result]+= 1;
+      }
+      else if (result.length == 2) {
+
+        posResults[result[0]]+= 1;
+        posResults[result[1]]+= 1;
+      }
+    }
+  }//roll positive dice
+  console.log(posDice);
+
+  var negDiceTypes = {'purple': purpleDie, 'red' : redDie, 'setback': setbackDie};
+  keys = Object.keys(negDiceTypes);
+  for (var i=0; i<keys.length; i++) {
+
+    var dtype = keys[i];
+    var die = negDiceTypes[dtype];
+
+    for (var j=0; j<negDicePool[dtype]; j++) {
+      var result = die[Math.floor(Math.random() * die.length)];
+      negDice.push([dtype, result]);
+
+      if (result.length == 1) {
+        negResults[result]+= 1;
+      }
+      else if (result.length == 2) {
+        negResults[result[0]]+= 1;
+        negResults[result[1]]+= 1;
+      }
+    }
+  }
+  console.log(negDice);
+  displayDiceResults(posDice, negDice);
+  displayDiceResultsDOM(posDice, negDice);
+  updateResultTotals();
+};
+var displayDiceResultsDOM = function(posDice, negDice) {
+
+  var posDiceTypes = {'green': "#00FF00", 'yellow' : '#FFFF00', 'boost': '#80dfff', 'force':'#fff8dc'};
+  var posResultDisplay = document.getElementById('pospool0');
+  posResultDisplay.innerHTML = "";
+  for (var i=0; i<posDice.length; i++) {
+
+    var dtype = posDice[i][0];
+    var result = posDice[i][1];
+
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = posDiceTypes[dtype];
+    posResultDisplay.appendChild(die);
+    if (result.length == 1) {
+      var img = document.createElement('img');
+      img.src = posImages[result].src;
+      img.width = DICE_SIZE;
+      img.height = DICE_SIZE;
+      die.appendChild(img);
+    }
+    else if (result.length == 2) {
+      var img = document.createElement('img');
+      img.src = posImages[result[0]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+      img = document.createElement('img');
+      img.src = posImages[result[1]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+    }
+  }//positive dice
+
+  var negDiceTypes = {'purple': "#5c00e6", 'red' : '#FF0000', 'setback': '#000000'};
+  var negResultDisplay = document.getElementById('negpool0');
+  negResultDisplay.innerHTML = "";
+
+  for (var i=0; i<negDice.length; i++) {
+
+    var dtype = negDice[i][0];
+    var result = negDice[i][1];
+
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = negDiceTypes[dtype];
+    negResultDisplay.appendChild(die);
+
+    if (result.length == 1) {
+      var img = document.createElement('img');
+      img.src = negImages[result].src;
+      img.width = DICE_SIZE;
+      img.height = DICE_SIZE;
+      die.appendChild(img);
+    }
+    else if (result.length == 2) {
+      var img = document.createElement('img');
+      img.src = negImages[result[0]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+      img = document.createElement('img');
+      img.src = negImages[result[1]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+    }
+  }
+};
+
 var updateResultTotals = function() {
   var u = posResults[TRIUMPH];
   var s = posResults[SUCCESS] + u;
@@ -490,6 +665,65 @@ var multi_roll = function(n) {
   console.log( "success: " + netsuccess);
   console.log( "failure: " + netfailure);
 };
+var updateDiceDisplayDOM = function() {
+  /* DOM DICE TESTING */
+  var posPoolDisplay = document.getElementById('pospool0');
+  posPoolDisplay.innerHTML = "";
+
+  var amt = posDicePool['green'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#00FF00";
+    posPoolDisplay.appendChild(die);
+  }
+  amt = posDicePool['yellow'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#FFFF00";
+    posPoolDisplay.appendChild(die);
+  }
+  amt = posDicePool['boost'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#80dfff";
+    posPoolDisplay.appendChild(die);
+  }
+  amt = posDicePool['force'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#fff8dc";
+    posPoolDisplay.appendChild(die);
+  }
+
+  var negPoolDisplay = document.getElementById('negpool0');
+  negPoolDisplay.innerHTML = "";
+
+  amt = negDicePool['purple'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#5c00e6";
+    negPoolDisplay.appendChild(die);
+  }
+  amt = negDicePool['red'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#FF0000";
+    negPoolDisplay.appendChild(die);
+  }
+  amt = negDicePool['setback'];
+  for (var i=0; i<amt; i++) {
+    var die = document.createElement('span');
+    die.classList.add('die');//new
+    die.style.backgroundColor = "#000000";
+    negPoolDisplay.appendChild(die);
+  }
+};//updateDiceDisplayDOM
 var updateDiceDisplay = function() {
   var posPoolDisplay = document.getElementById('pospool');
   var ctx = posPoolDisplay.getContext('2d');
@@ -567,6 +801,7 @@ var updatePool = function() {
   negDicePool['setback'] = s;
 
   updateDiceDisplay();
+  updateDiceDisplayDOM();
 };
 /*===========================
   END DICE FUNCTIONS

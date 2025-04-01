@@ -1,3 +1,20 @@
+/* stolen form boostrap for responsiveness */
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
+
 body {
     font-family: sans-serif;
 }
@@ -53,4 +70,25 @@ skill-line {
 #data-url {
   width: 100%;
   overflow: auto;
+}
+
+.die {
+  width: 50px;
+  height: 50px;
+  background-color: lightsteelblue;
+  margin-left: 2px;
+  margin-right: 2px;
+  margin-top: 5px;
+  display: inline-block;
+  text-align: center;
+  color: white;
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+.dicepool {
+  margin-left: auto;
+  margin-right:auto;
+  padding-bottom: 5px;
+  /* border: 1px solid black; */
 }
