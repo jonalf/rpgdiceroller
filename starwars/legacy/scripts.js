@@ -652,3 +652,225 @@ var setup = function() {
   negResultDisplay.height = DICE_SIZE;
   negResultDisplay.width = DICE_DISPLAY_WIDTH;
 };
+
+
+//LEGACY
+
+var weapons_backup = {
+  'dual_saber' : {
+    name: 'Dual Bladed Saber',
+    type: 'lightsaber',
+    damage: 6,
+    crit: 2,
+    accurate: 0,
+    pierce: 10,
+    breach: 1,
+    linked: 1,
+    sunder: 1,
+    unweildy: 3,
+    hp: 2
+  },
+
+  'training_saber' : {
+    name: 'Training Saber',
+    type: 'lightsaber',
+    damage: 6,
+    crit: 0,
+    accurate: 0,
+    pierce: 0
+  }
+};
+
+var teru_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' : 2,
+  'woundthresh' : 13,
+  'strainthresh' : 18,
+  'rangeddef' : 1,
+  'meleeddef' : 1,
+  'brawn' : 1,
+  'agility' : 3,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 5,
+  'pressence' : 4,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 0,
+  'computers' : 0,
+  'cool' : 1,
+  'coordination' : 0,
+  'deception' : 0,
+  'discipline' :1,
+  'leadership' : 1,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 2,
+  'perception' : 0,
+  'pilot-planet' : 0,
+  'pilot-space' : 0,
+  'resilience' : 0,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl_skill' : 0,
+  'melee_skill' : 0,
+  'lightsaber_skill' : 1,
+  'ranged-light_skill' : 0,
+  'ranged-heavy_skill' : 0,
+  'gunnery_skill' : 0
+};
+
+var deegray_stats = {
+  'wounds' : 0,
+  'strain' : 0,
+  'soak' : 13,
+  'woundthresh' : 34,
+  'strainthresh' : 16,
+  'rangeddef' : 2,
+  'meleeddef' : 2,
+  'brawn' : 6,
+  'agility' : 5,
+  'intellect' : 2,
+  'cunning' : 2,
+  'willpower' : 3,
+  'pressence' : 1,
+  'astrogation' : 0,
+  'athletics' : 0,
+  'charm' : 0,
+  'coercion' : 1,
+  'computers' : 0,
+  'cool' : 0,
+  'coordination' : 1,
+  'deception' : 0,
+  'discipline' :2,
+  'leadership' : 3,
+  'mechanics' : 0,
+  'medicine' : 0,
+  'negotiation' : 0,
+  'perception' : 0,
+  'pilot-planet' : 3,
+  'pilot-space' : 0,
+  'resilience' : 1,
+  'skullduggery' : 0,
+  'stealth' : 0,
+  'streetwise' : 0,
+  'survival' : 0,
+  'vigilance' : 1,
+  'brawl_skill' : 1,
+  'melee_skill' : 3,
+  'lightsaber_skill' : 5,
+  'ranged-light_skill' : 0,
+  'ranged-heavy_skill' : 3,
+  'gunnery_skill' : 2
+};
+
+var deegray_weapons = {
+  'great_ls' : {
+    name : 'Great Lightsaber',
+    type : 'lightsaber',
+    crit : 3,
+    accurate : 0,
+    pierce : 10,
+    damage : 12,
+    burn : 1
+  },
+  'ls_pike' : {
+    name : 'Lightsaber Pike',
+    type : 'lightsaber',
+    crit : 2,
+    accurate : 0,
+    pierce : 10,
+    damage : 9
+  },
+  'ichor_sword' : {
+    name : 'Ichor Sword',
+    type : 'melee',
+    crit : 1,
+    accurate : 2,
+    pierce : 1,
+    damage : 16
+  },
+  'bo_rifle2' : {
+    name : 'Ancient Bo Rifle',
+    type : 'melee',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 15
+  },
+  'bo_rifle2_ranged' : {
+    name : 'Ancient Bo Rifle',
+    type : 'ranged-heavy',
+    crit : 3,
+    accurate : 3,
+    pierce : 3,
+    damage : 10
+  },
+  'bo_rifle' : {
+    name : 'Bo Rifle',
+    type : 'melee',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 14
+  },
+  'bo_rifle_ranged' : {
+    name : 'Bo Rifle',
+    type : 'ranged-heavy',
+    crit : 4,
+    accurate : 2,
+    pierce : 0,
+    damage : 8
+  }
+};
+
+//Dont think this is actually used anymore
+var setup_skills_old = function() {
+
+  var combat_table = document.createElement("table");
+  var knowledge_table = document.createElement("table");
+  var table = document.createElement("table");
+  table.style.float = "left";
+  table.style.border = "1px solid";
+  combat_table.style.border = "1px solid";
+  knowledge_table.style.border = "1px solid";
+
+  var skills = Object.keys(check_table);
+  for (var i=0; i<skills.length; i++) {
+    //console.log(skills[i]);
+    var row = document.createElement('tr');
+    var tdr = document.createElement('td');
+    var radio = document.createElement('input');
+    radio.type = "radio";
+    radio.name="check_type";
+    radio.id = skills[i] + "_check";
+    tdr.appendChild(radio);
+    var name = skills[i].charAt(0).toUpperCase() + skills[i].slice(1);
+    name = name.split('_')[0];
+    console.log(name);
+    tdr.innerHTML+= name;
+    var tdi = document.createElement('td');
+    var input = document.createElement('input');
+    input.type = "number";
+    input.id = skills[i];
+    input.min = "0";
+    input.style.width = "50px";
+    tdi.appendChild(input);
+    row.appendChild(tdr);
+    row.appendChild(tdi);
+    if ( combat_skills.includes(skills[i]))
+    combat_table.appendChild(row);
+    else if (knowledge_skills.includes(skills[i]))
+    knowledge_table.appendChild(row);
+    else
+    table.appendChild(row);
+  }
+  document.getElementById("skills").appendChild( table );
+  document.getElementById("skills").appendChild( combat_table );
+  document.getElementById("skills").appendChild( knowledge_table );
+};
