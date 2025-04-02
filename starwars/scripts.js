@@ -27,6 +27,8 @@ var char_stats = {
   'medicine' : 0,
   'negotiation' : 0,
   'outer-rim' : 0,
+  'core worlds' : 0,
+  'education' : 0,
   'perception' : 0,
   'pilot-planet' : 0,
   'pilot-space' : 0,
@@ -167,7 +169,7 @@ var load_stats = function() {
   }
 };
 
-var add_weapon = function() {
+var add_weapon_table = function() {
   //get weapon table
   var weapon_table = document.getElementById("weapons");
   //create & return new row:
@@ -234,10 +236,7 @@ var add_weapon = function() {
     cell.appendChild(input);
   }//add numeric stats
 };
-
-
-// <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
-var load_weapons = function() {
+var load_weapons_table = function() {
   var weapon_table = document.getElementById("weapons");
   weapon_table.innerHTML = "";
   var weapon_keys = Object.keys(weapons);
@@ -272,6 +271,124 @@ var load_weapons = function() {
           cell.appendChild(input);
         }
       }//weapon info
+    }
+  }//weapons
+};
+
+var add_weapon = function() {
+  //get weapon table
+  var weapon_table = document.getElementById("weapons");
+  //create & return new row:
+  var weapon_row = document.createElement("div");
+  weapon_row.classList.add("container");
+
+  var weapon_id = 'w' + (document.getElementById("weapons").childElementCount-1);
+
+  //create weapon select button
+  var rad = document.createElement("input");
+  rad.type = "radio";
+  rad.name = "weapon";
+  rad.id = weapon_id;
+  weapon_row.appendChild(rad);
+
+  //name entry
+  var name_input = document.createElement("input");
+  name_input.id = weapon_id + '_name';
+  weapon_row.appendChild(name_input);
+
+  //weapon type selector
+  var weapon_types = ['ranged-light', 'ranged-heavy', 'gunnery', 'melee', 'lightsaber', 'brawl'];
+  var type_selector = document.createElement("select");
+  type_selector.id= weapon_id + '_type';//more figuring
+  for (var i=0; i<weapon_types.length; i++) {
+    var type_option = document.createElement("option");
+    type_option.id = weapon_types[i];
+    type_option.text = weapon_types[i];
+    type_option.value = weapon_types[i];
+    type_selector.appendChild(type_option);
+  }//add weapon types
+  weapon_row.appendChild(type_selector);
+
+  //weapon range selector
+  var weapon_ranges = ['engaged', 'short', 'medium', 'long', 'extreme'];
+  var range_selector = document.createElement("select");
+  range_selector.id = weapon_id + '_range';
+  for (var i=0; i<weapon_ranges.length; i++) {
+    var range_option = document.createElement("option");
+    range_option.id = weapon_ranges[i];
+    range_option.text = weapon_ranges[i];
+    range_option.value = weapon_ranges[i];
+    range_selector.appendChild(range_option);
+  }//add weapon ranges
+  weapon_row.appendChild(range_selector);
+
+  //number stat entries:
+  var num_stats = ['damage', 'crit', 'accurate', `pierce`, `breach`, `linked`, `sunder`, 'burn', `blast`, `unweildy`, `hp`];
+  for (var i=0; i<num_stats.length; i++) {
+    var stat_div = document.createElement("div");
+    stat_div.classList.add("vertical");
+    stat_div.classList.add("item-center");
+    stat_div.innerText = num_stats[i];
+    var input = document.createElement("input");
+    input.type = "number";
+    input.name = weapon_id + "_" + num_stats[i];//weapon_keys[i] + '_' + weapon_info[j];
+    input.id = weapon_id + "_" + num_stats[i];
+    input.value = 0;
+    input.style.width = "50px";
+    stat_div.appendChild(input);
+    weapon_row.appendChild(stat_div);
+  }//add numeric stats
+  weapon_table.appendChild(weapon_row);
+};
+
+
+// <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
+var load_weapons = function() {
+  var weapon_table = document.getElementById("weapons");
+  weapon_table.innerHTML = "";
+  var weapon_keys = Object.keys(weapons);
+  for (var i=0; i < weapon_keys.length; i++) {
+    if (weapon_keys[i] != 'none') {
+      var weapon = weapons[weapon_keys[i]];
+      //console.log(weapon);
+      var weapon_row = document.createElement("div");
+      weapon_row.classList.add("container");
+
+      //add radio button
+      var rad = document.createElement("input");
+      rad.type = "radio";
+      rad.name = "weapon";
+      rad.id = "weapon_" + weapon_keys[i];
+      weapon_row.appendChild(rad);
+
+      var weapon_info = Object.keys(weapon);
+      for (var j=0; j<weapon_info.length; j++) {
+        var weapon_stat = weapon[weapon_info[j]];
+
+        if ( isNaN(weapon_stat) ) {//typeof(weapon_stat) == 'string') {
+          var weapon_text = document.createElement("span");
+          weapon_text.style.paddingRight = "10px";
+          weapon_text.style.paddingTop = "10px";          
+          weapon_text.style.fontSize = "1.25em";
+          weapon_text.innerHTML = weapon_stat;
+          weapon_row.appendChild(weapon_text);
+        }
+        else {
+          var stat_div = document.createElement("div");
+          stat_div.classList.add("vertical");
+          stat_div.classList.add("item-center");
+          stat_div.innerText = weapon_info[j];
+          var input = document.createElement("input");
+          input.type = "number";
+          input.name = weapon_keys[i] + '_' + weapon_info[j];
+          input.id = weapon_keys[i] + '_' + weapon_info[j];
+          input.value = weapon_stat;
+          input.style.width = "50px";
+          stat_div.appendChild(input);
+          weapon_row.appendChild(stat_div);
+        }
+      }//weapon info
+      weapon_table.appendChild(weapon_row);
     }
   }//weapons
 };
@@ -508,7 +625,7 @@ var rollDice = function() {
       }
     }
   }//roll positive dice
-  console.log(posDice);
+  //console.log(posDice);
 
   var negDiceTypes = {'purple': purpleDie, 'red' : redDie, 'setback': setbackDie};
   keys = Object.keys(negDiceTypes);
@@ -530,8 +647,8 @@ var rollDice = function() {
       }
     }
   }
-  console.log(negDice);
-  displayDiceResults(posDice, negDice);
+  //console.log(negDice);
+  //displayDiceResults(posDice, negDice);
   displayDiceResultsDOM(posDice, negDice);
   updateResultTotals();
 };
@@ -800,7 +917,7 @@ var updatePool = function() {
   negDicePool['red'] = r;
   negDicePool['setback'] = s;
 
-  updateDiceDisplay();
+  //updateDiceDisplay();
   updateDiceDisplayDOM();
 };
 /*===========================
@@ -879,11 +996,4 @@ var setup = function() {
   }
   load_stats();
   load_weapons();
-  //set dice display sizes
-  var posResultDisplay = document.getElementById('pospool');
-  posResultDisplay.height = DICE_SIZE;
-  posResultDisplay.width = DICE_DISPLAY_WIDTH;
-  var negResultDisplay = document.getElementById('negpool');
-  negResultDisplay.height = DICE_SIZE;
-  negResultDisplay.width = DICE_DISPLAY_WIDTH;
 };
