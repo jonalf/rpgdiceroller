@@ -368,7 +368,7 @@ var load_weapons = function() {
         if ( isNaN(weapon_stat) ) {//typeof(weapon_stat) == 'string') {
           var weapon_text = document.createElement("span");
           weapon_text.style.paddingRight = "10px";
-          weapon_text.style.paddingTop = "10px";          
+          weapon_text.style.paddingTop = "10px";
           weapon_text.style.fontSize = "1.25em";
           weapon_text.innerHTML = weapon_stat;
           weapon_row.appendChild(weapon_text);
@@ -748,29 +748,32 @@ var updateResultTotals = function() {
   else {
     netfailure+= 1;
   }
-  var check_type  = document.querySelector('input[name="check_type"]:checked').id;
-  //console.log(check_type);
-  if (check_type == 'melee_skill_check' ||
-      check_type == 'lightsaber_skill_check' ||
-      check_type == 'ranged-heavy_skill_check' ||
-      check_type == 'ranged-light_skill_check' ||
-      check_type == 'gunnery_skill_check' ||
-      check_type == 'brawl_skill_check') {
-    console.log('combat check');
-    var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
-    weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
-    console.log(weapon_name);
-    var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+  var check_type  = document.querySelector('input[name="check_type"]:checked');
+  if (check_type != null) {
+    check_type = check_type.id;
+    //console.log(check_type);
+    if (check_type == 'melee_skill_check' ||
+        check_type == 'lightsaber_skill_check' ||
+        check_type == 'ranged-heavy_skill_check' ||
+        check_type == 'ranged-light_skill_check' ||
+        check_type == 'gunnery_skill_check' ||
+        check_type == 'brawl_skill_check') {
+      console.log('combat check');
+      var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
+      weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
+      console.log(weapon_name);
+      var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
 
-    //console.log(weapon_name);
+      //console.log(weapon_name);
 
-    document.getElementById("total_damage").value = 0;
-    if ((s-f) > 0) {
-      damage+= (s-f);
-      document.getElementById("total_damage").value = damage;
-    }
-}
-};
+      document.getElementById("total_damage").value = 0;
+      if ((s-f) > 0) {
+        damage+= (s-f);
+        document.getElementById("total_damage").value = damage;
+      }
+    }//combat check
+  }//there is a check selected
+};//updateResultTotals
 var multi_roll = function(n) {
   netsuccess = 0;
   netfailure = 0;
