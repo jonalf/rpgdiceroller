@@ -940,17 +940,26 @@ document.getElementById("roll").addEventListener('click', rollDice);
 var get_weapons = function() {
   var weapon_table = document.getElementById("weapons");
   var new_weapons = {};
-  for (var w=0; w < weapon_table.rows.length; w++) {
-    var weapon_row = weapon_table.rows[w];
+  for (var w=0; w < weapon_table.childElementCount; w++) {
+    var weapon_row = weapon_table.childNodes[w];
 
-    //get weapong identifier from first entry
-    var weapon_id = weapon_row.cells[0].firstChild.id;
+    //get weapon identifier from first entry
+    var weapon_id = weapon_row.childNodes[0].id;
     var weapon = {}
-    for (var i=1; i<weapon_row.cells.length; i++) {
-      var weapon_data = weapon_row.cells[i].firstChild;
+    for (var i=1; i<weapon_row.childElementCount; i++) {
+      var weapon_data = weapon_row.childNodes[i];
       var stat_id = weapon_data.id.split('_')[1];
-      weapon[stat_id] = weapon_data.value;
+
+      if (weapon_data.childElementCount == 0) {
+        weapon[stat_id] = weapon_data.innerText;
+      }
+      else {
+        weapon[stat_id] = weapon_data.childNodes[0].value;
+      }
+      console.log(weapon);
+      //weapon[stat_id] = weapon_data.value;
     }//individual cell
+    //console.log(weapon);
     new_weapons[weapon_id] = weapon;
   }//each row
   return new_weapons;
