@@ -1,4 +1,5 @@
 var char_stats = {
+  //'char_name' : '',
   'wounds' : 0,
   'strain' : 0,
   'soak' :0,
@@ -48,8 +49,7 @@ var char_stats = {
   'gunnery_skill' : 0
 };
 
-var weapons = {
-};
+var weapons = {};
 
 
 var DICE_SIZE = 40;
@@ -105,9 +105,8 @@ var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE],
 var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
 
 var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
-
-var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
-var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
+// var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
+// var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
 var check_table = {
   'brawl_skill' : 'brawn',
@@ -146,19 +145,6 @@ var check_table = {
   'xenology' : 'intellect'
 };
 
-
-var load_teru = function() {
-  var stat_keys = Object.keys(teru_stats);
-  for (var i=0; i<stat_keys.length; i++) {
-    var e = document.getElementById( stat_keys[i] );
-    //console.log(stat_keys[i]);
-    //console.log(deegray_stats[ stat_keys[i]] );
-    e.value = teru_stats[ stat_keys[i] ];
-  }
-
-  load_weapons();
-};
-
 var load_stats = function() {
   var stat_keys = Object.keys(char_stats);
   for (var i=0; i<stat_keys.length; i++) {
@@ -169,112 +155,6 @@ var load_stats = function() {
   }
 };
 
-var add_weapon_table = function() {
-  //get weapon table
-  var weapon_table = document.getElementById("weapons");
-  //create & return new row:
-  var weapon_row = weapon_table.insertRow(-1);
-
-  //var weapon_id = "w" + (Object.keys(weapons).length-1);
-  var weapon_id = 'w' + (document.getElementById("weapons").rows.length-1);
-
-
-  //create weapon select button
-  var rad = document.createElement("input");
-  rad.type = "radio";
-  rad.name = "weapon";
-  rad.id = weapon_id;
-  //make cell and insert radio button
-  var rad_cell = weapon_row.insertCell(-1);
-  rad_cell.appendChild(rad);
-
-  //name entry
-  var name_input = document.createElement("input");
-  name_input.id = weapon_id + '_name';
-  var name_cell = weapon_row.insertCell(-1);
-  name_cell.appendChild(name_input);
-
-
-  //weapon type selector
-  var weapon_types = ['ranged-light', 'ranged-heavy', 'gunnery', 'melee', 'lightsaber', 'brawl'];
-  var type_selector = document.createElement("select");
-  type_selector.id= weapon_id + '_type';//more figuring
-  for (var i=0; i<weapon_types.length; i++) {
-    var type_option = document.createElement("option");
-    type_option.id = weapon_types[i];
-    type_option.text = weapon_types[i];
-    type_option.value = weapon_types[i];
-    type_selector.appendChild(type_option);
-  }//add weapon types
-  var type_cell = weapon_row.insertCell(-1);
-  type_cell.appendChild(type_selector);
-
-  //weapon range selector
-  var weapon_ranges = ['engaged', 'short', 'medium', 'long', 'extreme'];
-  var range_selector = document.createElement("select");
-  range_selector.id = weapon_id + '_range';
-  for (var i=0; i<weapon_ranges.length; i++) {
-    var range_option = document.createElement("option");
-    range_option.id = weapon_ranges[i];
-    range_option.text = weapon_ranges[i];
-    range_option.value = weapon_ranges[i];
-    range_selector.appendChild(range_option);
-  }//add weapon ranges
-  var range_cell = weapon_row.insertCell(-1);
-  range_cell.appendChild(range_selector);
-
-  //number stat entries:
-  var num_stats = ['damage', 'crit', 'accurate', `pierce`, `breach`, `linked`, `sunder`, 'burn', `blast`, `unweildy`, `hp`];
-  for (var i=0; i<num_stats.length; i++) {
-    var input = document.createElement("input");
-    input.type = "number";
-    input.name = weapon_id + "_" + num_stats[i];//weapon_keys[i] + '_' + weapon_info[j];
-    input.id = weapon_id + "_" + num_stats[i];
-    input.value = 0;
-    input.style.width = "50px";
-    var cell = weapon_row.insertCell(-1);
-    cell.appendChild(input);
-  }//add numeric stats
-};
-var load_weapons_table = function() {
-  var weapon_table = document.getElementById("weapons");
-  weapon_table.innerHTML = "";
-  var weapon_keys = Object.keys(weapons);
-  for (var i=0; i < weapon_keys.length; i++) {
-    if (weapon_keys[i] != 'none') {
-      var weapon = weapons[weapon_keys[i]];
-      //console.log(weapon);
-      var weapon_row = weapon_table.insertRow(-1);
-
-      //add radio button
-      var rad = document.createElement("input");
-      rad.type = "radio";
-      rad.name = "weapon";
-      rad.id = "weapon_" + weapon_keys[i];
-      var rad_cell = weapon_row.insertCell(-1);
-      rad_cell.appendChild(rad);
-
-      var weapon_info = Object.keys(weapon);
-      for (var j=0; j<weapon_info.length; j++) {
-        var weapon_stat = weapon[weapon_info[j]];
-        var cell = weapon_row.insertCell(-1);
-        if ( isNaN(weapon_stat) ) {//typeof(weapon_stat) == 'string') {
-          cell.innerHTML = weapon_stat;
-        }
-        else {
-          var input = document.createElement("input");
-          input.type = "number";
-          input.name = weapon_keys[i] + '_' + weapon_info[j];
-          input.id = weapon_keys[i] + '_' + weapon_info[j];
-          input.value = weapon_stat;
-          input.style.width = "50px";
-          cell.appendChild(input);
-        }
-      }//weapon info
-    }
-  }//weapons
-};
-
 var add_weapon = function() {
   //get weapon table
   var weapon_table = document.getElementById("weapons");
@@ -282,7 +162,7 @@ var add_weapon = function() {
   var weapon_row = document.createElement("div");
   weapon_row.classList.add("container");
 
-  var weapon_id = 'w' + (document.getElementById("weapons").childElementCount-1);
+  var weapon_id = 'w' + (document.getElementById("weapons").childElementCount);
 
   //create weapon select button
   var rad = document.createElement("input");
@@ -341,8 +221,6 @@ var add_weapon = function() {
   weapon_table.appendChild(weapon_row);
 };
 
-
-// <th></th><th>Name</th><th>Type</th><th>Crit</th><th>Accurate</th><th>Pierce</th><th>Damage</th>
 var load_weapons = function() {
   var weapon_table = document.getElementById("weapons");
   weapon_table.innerHTML = "";
@@ -394,7 +272,6 @@ var load_weapons = function() {
 };
 
 
-//var check_table = {
 var setup_skills_div = function() {
 
   //create a div for each check type
@@ -948,15 +825,19 @@ var get_weapons = function() {
     var weapon = {}
     for (var i=1; i<weapon_row.childElementCount; i++) {
       var weapon_data = weapon_row.childNodes[i];
-      var stat_id = weapon_data.id.split('_')[1];
+      //console.log(weapon_data);
 
       if (weapon_data.childElementCount == 0) {
-        weapon[stat_id] = weapon_data.innerText;
+        var stat_id = weapon_data.id.split('_')[1];
+        weapon[stat_id] = weapon_data.value;
       }
       else {
-        weapon[stat_id] = weapon_data.childNodes[0].value;
+        //console.log(weapon_data.childNodes[1]);
+        weapon_data = weapon_data.childNodes[1];
+        var stat_id = weapon_data.id.split('_')[1];
+        weapon[stat_id] = weapon_data.value;
       }
-      console.log(weapon);
+      //console.log(weapon);
       //weapon[stat_id] = weapon_data.value;
     }//individual cell
     //console.log(weapon);
