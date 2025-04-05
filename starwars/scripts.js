@@ -49,6 +49,8 @@ var char_stats = {
   'gunnery_skill' : 0
 };
 
+
+
 var weapons = {};
 
 
@@ -108,6 +110,14 @@ var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', '
 // var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
 // var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
+var careers = {
+  'Consular': ['Healer', 'Niman Disciple', 'Sage'],
+  'Guardian': ['Armorer', 'Peacekeeper', 'Protector', 'Soresu Defender', 'Warden', 'Warleader'],
+  'Mystic' : ['Advisor', 'Makashi Duelist', 'Seer'],
+  'Seeker' : ['Ataru Striker', 'Executioner', 'Hermit', 'Hunter', 'Navigator', 'Pathfinder'],
+  'Sentinel' : ['Artisan', 'Investigator', 'Racer', 'Sentry', 'Shadow', 'Shien Expertise'],
+  'Warrior' : ['Aggressor', 'Shii-Cho Knight', 'Starfighter Ace']
+ };
 var check_table = {
   'brawl_skill' : 'brawn',
   'melee_skill' : 'brawn',
@@ -328,6 +338,48 @@ var setup_skills_div = function() {
   return skill_divs;
 };
 
+
+var setup_char_info = function() {
+  setup_career_info();
+  setup_spec_info();
+};
+var setup_career_info = function() {
+  var career_select = document.createElement('select');
+  var career_types = Object.keys(careers);
+  for (var i=0; i<career_types.length;i++) {
+    var career_option = document.createElement('option');
+    career_option.id = career_types[i];
+    career_option.name = career_types[i];
+    career_option.value = career_types[i];
+    career_option.text = career_types[i];
+    //console.log(career_option);
+    career_select.appendChild(career_option);
+  }
+  var career_container = document.getElementById('career_container');
+  career_container.appendChild(career_select);
+};
+var setup_spec_info = function() {
+  var spec_select = document.createElement('select');
+  var career_types = Object.keys(careers);
+  for (var i=0; i<career_types.length;i++) {
+    var career_group = document.createElement('optgroup');
+    career_group.label = career_types[i];
+
+    var spec_types = careers[career_types[i]];
+    for (var s=0; s <= spec_types.length; s++) {
+      var spec_option = document.createElement('option');
+      spec_option.id = spec_types[s];
+      spec_option.name = spec_types[s];
+      spec_option.value = spec_types[s];
+      spec_option.text = spec_types[s];
+      //console.log(career_option);
+      career_group.appendChild(spec_option);
+    }
+    spec_select.appendChild(career_group);
+  }
+  var spc_container = document.getElementById('spec_container');
+  spec_container.appendChild(spec_select);
+};
 
 
 var get_check = function( e ) {
@@ -879,6 +931,8 @@ var set_stats = function() {
 
 var setup = function() {
   setup_skills_div();
+  setup_char_info();
+
   var checks = document.getElementsByName('check_type');
   for (var i=0; i<checks.length; i++) {
     checks[i].addEventListener('click', get_check);
@@ -886,7 +940,7 @@ var setup = function() {
   if ( window.location.hash ) {
     //console.log("getting stats");
     set_stats( window.location.hash );
+    load_stats();
+    load_weapons();
   }
-  load_stats();
-  load_weapons();
 };
