@@ -53,7 +53,8 @@ var char_info = {
   char_name: '',
   career: '',
   specializations: [],
-  force_powers: []
+  force_powers: [],
+  xp: 0
 };
 
 var DICE_SIZE = 40;
@@ -113,12 +114,39 @@ var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', '
 // var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
 var careers = {
-  'Consular': ['Healer', 'Niman Disciple', 'Sage'],
-  'Guardian': ['Armorer', 'Peacekeeper', 'Protector', 'Soresu Defender', 'Warden', 'Warleader'],
-  'Mystic' : ['Advisor', 'Makashi Duelist', 'Seer'],
-  'Seeker' : ['Ataru Striker', 'Executioner', 'Hermit', 'Hunter', 'Navigator', 'Pathfinder'],
-  'Sentinel' : ['Artisan', 'Investigator', 'Racer', 'Sentry', 'Shadow', 'Shien Expertise'],
-  'Warrior' : ['Aggressor', 'Shii-Cho Knight', 'Starfighter Ace']
+  'Consular': {
+    'Healer': "consular/healer.pdf",
+    'Niman Disciple': 'consular/niman.pdf',
+    'Sage': 'consular/sage.pdf'},
+  'Guardian': {
+    'Armorer': 'guardian/armorer.pdf',
+    'Peacekeeper': 'guardian/peacekeeper.pdf',
+    'Protector': 'guardian/protector.pdf',
+    'Soresu Defender': 'guardian/soresu.pdf',
+    'Warden': 'guardian/warden.pdf',
+    'Warleader': 'guardian/warleader.pdf'},
+  'Mystic' : {
+    'Advisor': 'mystic/advisor.pdf',
+    'Makashi Duelist': 'mystic/makashi.pdf',
+    'Seer': 'mystic/seer.pdf'},
+  'Seeker' : {
+    'Ataru Striker': 'seeker/ataru.pdf',
+    'Executioner': 'seeker/executioner.pdf',
+    'Hermit': 'seeker/hermit.pdf',
+    'Hunter': 'seeker/hunter.pdf',
+    'Navigator': 'seeker/navigator.pdf',
+    'Pathfinder': 'seeker/pathfinder.pdf'},
+  'Sentinel': {
+    'Artisan': 'sentinel/artisan.pdf',
+    'Investigator': 'sentinel/investigator.pdf',
+    'Racer': 'sentinel/racer.pdf',
+    'Sentry': 'sentinel/sentry.pdf',
+    'Shadow': 'sentinel/shadow.pdf',
+    'Shien Expertise': 'sentinel/shien.pdf'},
+  'Warrior': {
+    'Aggressor': 'warrior/aggressor.pdf',
+    'Shii-Cho Knight': 'warrior/shii-cho.pdf',
+    'Starfighter Ace': 'warrior/starfighter.pdf'}
  };
 var check_table = {
   'brawl_skill' : 'brawn',
@@ -361,7 +389,7 @@ var setup_career_info = function() {
   var career_container = document.getElementById('career_container');
   career_container.appendChild(career_select);
 };
-var setup_spec_info = function() {
+var setup_spec_info_orignal = function() {
   var spec_select = document.createElement('select');
   spec_select.classList.add('specializations');
   var career_types = Object.keys(careers);
@@ -369,13 +397,35 @@ var setup_spec_info = function() {
     var career_group = document.createElement('optgroup');
     career_group.label = career_types[i];
 
-    var spec_types = careers[career_types[i]];
+    var spec_types = Object.keys(careers[career_types[i]]);
     for (var s=0; s <= spec_types.length; s++) {
       var spec_option = document.createElement('option');
       spec_option.id = spec_types[s];
       spec_option.name = spec_types[s];
       spec_option.value = spec_types[s];
       spec_option.text = spec_types[s];
+      //console.log(career_option);
+      career_group.appendChild(spec_option);
+    }
+    spec_select.appendChild(career_group);
+  }
+  var spc_container = document.getElementById('spec_container');
+  spec_container.appendChild(spec_select);
+};
+var setup_spec_info = function() {
+  var spec_select = document.createElement('select');
+  spec_select.classList.add('specializations');
+
+  for (career_name in careers){
+    var career_group = document.createElement('optgroup');
+    career_group.label = career_name;
+
+    for (spec_name in careers[career_name]) {
+      var spec_option = document.createElement('option');
+      spec_option.id = spec_name;
+      spec_option.name = spec_name;
+      spec_option.value = spec_name;
+      spec_option.text = spec_name;
       //console.log(career_option);
       career_group.appendChild(spec_option);
     }
@@ -393,24 +443,41 @@ var load_char_info = function() {
   name_span.id = 'char_name';
   name_input.replaceWith(name_span);
 
-  let career_input = document.getElementById('career');
+
   let career_span = document.createElement('span');
   career_span.innerText = char_info['career'];
   career_span.value = char_info['career'];
   career_span.id = 'career';
-  career_input.replaceWith(career_span);
+  let career_input = document.getElementById('career_container');
+  career_input.innerHTML = '';
+  career_input.appendChild(career_span);
 
   let spec_container = document.getElementById('spec_container');
   spec_container.innerHTML="";
   for (var s=0; s<char_info['specializations'].length; s++) {
-    let spec_span = document.createElement('span');
+    let spec_span = document.createElement('a');
     spec_span.innerText = char_info['specializations'][s];
     spec_span.value = char_info['specializations'][s];
+    spec_span.href = 'sheets/'+ get_sheet_ref(char_info['specializations'][s], 'spec');
+    spec_span.target = '_blank';
     spec_span.classList.add('specializations');
-    spec_container.appendChild(career_span);
+    spec_container.appendChild(spec_span);
   }
-};
 
+  let xp_input = document.getElementById('xp');
+  xp_input.value = char_info['xp'];
+};
+var get_sheet_ref = function(sheet_name, sheet_type) {
+  if (sheet_type == 'spec') {
+    for (career_name in careers) {
+      for (spec_name in careers[career_name]) {
+        if (spec_name == sheet_name) {
+          return careers[career_name][spec_name];
+        }
+      }//spec loop
+    }//carrer loop
+  }//spec ref
+};
 
 var get_check = function( e ) {
   var c = e.target.id.lastIndexOf('_');
@@ -839,6 +906,7 @@ var get_char_info = function() {
     specs.push(spec_selector[s].value);
   }
   new_info['specializations'] = specs;
+  new_info['xp'] = document.getElementById('xp').value;
   //console.log(new_info);
   return new_info;
 };

@@ -70,9 +70,13 @@
         <div class="container">
           <h3>Character Information</h3>
           <hr class="innerbreak">
-          <span>Name: <input id="char_name"></span><span>Career:<span id="career_container"></span></span>
+          <span>Name: <input id="char_name"></span>
+          <span>Career:<span id="career_container"></span></span>
+          <span>XP:
+            <input id="xp" type="number" style="width: 50px">
+          </span>
           <hr class="innerbreak">
-          <span>Specializations:</span><span id="spec_container"></span><button>+</button>
+          <span>Specializations:</span><span id="spec_container"></span><button onclick="setup_spec_info()">+</button>
           <hr class="innerbreak">
           Force Powers:
         </div>

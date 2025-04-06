@@ -24,7 +24,9 @@ body {
 .h2 {
   font-family: "Orbitron", sans-serif;
 }
-
+a {
+  color: #f7ce39;
+}
 .container {
     display: flex;
     flex-wrap: wrap;
@@ -69,6 +71,10 @@ self-right {
     align-self: end;
 }
 
+.specializations {
+  margin-left: 5px;
+  margin-right: 5px;
+}
 
 skill-line {
     border: 1px solid black;
