@@ -48,11 +48,13 @@ var char_stats = {
   'ranged-heavy_skill' : 0,
   'gunnery_skill' : 0
 };
-
-
-
 var weapons = {};
-
+var char_info = {
+  char_name: '',
+  career: '',
+  specializations: [],
+  force_powers: []
+};
 
 var DICE_SIZE = 40;
 var OFFSET = 2;
@@ -345,6 +347,7 @@ var setup_char_info = function() {
 };
 var setup_career_info = function() {
   var career_select = document.createElement('select');
+  career_select.id = 'career';
   var career_types = Object.keys(careers);
   for (var i=0; i<career_types.length;i++) {
     var career_option = document.createElement('option');
@@ -360,6 +363,7 @@ var setup_career_info = function() {
 };
 var setup_spec_info = function() {
   var spec_select = document.createElement('select');
+  spec_select.classList.add('specializations');
   var career_types = Object.keys(careers);
   for (var i=0; i<career_types.length;i++) {
     var career_group = document.createElement('optgroup');
@@ -379,6 +383,32 @@ var setup_spec_info = function() {
   }
   var spc_container = document.getElementById('spec_container');
   spec_container.appendChild(spec_select);
+};
+
+var load_char_info = function() {
+  let name_input = document.getElementById('char_name');
+  let name_span = document.createElement('span');
+  name_span.innerText = char_info['char_name'];
+  name_span.value = char_info['char_name'];
+  name_span.id = 'char_name';
+  name_input.replaceWith(name_span);
+
+  let career_input = document.getElementById('career');
+  let career_span = document.createElement('span');
+  career_span.innerText = char_info['career'];
+  career_span.value = char_info['career'];
+  career_span.id = 'career';
+  career_input.replaceWith(career_span);
+
+  let spec_container = document.getElementById('spec_container');
+  spec_container.innerHTML="";
+  for (var s=0; s<char_info['specializations'].length; s++) {
+    let spec_span = document.createElement('span');
+    spec_span.innerText = char_info['specializations'][s];
+    spec_span.value = char_info['specializations'][s];
+    spec_span.classList.add('specializations');
+    spec_container.appendChild(career_span);
+  }
 };
 
 
@@ -477,57 +507,7 @@ var rollDiceOld = function() {
   }
   updateResultTotals();
 };
-var displayDiceResults = function(posDice, negDice) {
 
-  var posDiceTypes = {'green': "#00FF00", 'yellow' : '#FFFF00', 'boost': '#80dfff', 'force':'#FFFFFF'};
-  var posResultDisplay = document.getElementById('pospool');
-  var ctx = posResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-  var startx = 0;
-
-  for (var i=0; i<posDice.length; i++) {
-
-    var dtype = posDice[i][0];
-    var result = posDice[i][1];
-
-    ctx.fillStyle = posDiceTypes[dtype];
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    if (result.length == 1) {
-      ctx.drawImage(posImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-    }
-    else if (result.length == 2) {
-
-      ctx.drawImage(posImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-      ctx.drawImage(posImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-    }
-    startx+= DICE_SIZE + OFFSET;
-  }
-
-  var negDiceTypes = {'purple': "#5c00e6", 'red' : '#FF0000', 'setback': '#000000'};
-  var negResultDisplay = document.getElementById('negpool');
-  ctx = negResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-  startx = 0;
-  for (var i=0; i<negDice.length; i++) {
-
-    var dtype = negDice[i][0];
-    var result = negDice[i][1];
-
-    ctx.fillStyle = negDiceTypes[dtype];
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-
-    if (result.length == 1) {
-      ctx.drawImage(negImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-    }
-    else if (result.length == 2) {
-      ctx.drawImage(negImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-      ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-    }
-    startx+= DICE_SIZE + OFFSET;
-  }
-};
 var rollDice = function() {
   updatePool();
   posResults = [0,0, 0, 0];
@@ -773,64 +753,7 @@ var updateDiceDisplayDOM = function() {
     negPoolDisplay.appendChild(die);
   }
 };//updateDiceDisplayDOM
-var updateDiceDisplay = function() {
-  var posPoolDisplay = document.getElementById('pospool');
-  var ctx = posPoolDisplay.getContext('2d');
 
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-
-  var startx = 0;
-  var amt = posDicePool['green'];
-  ctx.fillStyle = "#00FF00";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-  amt = posDicePool['yellow'];
-  ctx.fillStyle = "#FFFF00";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-  amt = posDicePool['boost'];
-  ctx.fillStyle = "#80dfff";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-  amt = posDicePool['force'];
-  ctx.fillStyle = "#fff8dc";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-
-  var negPoolDisplay = document.getElementById('negpool');
-  ctx = negPoolDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-
-  startx = 0;
-  amt = negDicePool['purple'];
-  ctx.fillStyle = "#5c00e6";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-  amt = negDicePool['red'];
-  ctx.fillStyle = "#FF0000";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-  amt = negDicePool['setback'];
-  ctx.fillStyle = "#000000";
-  for (var i=0; i<amt; i++) {
-    ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    startx+= DICE_SIZE + OFFSET;
-  }
-
-};
 var updatePool = function() {
   var g = document.getElementById('numgreen').value;
   var p = document.getElementById('numpurple').value;
@@ -906,10 +829,26 @@ var get_stats = function() {
   }
   return new_stats;
 };
+var get_char_info = function() {
+  let new_info = {};
+  new_info['char_name'] = document.getElementById('char_name').value;
+  new_info['career'] = document.getElementById('career').value;
+  let specs = [];
+  let spec_selector = document.getElementsByClassName('specializations');
+  for (let s=0; s<spec_selector.length; s++) {
+    specs.push(spec_selector[s].value);
+  }
+  new_info['specializations'] = specs;
+  //console.log(new_info);
+  return new_info;
+};
+
 var encode_stats = function() {
   var new_stats = get_stats();
   var new_weapons = get_weapons();
-  var encode_data = {stats: new_stats, weapons: new_weapons};
+  var new_char_info = get_char_info();
+  console.log(new_char_info);
+  var encode_data = {stats: new_stats, weapons: new_weapons, info: new_char_info};
   //console.log(encode_data);
   var encode_string = btoa(JSON.stringify(encode_data));
   return encode_string;
@@ -927,6 +866,9 @@ var set_stats = function() {
   //console.log(data);
   char_stats =  data['stats'];
   weapons = data['weapons'];
+  console.log('info in set_stats:');
+  console.log(data['info']);
+  char_info = data['info'];
 };
 
 var setup = function() {
@@ -938,9 +880,10 @@ var setup = function() {
     checks[i].addEventListener('click', get_check);
   }
   if ( window.location.hash ) {
-    //console.log("getting stats");
+    console.log("getting stats");
     set_stats( window.location.hash );
     load_stats();
     load_weapons();
+    load_char_info();
   }
 };
