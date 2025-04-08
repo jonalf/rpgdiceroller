@@ -71,7 +71,8 @@ self-right {
     align-self: end;
 }
 
-.specializations {
+.specializations,
+.force_powers {
   margin-left: 5px;
   margin-right: 5px;
 }

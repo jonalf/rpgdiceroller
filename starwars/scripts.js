@@ -148,6 +148,22 @@ var careers = {
     'Shii-Cho Knight': 'warrior/shii-cho.pdf',
     'Starfighter Ace': 'warrior/starfighter.pdf'}
  };
+var force_powers  = {
+  'Battle Meditation': 'battle_meditation.pdf',
+  'Bind': 'bind.pdf',
+  'Enhance': 'enhance.pdf',
+  'Farsight': 'farsight.pdf',
+  'Forsee': 'forsee.pdf',
+  'Heal/Harm': 'heal-harm.pdf',
+  'Influence': 'influence.pdf',
+  'Manipulate': 'manipulate.pdf',
+  'Misdirect': 'misdirect.pdf',
+  'Move': 'move.pdf',
+  'Protect/Unleash': 'protect-unleash.pdf',
+  'Seek': 'seek.pdf',
+  'Sense': 'sense.pdf',
+  'Supress': 'supress.pdf'
+};
 var check_table = {
   'brawl_skill' : 'brawn',
   'melee_skill' : 'brawn',
@@ -389,29 +405,7 @@ var setup_career_info = function() {
   var career_container = document.getElementById('career_container');
   career_container.appendChild(career_select);
 };
-var setup_spec_info_orignal = function() {
-  var spec_select = document.createElement('select');
-  spec_select.classList.add('specializations');
-  var career_types = Object.keys(careers);
-  for (var i=0; i<career_types.length;i++) {
-    var career_group = document.createElement('optgroup');
-    career_group.label = career_types[i];
 
-    var spec_types = Object.keys(careers[career_types[i]]);
-    for (var s=0; s <= spec_types.length; s++) {
-      var spec_option = document.createElement('option');
-      spec_option.id = spec_types[s];
-      spec_option.name = spec_types[s];
-      spec_option.value = spec_types[s];
-      spec_option.text = spec_types[s];
-      //console.log(career_option);
-      career_group.appendChild(spec_option);
-    }
-    spec_select.appendChild(career_group);
-  }
-  var spc_container = document.getElementById('spec_container');
-  spec_container.appendChild(spec_select);
-};
 var setup_spec_info = function() {
   var spec_select = document.createElement('select');
   spec_select.classList.add('specializations');
@@ -443,7 +437,7 @@ var load_char_info = function() {
   name_span.id = 'char_name';
   name_input.replaceWith(name_span);
 
-
+  //Career dispolay
   let career_span = document.createElement('span');
   career_span.innerText = char_info['career'];
   career_span.value = char_info['career'];
@@ -452,17 +446,36 @@ var load_char_info = function() {
   career_input.innerHTML = '';
   career_input.appendChild(career_span);
 
-  let spec_container = document.getElementById('spec_container');
-  spec_container.innerHTML="";
-  for (var s=0; s<char_info['specializations'].length; s++) {
-    let spec_span = document.createElement('a');
-    spec_span.innerText = char_info['specializations'][s];
-    spec_span.value = char_info['specializations'][s];
-    spec_span.href = 'sheets/'+ get_sheet_ref(char_info['specializations'][s], 'spec');
-    spec_span.target = '_blank';
-    spec_span.classList.add('specializations');
-    spec_container.appendChild(spec_span);
-  }
+  //specializations + links to sheets
+  if ('specializations' in char_info) {
+    let spec_container = document.getElementById('spec_container');
+    spec_container.innerHTML="";
+    for (var s=0; s<char_info['specializations'].length; s++) {
+      let spec_span = document.createElement('a');
+      spec_span.innerText = char_info['specializations'][s];
+      spec_span.value = char_info['specializations'][s];
+      spec_span.href = 'sheets/'+ get_sheet_ref(char_info['specializations'][s], 'spec');
+      spec_span.target = '_blank';
+      spec_span.classList.add('specializations');
+      spec_container.appendChild(spec_span);
+    }
+  }//if specializations exist
+
+  //force powers + links to sheets
+  if ('force_powers' in char_info) {
+    let fp_container = document.getElementById('fp_container');
+    fp_container.innerHTML="";
+    for (var f=0; f<char_info['force_powers'].length; f++) {
+      let fp_span = document.createElement('a');
+      let power = char_info['force_powers'][f];
+      fp_span.innerText = power;
+      fp_span.value = power;
+      fp_span.href = 'sheets/force_powers/'+ force_powers[power];
+      fp_span.target = '_blank';
+      fp_span.classList.add('force_powers');
+      fp_container.appendChild(fp_span);
+    }
+  }//if force powers exist
 
   let xp_input = document.getElementById('xp');
   xp_input.value = char_info['xp'];
@@ -477,6 +490,23 @@ var get_sheet_ref = function(sheet_name, sheet_type) {
       }//spec loop
     }//carrer loop
   }//spec ref
+};
+
+var setup_force_powers = function() {
+  var fp_select = document.createElement('select');
+  fp_select.classList.add('force_powers');
+
+  for (fp_name in force_powers){
+    var fp_option = document.createElement('option');
+    fp_option.id = fp_name;
+    fp_option.name = fp_name;
+    fp_option.value = fp_name;
+    fp_option.text = fp_name;
+    //console.log(career_option);
+    fp_select.appendChild(fp_option);
+  }
+  var fp_container = document.getElementById('fp_container');
+  fp_container.appendChild(fp_select);
 };
 
 var get_check = function( e ) {
@@ -574,7 +604,9 @@ var rollDiceOld = function() {
   }
   updateResultTotals();
 };
-
+/*===========================
+  BEGIN DICE FUNCTIONS
+  ===========================*/
 var rollDice = function() {
   updatePool();
   posResults = [0,0, 0, 0];
@@ -906,6 +938,12 @@ var get_char_info = function() {
     specs.push(spec_selector[s].value);
   }
   new_info['specializations'] = specs;
+  let fps = [];
+  let fp_selector = document.getElementsByClassName('force_powers');
+  for (let f=0; f<fp_selector.length; f++) {
+    fps.push(fp_selector[f].value);
+  }
+  new_info['force_powers'] = fps;
   new_info['xp'] = document.getElementById('xp').value;
   //console.log(new_info);
   return new_info;
