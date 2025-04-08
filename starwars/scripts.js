@@ -816,22 +816,31 @@ var display_die = function(die, dtype, result) {
   if (result) {
     if (result.length == 1) {
       var img = document.createElement('img');
+      img.classList.add('dieimage');
       img.src = dieImages[result].src;
       img.width = DICE_SIZE;
       img.height = DICE_SIZE;
       die.appendChild(img);
     }
     else if (result.length == 2) {
+      var img_container = document.createElement('div');
+      img_container.classList.add('dieimage_small');
       var img = document.createElement('img');
       img.src = dieImages[result[0]].src;
       img.width = DICE_SIZE/2;
       img.height = DICE_SIZE/2;
-      die.appendChild(img);
+      img.style.float = 'left';
+      img_container.appendChild(img);
+      die.appendChild(img_container);
+      var img_container = document.createElement('div');
+      img_container.classList.add('dieimage_small');
       img = document.createElement('img');
       img.src = dieImages[result[1]].src;
       img.width = DICE_SIZE/2;
       img.height = DICE_SIZE/2;
-      die.appendChild(img);
+      img.style.float = 'right';
+      img_container.appendChild(img);
+      die.appendChild(img_container);
     }
   }
 };
