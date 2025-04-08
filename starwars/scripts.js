@@ -64,11 +64,12 @@ var DICE_DISPLAY_WIDTH = 400;
 var SUCCESS = 0;
 var ADVANTAGE = 1;
 var TRIUMPH = 2;
-var FAILURE = 0;
-var THREAT = 1;
-var DESPAIR = 2;
+var FAILURE = 5; //0
+var THREAT = 6; //1
+var DESPAIR = 7; //2
 var DARK = 3;
 var LIGHT = 4;
+var RESULT_OFFSET = FAILURE - SUCCESS;
 
 var successImg = new Image();
 successImg.src = "img/success.png";
@@ -87,8 +88,7 @@ lightImg.src = "img/light.png";
 var darkImg = new Image();
 darkImg.src = "img/dark.png";
 
-var posImages = [successImg, advantageImg, triumphImg, lightImg, darkImg];
-var negImages = [failureImg, threatImg, despairImg];
+var dieImages = [successImg, advantageImg, triumphImg, lightImg, darkImg, failureImg, threatImg, despairImg];
 
 var posDicePool = {'green': 0, 'yellow': 0, 'boost': 0, 'force': 0};
 var negDicePool = {'purple': 0, 'red': 0, 'setback': 0};
@@ -102,12 +102,20 @@ var netfailure = 0;
 var greenDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE]];
 var yellowDie = [ [], [SUCCESS], [SUCCESS], [SUCCESS, SUCCESS], [SUCCESS, SUCCESS], [ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [TRIUMPH]];
 var boostDie = [ [], [], [SUCCESS], [SUCCESS, ADVANTAGE], [ADVANTAGE, ADVANTAGE], [ADVANTAGE]];
-
 var forceDie = [[DARK], [DARK], [DARK], [DARK], [DARK], [DARK], [DARK, DARK], [LIGHT], [LIGHT], [LIGHT, LIGHT], [LIGHT, LIGHT], [LIGHT, LIGHT]];
-
 var purpleDie =  [ [], [FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [THREAT], [FAILURE, THREAT]];
 var redDie = [ [], [FAILURE], [FAILURE], [FAILURE, FAILURE], [FAILURE, FAILURE], [THREAT], [THREAT], [FAILURE, THREAT], [FAILURE, THREAT], [THREAT, THREAT], [THREAT, THREAT], [DESPAIR]];
 var setbackDie = [ [], [], [FAILURE], [FAILURE], [THREAT], [THREAT]];
+
+var dice = {
+  'green': greenDie,
+  'yellow': yellowDie,
+  'boost': boostDie,
+  'force': forceDie,
+  'purple': purpleDie,
+  'red': redDie,
+  'setback': setbackDie
+};
 
 var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
 // var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
@@ -604,9 +612,6 @@ var rollDiceOld = function() {
   }
   updateResultTotals();
 };
-/*===========================
-  BEGIN DICE FUNCTIONS
-  ===========================*/
 var rollDice = function() {
   updatePool();
   posResults = [0,0, 0, 0];
@@ -647,11 +652,11 @@ var rollDice = function() {
       negDice.push([dtype, result]);
 
       if (result.length == 1) {
-        negResults[result]+= 1;
+        negResults[result-RESULT_OFFSET]+= 1;
       }
       else if (result.length == 2) {
-        negResults[result[0]]+= 1;
-        negResults[result[1]]+= 1;
+        negResults[result[0]-RESULT_OFFSET]+= 1;
+        negResults[result[1]-RESULT_OFFSET]+= 1;
       }
     }
   }
@@ -662,7 +667,6 @@ var rollDice = function() {
 };
 var displayDiceResultsDOM = function(posDice, negDice) {
 
-  var posDiceTypes = {'green': "#00FF00", 'yellow' : '#FFFF00', 'boost': '#80dfff', 'force':'#fff8dc'};
   var posResultDisplay = document.getElementById('pospool0');
   posResultDisplay.innerHTML = "";
   for (var i=0; i<posDice.length; i++) {
@@ -672,30 +676,11 @@ var displayDiceResultsDOM = function(posDice, negDice) {
 
     var die = document.createElement('span');
     die.classList.add('die');//new
-    die.style.backgroundColor = posDiceTypes[dtype];
     posResultDisplay.appendChild(die);
-    if (result.length == 1) {
-      var img = document.createElement('img');
-      img.src = posImages[result].src;
-      img.width = DICE_SIZE;
-      img.height = DICE_SIZE;
-      die.appendChild(img);
-    }
-    else if (result.length == 2) {
-      var img = document.createElement('img');
-      img.src = posImages[result[0]].src;
-      img.width = DICE_SIZE/2;
-      img.height = DICE_SIZE/2;
-      die.appendChild(img);
-      img = document.createElement('img');
-      img.src = posImages[result[1]].src;
-      img.width = DICE_SIZE/2;
-      img.height = DICE_SIZE/2;
-      die.appendChild(img);
-    }
+
+    roll_animation(die, dtype, result);
   }//positive dice
 
-  var negDiceTypes = {'purple': "#5c00e6", 'red' : '#FF0000', 'setback': '#000000'};
   var negResultDisplay = document.getElementById('negpool0');
   negResultDisplay.innerHTML = "";
 
@@ -706,38 +691,18 @@ var displayDiceResultsDOM = function(posDice, negDice) {
 
     var die = document.createElement('span');
     die.classList.add('die');//new
-    die.style.backgroundColor = negDiceTypes[dtype];
     negResultDisplay.appendChild(die);
-
-    if (result.length == 1) {
-      var img = document.createElement('img');
-      img.src = negImages[result].src;
-      img.width = DICE_SIZE;
-      img.height = DICE_SIZE;
-      die.appendChild(img);
-    }
-    else if (result.length == 2) {
-      var img = document.createElement('img');
-      img.src = negImages[result[0]].src;
-      img.width = DICE_SIZE/2;
-      img.height = DICE_SIZE/2;
-      die.appendChild(img);
-      img = document.createElement('img');
-      img.src = negImages[result[1]].src;
-      img.width = DICE_SIZE/2;
-      img.height = DICE_SIZE/2;
-      die.appendChild(img);
-    }
-  }
+    roll_animation(die, dtype,  result);
+  }//neg dice
 };
 
 var updateResultTotals = function() {
   var u = posResults[TRIUMPH];
   var s = posResults[SUCCESS] + u;
   var a = posResults[ADVANTAGE];
-  var d = negResults[DESPAIR];
-  var f = negResults[FAILURE] + d;
-  var t = negResults[THREAT];
+  var d = negResults[DESPAIR-RESULT_OFFSET];
+  var f = negResults[FAILURE-RESULT_OFFSET] + d;
+  var t = negResults[THREAT-RESULT_OFFSET];
 
   document.getElementById("scount").innerText = s;
   document.getElementById("acount").innerText = a;
@@ -798,59 +763,28 @@ var updateDiceDisplayDOM = function() {
   var posPoolDisplay = document.getElementById('pospool0');
   posPoolDisplay.innerHTML = "";
 
-  var amt = posDicePool['green'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#00FF00";
-    posPoolDisplay.appendChild(die);
-  }
-  amt = posDicePool['yellow'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#FFFF00";
-    posPoolDisplay.appendChild(die);
-  }
-  amt = posDicePool['boost'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#80dfff";
-    posPoolDisplay.appendChild(die);
-  }
-  amt = posDicePool['force'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#fff8dc";
-    posPoolDisplay.appendChild(die);
-  }
+  for (posDie in posDicePool) {
+    var amt = posDicePool[posDie];
+    for (var i=0; i<amt; i++) {
+      var die = document.createElement('span');
+      die.classList.add('die');//new
+      posPoolDisplay.appendChild(die);
+      display_die(die, posDie, false);
+    }
+  }//positive dice
 
   var negPoolDisplay = document.getElementById('negpool0');
   negPoolDisplay.innerHTML = "";
 
-  amt = negDicePool['purple'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#5c00e6";
-    negPoolDisplay.appendChild(die);
-  }
-  amt = negDicePool['red'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#FF0000";
-    negPoolDisplay.appendChild(die);
-  }
-  amt = negDicePool['setback'];
-  for (var i=0; i<amt; i++) {
-    var die = document.createElement('span');
-    die.classList.add('die');//new
-    die.style.backgroundColor = "#000000";
-    negPoolDisplay.appendChild(die);
-  }
+  for (negDie in negDicePool) {
+    var amt = negDicePool[negDie];
+    for (var i=0; i<amt; i++) {
+      var die = document.createElement('span');
+      die.classList.add('die');//new
+      negPoolDisplay.appendChild(die);
+      display_die(die, negDie, false);
+    }
+  }//positive dice
 };//updateDiceDisplayDOM
 
 var updatePool = function() {
@@ -871,9 +805,54 @@ var updatePool = function() {
   negDicePool['red'] = r;
   negDicePool['setback'] = s;
 
-  //updateDiceDisplay();
   updateDiceDisplayDOM();
 };
+
+var display_die = function(die, dtype, result) {
+
+  var dice_types = {'green': "#00FF00", 'yellow' : '#FFFF00', 'boost': '#80dfff', 'force':'#fff8dc', 'purple': "#5c00e6", 'red' : '#FF0000', 'setback': '#000000'};
+  die.style.backgroundColor = dice_types[dtype];
+
+  if (result) {
+    if (result.length == 1) {
+      var img = document.createElement('img');
+      img.src = dieImages[result].src;
+      img.width = DICE_SIZE;
+      img.height = DICE_SIZE;
+      die.appendChild(img);
+    }
+    else if (result.length == 2) {
+      var img = document.createElement('img');
+      img.src = dieImages[result[0]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+      img = document.createElement('img');
+      img.src = dieImages[result[1]].src;
+      img.width = DICE_SIZE/2;
+      img.height = DICE_SIZE/2;
+      die.appendChild(img);
+    }
+  }
+};
+
+var roll_animation = function(die, dtype, result) {
+  var cycles = 50;
+  let timer = setInterval( function() {
+    if (cycles == 0) {
+      clearInterval(timer);
+      die.innerHTML="";
+      display_die(die, dtype, result);
+    }
+    else {
+      let r  = dice[dtype][Math.floor(Math.random() * dice[dtype].length)];
+      die.innerHTML="";
+      //die.innerText = Math.floor(Math.random()*6)+1;
+      display_die(die, dtype, r);
+      cycles--;
+    }
+  }, 10);
+};//roll_animation
 /*===========================
   END DICE FUNCTIONS
   ===========================*/
@@ -972,8 +951,8 @@ var set_stats = function() {
   //console.log(data);
   char_stats =  data['stats'];
   weapons = data['weapons'];
-  console.log('info in set_stats:');
-  console.log(data['info']);
+  // console.log('info in set_stats:');
+  // console.log(data['info']);
   char_info = data['info'];
 };
 

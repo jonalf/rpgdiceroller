@@ -1,6 +1,5 @@
-# rpgdicerollers
 ## Star Wars FFG Dice Roller Instructions:
-### [star wars](starwars/)
+### [Dice Roller](starwars/)
 #### Dice Rolling Only:
 - Enter the appropriate number of dice for each type, hit roll.
 
