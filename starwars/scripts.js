@@ -424,6 +424,7 @@ var setup_skills_div = function() {
     input.id = skills[i];
     input.min = "0";
     input.style.width = "30px";
+    input.addEventListener('change', updateXP);
     span.appendChild(radio);
     let name_span = document.createElement('span');
     name_span.id = skills[i] + "_label";
@@ -441,6 +442,11 @@ var setup_skills_div = function() {
   return skill_divs;
 };
 
+var updateXP = function(e) {
+  let new_val = e.target.value;
+  let skill = e.target.id;
+  let diff = new_val - char_stats[skill];
+};
 
 var setup_char_info = function() {
   setup_career_info();
