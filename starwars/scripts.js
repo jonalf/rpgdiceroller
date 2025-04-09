@@ -156,6 +156,41 @@ var careers = {
     'Shii-Cho Knight': 'warrior/shii-cho.pdf',
     'Starfighter Ace': 'warrior/starfighter.pdf'}
  };
+var native_skills = {
+  'Consular': ['cool', 'discipline', 'education', 'lore', 'leadership', 'negotiation'],
+  'Guardian': ['brawl_skill', 'cool', 'discipline', 'melee_skill', 'resilience', 'vigilance'],
+  'Mystic' : ['charm', 'coercion', 'lore', 'outer-rim', 'perception', 'vigilance'],
+  'Seeker' : ['xenology', 'pilot-planet', 'pilot-space', 'ranged-heavy_skill', 'survival', 'vigilance'],
+  'Sentinel': ['computers', 'deception', 'core worlds', 'perception', 'skullduggery', 'stealth'],
+  'Warrior': ['athletics', 'brawl_skill', 'cool', 'melee_skill', 'perception', 'survival'],
+  'Healer': ['discipline', 'education', 'xenology', 'medicine'],
+  'Niman Disciple': ['discipline', 'leadership', 'lightsaber_skill', 'negotiation'],
+  'Sage': ['astrogation', 'charm', 'cool', 'lore'],
+  'Armorer': [ 'outer-rim', 'lightsaber_skill', 'mechanics', 'resilience'],
+  'Peacekeeper': ['discipline', 'leadership', 'perception', 'pilot-planet'],
+'Protector': ['athletics', 'medicine','ranged-light_skill', 'resilience'],
+  'Soresu Defender': ['discipline', 'lore', 'lightsaber_skill', 'vigilance'],
+  'Warden': ['brawl_skill', 'coercion', 'discipline', 'underworld'],
+  'Warleader': ['leadership', 'perception', 'ranged-light_skill', 'survival'],
+  'Advisor': ['charm', 'deception', 'negotiation', 'streetwise'],
+  'Makashi Duelist': ['charm', 'cool', 'coordination', 'lightsaber_skill'],
+  'Seer': ['discipline','lore', 'survival', 'vigilance'],
+  'Ataru Striker': ['athletics', 'coordination', 'lightsaber_skill', 'perception'],
+  'Executioner': ['discipline', 'melee_skill', 'perception', 'ranged-heavy_skill'],
+  'Hermit': ['discipline', 'xenology', 'stealth', 'survival'],
+  'Hunter': ['coordination', 'ranged-heavy_skill', 'stealth', 'vigilance'],
+  'Navigator': ['astrogation', 'outer-rim', 'perception', 'survival'],
+  'Pathfinder': ['medicine', 'ranged-light_skill', 'resilience', 'survival'],
+  'Artisan': ['astrogation', 'computers', 'education', 'mechanics'],
+  'Investigator': ['education', 'underworld', 'perception', 'streetwise'],
+  'Racer': ['cool', 'coordination', 'pilot-planet', 'pilot-space'],
+  'Sentry': ['coordination', 'lightsaber_skill', 'stealth', 'vigilance'],
+  'Shadow': ['underworld', 'skulduggery', 'stealth', 'streetwise'],
+  'Shien Expertise': ['athletics', 'lightsaber_skill', 'resilience', 'skulduggery'],
+  'Aggressor': ['coercion', 'underworld', 'ranged-light_skill', 'streetwise'],
+  'Shii-Cho Knight': ['athletics', 'coordination', 'lightsaber_skill', 'melee_skill'],
+  'Starfighter Ace': ['astrogation', 'gunnery_skill', 'mechanics', 'pilot-space']
+};
 var force_powers  = {
   'Battle Meditation': 'battle_meditation.pdf',
   'Bind': 'bind.pdf',
@@ -210,14 +245,28 @@ var check_table = {
 };
 
 var load_stats = function() {
-  var stat_keys = Object.keys(char_stats);
-  for (var i=0; i<stat_keys.length; i++) {
-    var e = document.getElementById( stat_keys[i] );
-    //console.log(stat_keys[i]);
-    //console.log(deegray_stats[ stat_keys[i]] );
-    e.value = char_stats[ stat_keys[i] ];
-  }
-};
+  let career_skills = [];
+  for (skill in native_skills[char_info['career']]) {
+    career_skills.push(native_skills[char_info['career']][skill]);
+  }//get career skills
+  for (spec in char_info['specializations']) {
+    let spec_skills = native_skills[char_info['specializations'][spec]];
+    for (skill in spec_skills) {
+      if (career_skills.indexOf(spec_skills[skill]) == -1) {
+        career_skills.push(spec_skills[skill]);
+      }//only add new skills
+    }//get specialization skill
+  }//get specializations
+
+  for (stat in char_stats) {
+    var e = document.getElementById( stat );
+    e.value = char_stats[ stat ];
+    if ( career_skills.indexOf(stat) != -1) {
+      let label = document.getElementById(stat+'_label');
+      label.innerHTML+= '*';
+    }//signify career stats
+  }//load stats
+};//load_stats
 
 var add_weapon = function() {
   //get weapon table
@@ -325,7 +374,7 @@ var load_weapons = function() {
           input.name = weapon_keys[i] + '_' + weapon_info[j];
           input.id = weapon_keys[i] + '_' + weapon_info[j];
           input.value = weapon_stat;
-          input.style.width = "50px";
+          input.style.width = "40px";
           stat_div.appendChild(input);
           weapon_row.appendChild(stat_div);
         }
@@ -362,10 +411,7 @@ var setup_skills_div = function() {
     var charateristic = check_table[skill];
     //create input
     var span = document.createElement('div');
-    span.style.display = "flex";
-    span.style.flexDirection = "row";
-    span.style.alignSelf = "stretch";
-    span.style.justifyContent = "space-between";
+    span.classList.add('skill-line');
     var radio = document.createElement('input');
     radio.type = "radio";
     radio.name="check_type";
@@ -377,9 +423,12 @@ var setup_skills_div = function() {
     input.type = "number";
     input.id = skills[i];
     input.min = "0";
-    input.style.width = "50px";
+    input.style.width = "30px";
     span.appendChild(radio);
-    span.innerHTML += name;
+    let name_span = document.createElement('span');
+    name_span.id = skills[i] + "_label";
+    name_span.innerText = name;
+    span.appendChild(name_span);
     span.appendChild(input);
     skill_divs[charateristic].appendChild(span);
   }
@@ -438,21 +487,26 @@ var setup_spec_info = function() {
 };
 
 var load_char_info = function() {
-  let name_input = document.getElementById('char_name');
-  let name_span = document.createElement('span');
-  name_span.innerText = char_info['char_name'];
-  name_span.value = char_info['char_name'];
-  name_span.id = 'char_name';
-  name_input.replaceWith(name_span);
+
+  if ('char_name' in char_info) {
+    let name_input = document.getElementById('char_name');
+    let name_span = document.createElement('span');
+    name_span.innerText = char_info['char_name'];
+    name_span.value = char_info['char_name'];
+    name_span.id = 'char_name';
+    name_input.replaceWith(name_span);
+  }
 
   //Career dispolay
-  let career_span = document.createElement('span');
-  career_span.innerText = char_info['career'];
-  career_span.value = char_info['career'];
-  career_span.id = 'career';
-  let career_input = document.getElementById('career_container');
-  career_input.innerHTML = '';
-  career_input.appendChild(career_span);
+  if ('career' in char_info) {
+    let career_span = document.createElement('span');
+    career_span.innerText = char_info['career'];
+    career_span.value = char_info['career'];
+    career_span.id = 'career';
+    let career_input = document.getElementById('career_container');
+    career_input.innerHTML = '';
+    career_input.appendChild(career_span);
+  }
 
   //specializations + links to sheets
   if ('specializations' in char_info) {
@@ -731,20 +785,27 @@ var updateResultTotals = function() {
         check_type == 'ranged-light_skill_check' ||
         check_type == 'gunnery_skill_check' ||
         check_type == 'brawl_skill_check') {
-      console.log('combat check');
-      var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
-      weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
-      console.log(weapon_name);
-      var damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+      //console.log('combat check');
+
+      var damage = 0;
+      if (document.querySelector('input[name="weapon"]:checked')) {
+        var weapon_name = document.querySelector('input[name="weapon"]:checked').id;
+        weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
+        //console.log(weapon_name);
+        damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+      }
 
       //console.log(weapon_name);
 
-      document.getElementById("total_damage").value = 0;
+      document.getElementById("total_damage").innerText = "Damage: 0";
       if ((s-f) > 0) {
         damage+= (s-f);
-        document.getElementById("total_damage").value = damage;
+        document.getElementById("total_damage").innerText = "Damage: " + damage;
       }
     }//combat check
+    else {
+      document.getElementById("total_damage").innerText ="";
+    }//remove samage if not weapon check
   }//there is a check selected
 };//updateResultTotals
 var multi_roll = function(n) {

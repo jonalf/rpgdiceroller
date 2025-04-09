@@ -63,12 +63,9 @@ hr {
     align-items: start;
 }
 
-item-right {
-    align-items: end;
-}
-
-self-right {
-    align-self: end;
+.self-right {
+    margin-left: auto;
+    margin-right: 5px;
 }
 
 .specializations,
@@ -77,12 +74,12 @@ self-right {
   margin-right: 5px;
 }
 
-skill-line {
-    border: 1px solid black;
+.skill-line {
+    /* border: 1px solid black; */
     display: flex;
     flex-direction: row;
     align-self: stretch;
-    justify-content: space-around;
+    justify-content: start;
 }
 
 #data-url {
