@@ -55,7 +55,8 @@ var char_info = {
   specializations: [],
   force_powers: [],
   xp: 0,
-  credits: 0
+  credits: 0,
+  morality: 50
 };
 
 var DICE_SIZE = 40;
@@ -558,6 +559,8 @@ var load_char_info = function() {
   xp_input.value = char_info['xp'];
   let credit_input = document.getElementById('credits');
   credit_input.value = char_info['credits'];
+  let morality_input = document.getElementById('morality');
+  morality_input.value = char_info['morality'];
 };
 var get_sheet_ref = function(sheet_name, sheet_type) {
   if (sheet_type == 'spec') {
@@ -961,6 +964,7 @@ var get_char_info = function() {
   new_info['force_powers'] = fps;
   new_info['xp'] = document.getElementById('xp').value;
   new_info['credits'] = document.getElementById('credits').value;
+  new_info['morality'] = document.getElementById('morality').value;
   //console.log(new_info);
   return new_info;
 };
