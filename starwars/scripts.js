@@ -54,7 +54,8 @@ var char_info = {
   career: '',
   specializations: [],
   force_powers: [],
-  xp: 0
+  xp: 0,
+  credits: 0
 };
 
 var DICE_SIZE = 40;
@@ -118,7 +119,7 @@ var dice = {
 };
 
 var charateristics = ['brawn', 'agility', 'intellect', 'cunning', 'willpower', 'pressence'];
-// var combat_skills = ['brawl', 'melee', 'lightsaber', 'ranged-light', 'ranged-heavy', 'gunnery'];
+var combat_skills = ['brawl_skill', 'melee_skill', 'lightsaber_skill', 'ranged-light_skill', 'ranged-heavy_skill', 'gunnery_skill'];
 // var knowledge_skills = ['core worlds', 'education', 'lore', 'outer rim', 'underworld', 'xenology'];
 
 var careers = {
@@ -244,7 +245,7 @@ var check_table = {
   'xenology' : 'intellect'
 };
 
-var load_stats = function() {
+var get_career_skills = function() {
   let career_skills = [];
   for (skill in native_skills[char_info['career']]) {
     career_skills.push(native_skills[char_info['career']][skill]);
@@ -257,6 +258,10 @@ var load_stats = function() {
       }//only add new skills
     }//get specialization skill
   }//get specializations
+  return career_skills;
+};
+var load_stats = function() {
+  let career_skills = get_career_skills();
 
   for (stat in char_stats) {
     var e = document.getElementById( stat );
@@ -282,6 +287,7 @@ var add_weapon = function() {
   rad.type = "radio";
   rad.name = "weapon";
   rad.id = weapon_id;
+  rad.addEventListener('click', set_dice);
   weapon_row.appendChild(rad);
 
   //name entry
@@ -350,18 +356,21 @@ var load_weapons = function() {
       rad.type = "radio";
       rad.name = "weapon";
       rad.id = "weapon_" + weapon_keys[i];
+      rad.addEventListener('click', set_dice);
       weapon_row.appendChild(rad);
 
       var weapon_info = Object.keys(weapon);
       for (var j=0; j<weapon_info.length; j++) {
         var weapon_stat = weapon[weapon_info[j]];
 
-        if ( isNaN(weapon_stat) ) {//typeof(weapon_stat) == 'string') {
+        if ( isNaN(weapon_stat) ) {
           var weapon_text = document.createElement("span");
           weapon_text.style.paddingRight = "10px";
           weapon_text.style.paddingTop = "10px";
-          weapon_text.style.fontSize = "1.25em";
+          //weapon_text.style.fontSize = "1.25em";
+          weapon_text.id = weapon_keys[i] + '_' + weapon_info[j]
           weapon_text.innerHTML = weapon_stat;
+          weapon_text.value = weapon_stat;
           weapon_row.appendChild(weapon_text);
         }
         else {
@@ -382,7 +391,7 @@ var load_weapons = function() {
       weapon_table.appendChild(weapon_row);
     }
   }//weapons
-};
+};//load_weapons
 
 
 var setup_skills_div = function() {
@@ -547,6 +556,8 @@ var load_char_info = function() {
 
   let xp_input = document.getElementById('xp');
   xp_input.value = char_info['xp'];
+  let credit_input = document.getElementById('credits');
+  credit_input.value = char_info['credits'];
 };
 var get_sheet_ref = function(sheet_name, sheet_type) {
   if (sheet_type == 'spec') {
@@ -585,93 +596,31 @@ var get_check = function( e ) {
 
 var set_dice = function( skill ) {
   var chara = check_table[skill];
-  var num_skill = document.getElementById(skill).value;
-  var num_char = document.getElementById(chara).value;
-  var num_dice = Math.max(num_skill, num_char);
-  var num_yellow = Math.min(num_skill, num_char);
-  document.getElementById('numgreen').value = (num_dice - num_yellow);
-  document.getElementById('numyellow').value = num_yellow;
+  if (document.getElementById(skill)) {
+    var num_skill = document.getElementById(skill).value;
+    var num_char = document.getElementById(chara).value;
+    var num_dice = Math.max(num_skill, num_char);
+    var num_yellow = Math.min(num_skill, num_char);
+    document.getElementById('numgreen').value = (num_dice - num_yellow);
+    document.getElementById('numyellow').value = num_yellow;
 
-  updatePool();
+    //add boost dice for accurate
+    if ( combat_skills.indexOf(skill) != -1) {
+      //check for a weapon
+      if (document.querySelector('input[name="weapon"]:checked')) {
+        let weapon_name = document.querySelector('input[name="weapon"]:checked').id;
+        weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
+        let accurate = parseInt(document.getElementById(weapon_name + '_accurate').value);
+        var b = document.getElementById('numboost').value = accurate;
+      }//found weapon
+    }//combat check
+    updatePool();
+  }
 };
 
 /*===========================
   DICE FUNCTIONS
   ===========================*/
-var rollDiceOld = function() {
-  updatePool();
-  posResults = [0,0, 0, 0];
-  negResults = [0, 0, 0];
-
-  var posDiceTypes = {'green': [greenDie, "#00FF00"], 'yellow' : [yellowDie, '#FFFF00'], 'boost': [boostDie, '#80dfff'], 'force': [forceDie, '#FFFFFF']};
-  //var posResultDisplay = document.getElementById('posresultc');
-  var posResultDisplay = document.getElementById('pospool');
-  var ctx = posResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-  var startx = 0;
-  var keys = Object.keys(posDiceTypes);
-  for (var i=0; i<keys.length; i++) {
-
-    var dtype = keys[i];
-    var die = posDiceTypes[dtype][0];
-    for (var j=0; j<posDicePool[dtype]; j++) {
-      var result = die[Math.floor(Math.random() * die.length)];
-
-      ctx.fillStyle = posDiceTypes[dtype][1];
-      ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-      if (result.length == 1) {
-        posResults[result]+= 1;
-        ctx.drawImage(posImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-      }
-      else if (result.length == 2) {
-
-        posResults[result[0]]+= 1;
-        posResults[result[1]]+= 1;
-
-        ctx.drawImage(posImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-        ctx.drawImage(posImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-      }
-      startx+= DICE_SIZE + OFFSET;
-    }
-  }
-
-  var negDiceTypes = {'purple': [purpleDie, "#5c00e6"], 'red' : [redDie, '#FF0000'], 'setback': [setbackDie, '#000000']};
-  //var negResultDisplay = document.getElementById('negresultc');
-  var negResultDisplay = document.getElementById('negpool');
-  ctx = negResultDisplay.getContext('2d');
-
-  ctx.clearRect(0, 0, DICE_DISPLAY_WIDTH, DICE_SIZE);
-  startx = 0;
-  keys = Object.keys(negDiceTypes);
-  for (var i=0; i<keys.length; i++) {
-
-    var dtype = keys[i];
-    var die = negDiceTypes[dtype][0];
-
-    for (var j=0; j<negDicePool[dtype]; j++) {
-      result = die[Math.floor(Math.random() * die.length)];
-      ctx.fillStyle = negDiceTypes[dtype][1];
-      ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-
-      if (result.length == 1) {
-        negResults[result]+= 1;
-        ctx.drawImage(negImages[result], startx, 0, DICE_SIZE, DICE_SIZE);
-      }
-      else if (result.length == 2) {
-        negResults[result[0]]+= 1;
-        negResults[result[1]]+= 1;
-        ctx.drawImage(negImages[result[0]], startx, 0, DICE_SIZE/2, DICE_SIZE/2);
-        ctx.drawImage(negImages[result[1]], startx + (DICE_SIZE)/2, DICE_SIZE/2, DICE_SIZE/2, DICE_SIZE/2);
-      }
-      if (dtype == 'setback' || dtype == "purple")
-      ctx.fillStyle = "#FFFFFF";
-
-      startx+= DICE_SIZE + OFFSET;
-    }
-  }
-  updateResultTotals();
-};
 var rollDice = function() {
   updatePool();
   posResults = [0,0, 0, 0];
@@ -799,6 +748,13 @@ var updateResultTotals = function() {
         weapon_name = weapon_name.slice(weapon_name.search('_') + 1);
         //console.log(weapon_name);
         damage = parseInt(document.getElementById(weapon_name + '_damage').value);
+
+        //add brawn to damage for melee/brawl
+        if (check_type == 'melee_skill_check' ||
+            check_type == 'brawl_skill_check' ) {
+            let brawn = parseInt(document.getElementById('brawn').value);
+            damage+= brawn;
+            }//+brawn
       }
 
       //console.log(weapon_name);
@@ -948,28 +904,32 @@ var get_weapons = function() {
   var new_weapons = {};
   for (var w=0; w < weapon_table.childElementCount; w++) {
     var weapon_row = weapon_table.childNodes[w];
-
+    //console.log(weapon_row);
     //get weapon identifier from first entry
     var weapon_id = weapon_row.childNodes[0].id;
     var weapon = {}
     for (var i=1; i<weapon_row.childElementCount; i++) {
       var weapon_data = weapon_row.childNodes[i];
-      //console.log(weapon_data);
-
-      if (weapon_data.childElementCount == 0) {
-        var stat_id = weapon_data.id.split('_')[1];
+      console.log(weapon_data);
+      var stat_id = weapon_data.id.split('_')[1];
+      if (stat_id == 'name') {
+        weapon['name'] = weapon_data.value;
+      }
+      else if (weapon_data.nodeName == 'SELECT') {
         weapon[stat_id] = weapon_data.value;
       }
+      else if (weapon_data.nodeName == 'SPAN') {
+        console.log(stat_id);
+        weapon[stat_id] = weapon_data.innerText;
+      }
       else {
+        //console.log(weapon_data.nodeName);
         //console.log(weapon_data.childNodes[1]);
         weapon_data = weapon_data.childNodes[1];
         var stat_id = weapon_data.id.split('_')[1];
         weapon[stat_id] = weapon_data.value;
       }
-      //console.log(weapon);
-      //weapon[stat_id] = weapon_data.value;
     }//individual cell
-    //console.log(weapon);
     new_weapons[weapon_id] = weapon;
   }//each row
   return new_weapons;
@@ -1000,6 +960,7 @@ var get_char_info = function() {
   }
   new_info['force_powers'] = fps;
   new_info['xp'] = document.getElementById('xp').value;
+  new_info['credits'] = document.getElementById('credits').value;
   //console.log(new_info);
   return new_info;
 };

@@ -20,6 +20,19 @@
       <h2>Star Wars Dice</h2>
       <hr class="innerbreak">
 
+      <!-- SET DICE AMOUNTS -->
+      <div class="container" width="50%">
+        <label for="numgreen">Green:</label><input type="number" style="width: 40px;" min="0" id="numgreen">
+        <label for="numyellow">Yellow:</label><input type="number" style="width: 40px;" min="0" id="numyellow">
+        <label for="numboost">Boost:</label><input type="number" style="width: 40px;" min="0" id="numboost">
+        <label for="numforce">Force:</label><input type="number" style="width: 40px;" min="0" id="numforce">
+      </div>
+      <div class="container" width="50%">
+        <label for="numpurple">Purple:</label><input type="number" style="width: 40px;" min="0" id="numpurple">
+        <label for="numred">Red:</label><input type="number" style="width: 40px;" min="0" id="numred">
+        <label for="numsetback">Setback:</label><input type="number" style="width: 40px;" min="0" id="numsetback">
+      </div>
+
       <!-- DICE DISPLAY -->
       <div class="container">
         <div class="dicepool container" id="pospool0"></div>
@@ -54,18 +67,7 @@
       <!-- </div>
       <div class="container"> -->
 
-      <!-- SET DICE AMOUNTS -->
-      <div class="container">
-        <label for="numgreen">Green:</label><input type="number" style="width: 40px;" min="0" id="numgreen">
-        <label for="numyellow">Yellow:</label><input type="number" style="width: 40px;" min="0" id="numyellow">
-        <label for="numboost">Boost:</label><input type="number" style="width: 40px;" min="0" id="numboost">
-        <label for="numforce">Force:</label><input type="number" style="width: 40px;" min="0" id="numforce">
-      </div>
-      <div class="container">
-        <label for="numpurple">Purple:</label><input type="number" style="width: 40px;" min="0" id="numpurple">
-        <label for="numred">Red:</label><input type="number" style="width: 40px;" min="0" id="numred">
-        <label for="numsetback">Setback:</label><input type="number" style="width: 40px;" min="0" id="numsetback">
-      </div>
+
 
       <hr>
       <!-- CHARACTER INFO -->
@@ -75,6 +77,7 @@
         <span>
           Career: <span id="career_container"></span>
           xp: <input id="xp" type="number" style="width: 40px">
+          credits: <input id="credits" type="number" style="width: 60px">
         </span>
         <hr class="innerbreak">
         <span>Specializations:</span><span id="spec_container"></span><button onclick="setup_spec_info()">+</button>
