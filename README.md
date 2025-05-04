@@ -1,7 +1,7 @@
 ## Star Wars FFG Dice Roller Instructions:
 ### [Dice Roller](starwars/)
 #### Dice Rolling Only:
-- Enter the appropriate number of dice for each type, hit roll.
+- Enter the appropriate number of dice for each type, hit roll, get results.
 
 #### Using/Saving Character Info
 - Enter character information is the appropriate spot.
