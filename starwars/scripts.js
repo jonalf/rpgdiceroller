@@ -821,6 +821,11 @@ var updatePool = function() {
   var r = document.getElementById('numred').value;
   var b = document.getElementById('numboost').value;
   var s = document.getElementById('numsetback').value;
+
+  if (document.getElementById('force-roll').checked) {
+    var fr = document.getElementById('force-rating').value;
+    document.getElementById('numforce').value = fr;
+  }
   var f = document.getElementById('numforce').value;
 
   posDicePool['green'] = g;
@@ -900,6 +905,7 @@ document.getElementById('numpurple').addEventListener('change', updatePool);
 document.getElementById('numred').addEventListener('change', updatePool);
 document.getElementById('numsetback').addEventListener('change', updatePool);
 document.getElementById('numforce').addEventListener('change', updatePool);
+document.getElementById('force-roll').addEventListener('change', updatePool);
 document.getElementById("roll").addEventListener('click', rollDice);
 
 //Data saving
