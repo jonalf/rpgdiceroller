@@ -323,7 +323,7 @@ var add_weapon = function() {
   weapon_row.appendChild(range_selector);
 
   //number stat entries:
-  var num_stats = ['damage', 'crit', 'accurate', `pierce`, `breach`, `linked`, `sunder`, 'burn', `blast`, `unweildy`, `hp`];
+  var num_stats = ['damage', 'crit', 'viscious', 'accurate', `pierce`, `breach`, `linked`, `sunder`, 'burn', `blast`, `unweildy`, `hp`];
   for (var i=0; i<num_stats.length; i++) {
     var stat_div = document.createElement("div");
     stat_div.classList.add("vertical");
