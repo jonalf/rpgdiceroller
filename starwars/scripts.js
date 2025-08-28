@@ -13,6 +13,7 @@ var char_stats = {
   'cunning' :0,
   'willpower' :0,
   'pressence' :0,
+  'force-rating' :0,
   'astrogation' : 0,
   'athletics' : 0,
   'charm' : 0,
