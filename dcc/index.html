@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DCC Char Sheet</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>DCC Char Sheet</h1>
+
+    <div class="container">
+      <div class="containter" id="dicepool">
+      </div>
+    </div> <!--dicepool area -->
+
+    <!-- char info -->
+    <div class="container">
+      <input id="char_name" placeholder="Character Name"></input>
+      <input id="char_race" placeholder="Race"></input>
+      <input id="char_class" placeholder="Class"></input>
+    </div>
+    <div class="containter">
+      <label for="char_level">Level: </label>
+      <input id="char_level" placeholder="lvl"></input>
+      <label for="char_crawler_number">Crawler: </label>
+      <input id="char_crawler_number" placeholder="Crawler Number"></input>
+      <label for="char_floor">Floor: </label>
+      <input id="char_floor" placeholder="Floor"></input>
+    </div>
+
+    <div class="container" id="health">
+    </div>
+
+    <div class="container" id="stats">
+    </div>
+  </div>
+
+<!--
+  <div class="container">
+    <h1>Old ORB SHEETt</h1>
+
+    <div class="container">
+      <hr class="innerbreak">
+      <hr class="innerbreak">
+
+      <div class="container">
+        <div class="containter" id="dicepool">
+        </div>
+
+        <hr class="innerbreak">
+        <button id="roll" style="width: 100px; height: 25px">Roll</button>
+        <button id="passionroll" style="width: 100px; height: 25px">With Passion!</button>
+      </div>
+
+        <hr class="innerbreak">
+
+        <div class="container">
+          <div>Brills: <strong id="brills"></strong></div>
+
+          <div style="margin-left: 5px;">Glooms: <strong id="glooms"></strong></div>
+        </div>
+
+        <hr>
+        <div class="container box-holder">
+          <span class="box-label">Vitality<span id="vitality"></span></span>
+          <span class="box-label">Distress<span id="distress"></span></span>
+          <span class="box-label">Passion<span id="passion"></span></span>
+        </div>
+        <hr>
+
+        <div class="container">
+
+          <div class="type-label">Personality</div>
+
+          <div class="vertical item-center">
+            Audacity
+            <input type="number" style="width: 50px;" min="0" id="audacity">
+            <input type="radio" name="personality" value="audacity_button">
+          </div>
+          <div class="vertical item-center">
+            Benevolence
+            <input type="number" style="width: 50px;" min="0" id="benevolence">
+            <input type="radio" name="personality" value="benevolence_button">
+          </div>
+          <div class="vertical item-center">
+            Cunning
+            <input type="number" style="width: 50px;" min="0" id="cunning">
+            <input type="radio" name="personality" value="cunning_button">
+          </div>
+          <div class="vertical item-center">
+            Decorum
+            <input type="number" style="width: 50px;" min="0" id="decorum">
+            <input type="radio" name="personality" value="decorum_button">
+          </div>
+          <div class="vertical item-center">
+            Defiance
+            <input type="number" style="width: 50px;" min="0" id="defiance">
+            <input type="radio" name="personality" value="defiance_button">
+          </div>
+          <div class="vertical item-center">
+            Loyalty
+            <input type="number" style="width: 50px;" min="0" id="loyalty">
+            <input type="radio" name="personality" value="loyalty_button">
+          </div>
+          <div class="vertical item-center">
+            Ingenuity
+            <input type="number" style="width: 50px;" min="0" id="ingenuity">
+            <input type="radio" name="personality" value="ingenuity_button">
+          </div>
+          <div class="vertical item-center">
+            Obsession
+            <input type="number" style="width: 50px;" min="0" id="obsession">
+            <input type="radio" name="personality" value="obsession_button">
+          </div>
+          <div class="vertical item-center">
+            Sensitivity
+            <input type="number" style="width: 50px;" min="0" id="sensitivity">
+            <input type="radio" name="personality" value="sensitivity_button">
+          </div>
+        </div>
+
+
+        <hr>
+
+        <div class="container">
+          <div class="type-label">Skill</div>
+
+          <div class="vertical item-center">
+            Craft
+            <input type="number" style="width: 50px;" min="0" id="craft">
+            <input type="radio" name="skill" value="craft_button">
+          </div>
+          <div class="vertical item-center">
+            Express
+            <input type="number" style="width: 50px;" min="0" id="express">
+            <input type="radio" name="skill" value="express_button">
+          </div>
+          <div class="vertical item-center">
+            Fight
+            <input type="number" style="width: 50px;" min="0" id="fight">
+            <input type="radio" name="skill" value="fight_button">
+          </div>
+          <div class="vertical item-center">
+            Foster
+            <input type="number" style="width: 50px;" min="0" id="foster">
+            <input type="radio" name="skill" value="foster_button">
+          </div>
+          <div class="vertical item-center">
+            Intrigue
+            <input type="number" style="width: 50px;" min="0" id="intrigue">
+            <input type="radio" name="skill" value="intrigue_button">
+          </div>
+          <div class="vertical item-center">
+            Intuit
+            <input type="number" style="width: 50px;" min="0" id="intuit">
+            <input type="radio" name="skill" value="intuit_button">
+          </div>
+          <div class="vertical item-center">
+            Observe
+            <input type="number" style="width: 50px;" min="0" id="observe">
+            <input type="radio" name="skill" value="observe_button">
+          </div>
+          <div class="vertical item-center">
+            Physicality
+            <input type="number" style="width: 50px;" min="0" id="physicality">
+            <input type="radio" name="skill" value="physicality_button">
+          </div>
+          <div class="vertical item-center">
+            Transgress
+            <input type="number" style="width: 50px;" min="0" id="transgress">
+            <input type="radio" name="skill" value="transgress_button">
+          </div>
+        </div>
+        <hr>
+
+        <div class="container box-holder">
+          <div class="type-label">Portfolio</div>
+
+          <div class="vertical item-center">
+            <span class="box-label">Access</span>
+            <div id="access"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Information</span>
+            <div id="information"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Entourage</span>
+            <div id="entourage"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Mentor</span>
+            <div id="mentor"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Reputation</span>
+            <div id="reputation"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Title</span>
+            <div id="title"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Gear</span>
+            <div id="gear"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Wardrobe</span>
+            <div id="wardrobe"></div>
+          </div>
+          <div class="vertical item-center">
+            <span class="box-label">Wealth</span>
+            <div id="wealth"></div>
+          </div>
+        </div>
+
+        <hr>
+
+  <button onclick="load_milton()">Load Milton</button>
+  <button onclick="make_data_url()">Save Stats</button>
+  <hr class="innerbreak">
+  <div class="container"><textarea id="data-url"></textarea></div>
+  </div>
+
+  <div class="container">
+    <h3>Level Up Area</h3>
+    <div class="container">
+      <button onclick="add_stat('vitality')">+ vitality</button>
+      <button onclick="add_stat('distress')">+ distress</button>
+      <button onclick="remove_passion()">- passion</button>
+    </div>
+    <div class="container">
+      <button onclick="add_portfolio('access')">+ access</button>
+      <button onclick="add_portfolio('information')">+ information</button>
+      <button onclick="add_portfolio('entourage')">+ entourage</button>
+      <button onclick="add_portfolio('mentor')">+ mentor</button>
+      <button onclick="add_portfolio('reputation')">+ reputation</button>
+      <button onclick="add_portfolio('title')">+ title</button>
+      <button onclick="add_portfolio('gear')">+ gear</button>
+      <button onclick="add_portfolio('wardrobe')">+ wardrobe</button>
+      <button onclick="add_portfolio('wealth')">+ wealth</button>
+    </div>
+  </div>
+
+</div>
+
+--->
+
+  <script src="scripts.js"></script>
+  <script>document.load = setup()</script>
+</body>
+</html>
