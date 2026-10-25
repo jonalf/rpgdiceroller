@@ -32,15 +32,16 @@ let char_stats = {
   'mana' : 0,
   'evade' : 0,
   'dr' : 0,
+  'health': 0,
 
   'info' : {
-    'name' : 'Mike Waters',
-    'race' : 'Human',
-    'crawler_number' : 13162193,
-    'level' : 9,
+    'name' : 'n/a',
+    'race' : 'n/a',
+    'crawler_number' : -1,
+    'level' : 1,
     'class' : 'n/a',
     'floor' : 1,
-    'gold' : 36
+    'gold' : 0
   },
 
   'inventory' : {
@@ -109,10 +110,11 @@ const STAT_NAMES = ["strength", "intelligence", "constitution", "dexterity", "ch
 const STAT_BREAKPOINTS = [3, 6, 10, 20, 50, 100, 150, 200, 300];
 
 const setup = function() {
-  stats = compute_stats(mike_stats);
-  populate_info(stats['info']);
-  make_health_bar(stats['health']);
-  make_stats(stats);
+  char_stats = compute_stats(mike_stats);
+
+  populate_info(char_stats['info']);
+  make_health_bar(char_stats['health']);
+  make_stats(char_stats);
 };
 
 const compute_stats = function(stats) {
@@ -158,11 +160,37 @@ const populate_info = function(info) {
 
 const make_stats =  function(stats) {
   let stat_row = document.getElementById("stats");
+  stat_row.innerHTML = "";
 
   for (let stat of STAT_NAMES) {
     stat_row.appendChild(make_stat_box(stats, stat));
   }
 };//make_stats
+
+const update_stats = function() {
+
+  //colect base modifiers
+  let new_base = collect_base_stats();
+  console.log(new_base);
+  for (let i of Object.keys(new_base)) {
+    char_stats[i+"_base"] = new_base[i];
+  }
+
+  char_stats = compute_stats(char_stats);
+  make_health_bar(char_stats['health']);
+  make_stats(char_stats);
+};
+
+const collect_base_stats = function() {
+  stats = {};
+  for (let stat of STAT_NAMES) {
+    //console.log(stat);
+    let stat_value = document.getElementById(stat+"_base");
+    stat_value = parseInt(stat_value.value);
+    stats[stat] = stat_value;
+  }
+  return stats;
+};//collect_base_stats
 
 const make_stat_box = function(stats, stat_name) {
   let base = stats[stat_name + "_base"];
@@ -171,12 +199,19 @@ const make_stat_box = function(stats, stat_name) {
 
   let stat_box = document.createElement("div");
   stat_box.classList.add("vertical");
-  stat_box.innerHTML = "<p>"+stat_name+"</p>";
+  stat_box.classList.add("stat-box");
+  stat_box.innerHTML = "<span>"+stat_name+"</span>";
 
-  let stat_values = document.createElement("p");
-  stat_values.innerText = stat + "/" + base;
+  let stat_values = document.createElement("span");
+  stat_values.innerText = stat + "/";
+  let stat_base = document.createElement("input");
+  stat_base.classList.add("invisible-textbox");
+  stat_base.id = stat_name + "_base";
+  stat_base.value = base;
+  stat_base.addEventListener('change', update_stats);
+  stat_values.appendChild(stat_base);
 
-  let stat_mod = document.createElement("p");
+  let stat_mod = document.createElement("span");
   stat_mod.innerText = "+" + mod;
 
   stat_box.appendChild(stat_values);
@@ -187,6 +222,7 @@ const make_stat_box = function(stats, stat_name) {
 const make_health_bar = function(health) {
 
   let health_bar = document.getElementById("health");
+  health_bar.innerHTML = "";
   let health_section = health/10;
   for (let i=0; i<10; i++) {
     let health_box = make_health_box(health_section, i);

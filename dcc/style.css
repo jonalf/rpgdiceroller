@@ -30,6 +30,10 @@ input {
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
+.stat-box {
+  margin: 5px;
+}
+
 .health-box {
   border: 1px solid black;
 }
