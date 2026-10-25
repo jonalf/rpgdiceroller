@@ -48,7 +48,14 @@ let char_stats = {
     'weapons' : [],
     'armor' : [],
     'items' : []
-  }
+  },
+
+  'skills' : {
+    'attack': [],
+    'defense': [],
+    'other': []
+  },
+  'notes' : ""
 };
 
 
@@ -100,13 +107,55 @@ let mike_stats = {
   },
 
   'inventory' : {
-    'weapons' : [],
+    'weapons' : [
+      { 'name': 'cutlas',
+        'skill': 'longsword',
+        'quantity': 1}
+      ],
     'armor' : [],
     'items' : []
-  }
+  },
+
+  'skills' : {
+    'attack': [
+      {'name' : 'longsword',
+       'rank' : 5,
+       'stat': 'strength',
+       'marked': false,
+       'damage' : '2d8',
+       'grind_bank': 1,
+       'notes' : ''},
+     {'name' : 'improvised weapons',
+      'rank' : 3,
+      'stat': 'strength',
+      'marked': false,
+      'damage' : '1d4',
+      'grind_bank': 1,
+      'notes' : ''},
+   ],
+    'defense': [
+      {'name' : 'evade',
+       'rank' : '',
+       'stat': 'dexterity',
+       'marked': '',
+       'damage' : '',
+       'grind_bank': '',
+       'notes' : ''},
+     {'name' : 'shield block',
+      'rank' : 3,
+      'stat': 'strength',
+      'marked': false,
+      'damage' : '',
+      'grind_bank': 0,
+      'notes' : ''},
+    ],
+    'other': []
+  },
+  'notes' : ""
 };
 
 const STAT_NAMES = ["strength", "intelligence", "constitution", "dexterity", "charisma"];
+const SKILL_HEADERS = ['name', 'rank', 'stat', 'mod', 'damage', 'notes', 'grind_bank', 'marked'];
 const STAT_BREAKPOINTS = [3, 6, 10, 20, 50, 100, 150, 200, 300];
 
 const setup = function() {
@@ -115,6 +164,16 @@ const setup = function() {
   populate_info(char_stats['info']);
   make_health_bar(char_stats['health']);
   make_stats(char_stats);
+
+  populate_skills('attack', char_stats['skills']['attack']);
+  populate_skills('defense', char_stats['skills']['defense']);
+
+  //add listeners
+  let attack_table = document.getElementById("attack_skill_body");
+  attack_table.addEventListener('command',  make_blank_skill_row);
+  let defense_table = document.getElementById("defense_skill_body");
+  defense_table.addEventListener('command',  make_blank_skill_row);
+  //let attack_table = document.getElementById("")
 };
 
 const compute_stats = function(stats) {
@@ -253,6 +312,63 @@ const make_health_box = function(conmod, i) {
 };//make_health_box
 
 
+const populate_skills = function(type, skills) {
+  var skill_table = document.getElementById(type+'_skill_body');
+  for (let skill of skills) {
+    skill_table.appendChild( make_skill_row(skill) );
+  }
+};
+
+const make_skill_row = function(skill) {
+  let row = document.createElement("tr");
+
+  let mod = '';
+  if (skill['stat']) {
+    mod = char_stats[skill['stat']+"_mod"];
+  }
+
+  for (let header of SKILL_HEADERS) {
+    let cell = document.createElement('td');
+
+    if (header == 'name') {
+      cell = document.createElement('th');
+      cell.scope = "row";
+    }
+    let cell_data = document.createElement("input");
+    cell_data.classList.add("invisible-textbox");
+
+    if (header == 'mod') { cell_data.value = mod; }
+    else { cell_data.value = skill[header]; }
+
+    cell.appendChild(cell_data);
+    row.appendChild(cell);
+  }//loop over headers
+
+  return row;
+};
+
+const make_blank_skill_row = function(e) {
+  let row = document.createElement("tr");
+
+  for (let header of SKILL_HEADERS) {
+    let cell = document.createElement('td');
+
+    if (header == 'name') {
+      cell = document.createElement('th');
+      cell.scope = "row";
+    }
+    let cell_data = document.createElement("input");
+    cell_data.classList.add("invisible-textbox");
+
+    // if (header == 'mod') { cell_data.value = mod; }
+    // else { cell_data.value = skill[header]; }
+
+    cell.appendChild(cell_data);
+    row.appendChild(cell);
+  }//loop over headers
+
+  e.target.appendChild(row);
+};
 
 
 

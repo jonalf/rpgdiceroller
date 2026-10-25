@@ -43,6 +43,56 @@
     <div class="container" id="stats">
     </div>
 
+    <hr class="innerbreak">
+    <div class="container" id="attack_skills">
+      <h3>Attack Skills</h3>
+      <hr class="innerbreak">
+
+      <table id="attack">
+        <thead>
+          <tr>
+            <th scope="row">Name</th>
+            <th scope="row">Rank</th>
+            <th scope="row">Stat</th>
+            <th scope="row">Mod</th>
+            <th scope="row">Damage</th>
+            <th scope="row">Notes</th>
+            <th scope="row">Grind</th>
+            <th scope="row">Marked</th>
+          </tr>
+        </thead>
+        <tbody id="attack_skill_body">
+        </tbody>
+      </table>
+      <hr class="innerbreak">
+      <button commandfor="attack_skill_body" command="--add-skill">+ Attack Skill</button>
+    </div>
+
+    <hr class="innerbreak">
+    <div class="container" id="defense_skills">
+      <h3>Defense Skills</h3>
+      <hr class="innerbreak">
+
+      <table id="defense">
+        <thead>
+          <tr>
+            <th scope="row">Name</th>
+            <th scope="row">Rank</th>
+            <th scope="row">Stat</th>
+            <th scope="row">Mod</th>
+            <th scope="row">Damage</th>
+            <th scope="row">Notes</th>
+            <th scope="row">Grind</th>
+            <th scope="row">Marked</th>
+          </tr>
+        </thead>
+        <tbody id="defense_skill_body">
+        </tbody>
+      </table>
+      <hr class="innerbreak">
+      <button commandfor="defense_skill_body" command="--add-skill">+ Defense Skill</button>
+    </div>
+
     <hr>
     <button onclick="load_make()">Load Mike</button>
     <button onclick="make_data_url()">Save Stats</button>
