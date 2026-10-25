@@ -3,10 +3,6 @@
 <head>
   <title>DCC Char Sheet</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,24 +17,37 @@
 
     <!-- char info -->
     <div class="container">
-      <input id="char_name" placeholder="Character Name"></input>
-      <input id="char_race" placeholder="Race"></input>
-      <input id="char_class" placeholder="Class"></input>
+      <label for="char_name">Name: </label>
+      <input id="char_name" placeholder="Character Name" class="invisible-textbox"></input>
+      <label for="char_race">Race: </label>
+      <input id="char_race" placeholder="Race" class="invisible-textbox"></input>
+      <label for="char_class">Class: </label>
+      <input id="char_class" placeholder="Class" class="invisible-textbox"></input>
     </div>
+    
+    <br>
     <div class="containter">
       <label for="char_level">Level: </label>
-      <input id="char_level" placeholder="lvl"></input>
+      <input id="char_level" placeholder="lvl" class="invisible-textbox"></input>
       <label for="char_crawler_number">Crawler: </label>
-      <input id="char_crawler_number" placeholder="Crawler Number"></input>
+      <input id="char_crawler_number" placeholder="Crawler Number" class="invisible-textbox"></input>
       <label for="char_floor">Floor: </label>
-      <input id="char_floor" placeholder="Floor"></input>
+      <input id="char_floor" placeholder="Floor" class="invisible-textbox"></input>
     </div>
 
+    <br>
     <div class="container" id="health">
     </div>
 
     <div class="container" id="stats">
     </div>
+
+    <hr>
+    <button onclick="load_make()">Load Mike</button>
+    <button onclick="make_data_url()">Save Stats</button>
+    <hr class="innerbreak">
+    <div class="container"><textarea id="data-url"></textarea></div>
+
   </div>
 
 <!--

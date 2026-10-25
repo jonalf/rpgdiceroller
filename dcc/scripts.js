@@ -195,18 +195,89 @@ const make_health_bar = function(health) {
 };//make_health_bar
 
 const make_health_box = function(conmod, i) {
+
+  let health_container = document.createElement("div");
+  health_container.classList.add("vertical");
+  health_container.classList.add("health-box");
+
   let health_box = document.createElement("span");
   let health_check = document.createElement("input");
+  health_check.classList.add("health-check");
   health_check.type = "checkbox";
   health_check.id = "health_" + i;
   let health_label = document.createElement("label");
   health_label.htmlFor = health_check.id;
   health_label.innerText = conmod;
-
   health_box.appendChild(health_label);
   health_box.appendChild(health_check);
-  return health_box;
+
+  health_container.appendChild(health_box);
+  health_container.innerHTML+= '<span style="font-size: 0.70em;">' + ((i+1) * 10) + "%</span>";
+  return health_container;
 };//make_health_box
+
+
+
+
+
+/* saving/encding/loading function */
+
+var get_stats = function() {
+  var personskills = {};
+  for (const ps of personality) {
+    var psval = parseInt(document.getElementById(ps).value)
+    personskills[ps] = psval;
+  }
+  for (const ps of skills) {
+    var psval = parseInt(document.getElementById(ps).value)
+    personskills[ps] = psval;
+  }
+  var vitality = {};
+  vitality['total'] = document.getElementsByClassName('vitality-box').length;
+  vitality['marked'] = document.getElementsByClassName('vitality-box marked').length;
+
+  var distress = {};
+  distress['total'] = document.getElementsByClassName('distress-box').length;
+  distress['marked'] = document.getElementsByClassName('distress-box marked').length;
+
+  var passion = {};
+  passion['total'] = document.getElementsByClassName('passion-box').length;
+  passion['marked'] = document.getElementsByClassName('passion-box marked').length;
+
+  var portfolio = {}
+  for (const ps of Object.keys(char_stats['portfolio'])) {
+    portfolio[ps] = {};
+    portfolio[ps]['total'] = document.getElementsByClassName(ps+"-box").length;
+    portfolio[ps]['marked'] = document.getElementsByClassName(ps+"-box marked").length;
+  }
+  console.log(portfolio);
+
+  var new_stats = {'personskills' : personskills,
+                   'vitality' : vitality,
+                   'distress' : distress,
+                   'passion' : passion,
+                   'portfolio' : portfolio};
+
+  return new_stats;
+};
+
+var encode_stats = function() {
+  var new_stats = get_stats();
+  var encode_string = btoa(JSON.stringify(new_stats));
+  return encode_string;
+};
+
+var set_stats = function() {
+  var stat_string = window.location.hash.substr(1);
+  char_stats =  JSON.parse(atob(stat_string));
+};
+
+var make_data_url = function() {
+  //return "data:text/plain;base64," + encode_stats();
+  window.location.hash = encode_stats();
+  document.getElementById('data-url').innerText = window.location;
+};
+
 
 /*
 var load_stats = function() {
