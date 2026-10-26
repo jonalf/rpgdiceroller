@@ -461,6 +461,28 @@ const toggle_disadvantage = function(e) {
   updateDiceDisplay('check');
 };
 
+const add_die = function(type) {
+  let pool = check_dicepool
+  if (type == 'damage') {
+    pool = damage_dicepool;
+  }
+  let die = document.getElementById(type+"_add_die").value;
+  pool.push(parseInt(die));
+  updateDiceDisplay(type);
+};
+const remove_die = function(type) {
+  let pool = check_dicepool
+  if (type == 'damage') {
+    pool = damage_dicepool;
+  }
+  let die = document.getElementById(type+"_add_die").value;
+  let diespot = pool.indexOf(parseInt(die));
+  if (diespot != -1) {
+    pool.splice(diespot, 1);
+  }
+  updateDiceDisplay(type);
+};
+
 /* saving/encding/loading function */
 
 var get_stats = function() {
@@ -591,17 +613,18 @@ var roll_animation = function(die, sides, result) {
 
 var roll_dice = function(e) {
   //updateDiceDisplay();
+  let type = 'check';
   let pool = check_dicepool;
   // console.log(pool);
   // console.log(e.target.id);
   if (e.target.id == 'damage_dicepool') {
     pool = damage_dicepool;
+    type = 'damage';
   }
 
   results = [];
   //console.log(pool);
   for (let j=0; j<pool.length; j++) {
-    //console.log(pool[j]);
     results.push(Math.floor(Math.random()*pool[j])+1);
   }
   //console.log(results);
@@ -610,19 +633,48 @@ var roll_dice = function(e) {
   let dicePoolDisplay = e.target;
   dicePoolDisplay.innerHTML = "";
   for (let i=0; i<pool.length; i++) {
-    let die = document.createElement('span'); //new
+    let die = document.createElement('span');
     die.classList.add('die');//new
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
-    //die.innerText = results[i];
-    dicePoolDisplay.appendChild(die);//new
+    dicePoolDisplay.appendChild(die);
     roll_animation(die, pool[i], results[i]);
-    //die.innerText = results[i];
+    //die.innerText = results[i]; //roll_animation will set final value
   }
 
-  let result_display = document.getElementById("check_result");
+  let result = calculate_result(results, type);
+  let result_display = document.getElementById(type+"_result");
   result_display.innerText = 'roll: ';
-  result_display.innerText+= results[0];
+  result_display.innerText+= result;
 };//roll_dice
+
+const calculate_result = function(results, type) {
+  let total = 0;
+  let pool = check_dicepool;
+  if (type == 'damage') {
+    pool = damage_dicepool;
+  }
+  let d20pool = [];
+  for (let i=0; i<results.length; i++) {
+    if (type == 'check' && pool[i] == 20) {
+      d20pool.push(results[i]);
+    }
+    else {
+      total+= results[i];
+    }
+  }//loop over results
+  if (type == 'check') {
+    if (d20pool.length == 1) {
+      total+= d20pool[0];
+    }
+    else if (document.getElementById('advantage').checked) {
+      total+= Math.max(...d20pool);
+    }
+    else {
+      total+= Math.min(...d20pool);
+    }
+  }//check modifiers
+  return total;
+};//calculate_result
 
 /*
 var load_stats = function() {

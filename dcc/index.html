@@ -10,11 +10,24 @@
   <div class="container">
     <h1>DCC Char Sheet</h1>
 
+     <!--dicepool area -->
     <div class="container">
       <div class="containter" id="check_dicepool">
       </div>
       <hr class="innerbreak">
       <div class="container" id="roll_controls">
+        <select name="check_add_die" id="check_add_die">
+          <option value="2">d2</option>
+          <option value="4">d4</option>
+          <option value="6">d6</option>
+          <option value="8">d8</option>
+          <option value="10">d10</option>
+          <option value="12">d12</option>
+          <option value="20">d20</option>
+          <option value="100">d100</option>
+        </select>
+        <button onclick="add_die('check')">+ Die</button>
+        <button onclick="remove_die('check')">- Die</button>
         <label for="advantage">Advantage:</label>
         <input type="checkbox" name="advantage" id="advantage">
         <label for="disadvantage">Disadvantage:</label>
@@ -27,9 +40,25 @@
       <div class="containter" id="damage_dicepool">
       </div>
       <hr class="innerbreak">
-      <button commandfor="damage_dicepool" command="--roll_dice">Roll Damage</button>
+
+      <div class="containter" id="damage_roll_controls">
+        <select name="damage_add_die" id="damage_add_die">
+          <option value="2">d2</option>
+          <option value="4">d4</option>
+          <option value="6">d6</option>
+          <option value="8">d8</option>
+          <option value="10">d10</option>
+          <option value="12">d12</option>
+          <option value="20">d20</option>
+          <option value="100">d100</option>
+        </select>
+        <button onclick="add_die('damage')">+ Die</button>
+        <button onclick="remove_die('damage')">- Die</button>
+        <button commandfor="damage_dicepool" command="--roll_dice">Roll Damage</button>
+        <span id="damage_result"></span>
+      </div>
     </div>
-     <!--dicepool area -->
+
 
     <!-- char info -->
     <div class="container">
