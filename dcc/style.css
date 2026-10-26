@@ -110,17 +110,6 @@ hr {
     align-items: start;
 }
 
-.distress-box,
-.vitality-box,
-.passion-box,
-.portfolio-box {
-  width: 1.25em;
-  height: 1.25em;
-  border: 2px solid black;
-  margin-left: 2px;
-  display: inline-block;
-}
-
 
 .box-label {
   margin-left: 5px;
@@ -150,7 +139,7 @@ hr {
   display: inline-block;
   text-align: center;
   color: white;
-  font-size: 1.5em;
+  font-size: 1em;
   line-height: 1.5em;
 }
 

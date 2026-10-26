@@ -560,7 +560,7 @@ const updateDiceDisplay = function(type) {
     var die = document.createElement('span'); //new
     die.classList.add('die');//new
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
-    die.innerText = "?";
+    die.innerText = "d" + pool[i];
     dicePoolDisplay.appendChild(die);//new
   }
 };//updateDiceDisplay
