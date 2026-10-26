@@ -1,10 +1,15 @@
 const DICE_SIZE = 50;
 const BOX_SIZE = 20;
 const OFFSET = 2;
+const baseColor = {
+  l: 46,
+  c: 41,
+  h: 309,
+  mode: "lch"
+};
 let dice_pallete;
-let results = [];
-let num_dice = 0;
-let use_passion = false;
+let check_dicepool = [20];
+let damage_dicepool = [];
 
 let char_stats = {
   /* full computed stats */
@@ -173,7 +178,14 @@ const setup = function() {
   attack_table.addEventListener('command',  make_blank_skill_row);
   let defense_table = document.getElementById("defense_skill_body");
   defense_table.addEventListener('command',  make_blank_skill_row);
-  //let attack_table = document.getElementById("")
+  let check_pool = document.getElementById("check_dicepool");
+  check_pool.addEventListener('command',  roll_dice);
+  let damage_pool = document.getElementById("damage_dicepool");
+  damage_pool.addEventListener('command',  roll_dice);
+  let advantage = document.getElementById("advantage");
+  advantage.addEventListener('change', toggle_advantage);
+  let disadvantage = document.getElementById("disadvantage");
+  disadvantage.addEventListener('change', toggle_disadvantage);
 };
 
 const compute_stats = function(stats) {
@@ -314,12 +326,14 @@ const make_health_box = function(conmod, i) {
 
 const populate_skills = function(type, skills) {
   var skill_table = document.getElementById(type+'_skill_body');
+  let i = 0;
   for (let skill of skills) {
-    skill_table.appendChild( make_skill_row(skill) );
+    skill_table.appendChild( make_skill_row(skill, type, i) );
+    i++;
   }
 };
 
-const make_skill_row = function(skill) {
+const make_skill_row = function(skill, type, i) {
   let row = document.createElement("tr");
 
   let mod = '';
@@ -327,8 +341,19 @@ const make_skill_row = function(skill) {
     mod = char_stats[skill['stat']+"_mod"];
   }
 
+  //add select box
+  let cell = document.createElement('td');
+  let checkbox = document.createElement('input');
+  checkbox.type = "radio";
+  checkbox.value = type + '_' + i;
+  checkbox.name = 'selected_skill';
+  checkbox.addEventListener('change', select_skill);
+  cell.appendChild(checkbox);
+  row.appendChild(cell);
+
+
   for (let header of SKILL_HEADERS) {
-    let cell = document.createElement('td');
+    cell = document.createElement('td');
 
     if (header == 'name') {
       cell = document.createElement('th');
@@ -350,6 +375,15 @@ const make_skill_row = function(skill) {
 const make_blank_skill_row = function(e) {
   let row = document.createElement("tr");
 
+  let cell = document.createElement('td');
+  let checkbox = document.createElement('input');
+  checkbox.type = "radio";
+  checkbox.value = e.target.id.split('_')[0] + '_' + e.target.childElementCount;
+  checkbox.name = 'selected_skill';
+  checkbox.addEventListener('change', select_skill);
+  cell.appendChild(checkbox);
+  row.appendChild(cell);
+
   for (let header of SKILL_HEADERS) {
     let cell = document.createElement('td');
 
@@ -366,11 +400,66 @@ const make_blank_skill_row = function(e) {
     cell.appendChild(cell_data);
     row.appendChild(cell);
   }//loop over headers
-
   e.target.appendChild(row);
 };
 
+const select_skill = function(e) {
+  let skill_info = e.target.value.split('_');
+  let type = skill_info[0];
+  let num = skill_info[1];
 
+  let skill = char_stats['skills'][type][num];
+  updateDiceDisplay('check');
+
+  damage_dicepool = []
+  if (skill['damage']) {
+    let dmg = skill['damage'].split('d');
+    let num_dice = parseInt(dmg[0]);
+    let dice_value = parseInt(dmg[1]);
+    for (let i=0; i<num_dice; i++) {
+      damage_dicepool.push(dice_value);
+    }
+    updateDiceDisplay('damage');
+  }
+  console.log(skill);
+};
+
+const toggle_advantage = function(e) {
+  let ad_state = e.target.checked;
+  let disad_state = document.getElementById('disadvantage').checked;
+
+  if (ad_state && !disad_state) {
+    check_dicepool.push(20);
+  }
+  else if (ad_state && disad_state) {
+    check_dicepool.splice(check_dicepool.indexOf(20), 1);
+  }
+  else if (disad_state) {
+    check_dicepool.push(20);
+  }
+  else if (!disad_state) {
+    check_dicepool.splice(check_dicepool.indexOf(20), 1);
+  }
+  updateDiceDisplay('check');
+};
+const toggle_disadvantage = function(e) {
+  let disad_state = e.target.checked;
+  let ad_state = document.getElementById('advantage').checked;
+
+  if (disad_state && !ad_state) {
+    check_dicepool.push(20);
+  }
+  else if (disad_state && ad_state) {
+    check_dicepool.splice(check_dicepool.indexOf(20), 1);
+  }
+  else if (ad_state) {
+    check_dicepool.push(20);
+  }
+  else if (!ad_state) {
+    check_dicepool.splice(check_dicepool.indexOf(20), 1);
+  }
+  updateDiceDisplay('check');
+};
 
 /* saving/encding/loading function */
 
@@ -430,6 +519,110 @@ var make_data_url = function() {
   document.getElementById('data-url').innerText = window.location;
 };
 
+
+/* DICE STUFF */
+
+const updateDiceDisplay = function(type) {
+  let pool = check_dicepool;
+  if (type == 'damage') {
+    pool = damage_dicepool;
+  }
+
+  dice_pallete = createScientificPalettes(baseColor)['unknown'];
+
+  var dicePoolDisplay = document.getElementById(type+'_dicepool');//new
+  dicePoolDisplay.innerHTML="";
+
+  for (var i=0; i<pool.length; i++) {
+
+    var die = document.createElement('span'); //new
+    die.classList.add('die');//new
+    die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
+    die.innerText = "?";
+    dicePoolDisplay.appendChild(die);//new
+  }
+};//updateDiceDisplay
+
+
+const createScientificPalettes = function(baseColor) {
+  const targetHueSteps = {
+    analogous: [0, 30, 60],
+    triadic: [0, 120, 240],
+    tetradic: [0, 90, 180, 270],
+    complementary: [0, 180],
+    splitComplementary: [0, 150, 210],
+    unknown: [0, 72, 144, 216, 288]
+  };
+
+  const palettes = {};
+
+  for (const type of Object.keys(targetHueSteps)) {
+    var pallete = [];
+    for (const step of targetHueSteps[type]) {
+    var color = "lch(" + baseColor.l + " ";
+    color+= baseColor.c + " ";
+    color+= adjustHue(baseColor.h + step) + ")";
+    pallete.push(color);
+    }
+    palettes[type] = pallete;
+  }
+  return palettes;
+};
+
+const adjustHue = function(val) {
+  if (val < 0) val += Math.ceil(-val / 360) * 360;
+
+  return val % 360;
+};//adjustHue
+
+var roll_animation = function(die, sides, result) {
+  var cycles = 50;
+  let timer = setInterval( function() {
+    if (cycles == 0) {
+      clearInterval(timer);
+      die.innerText = result;
+    }
+    else {
+      die.innerText = Math.floor(Math.random()*sides)+1;
+      cycles--;
+    }
+  }, 2);
+};//roll_animation
+
+var roll_dice = function(e) {
+  //updateDiceDisplay();
+  let pool = check_dicepool;
+  // console.log(pool);
+  // console.log(e.target.id);
+  if (e.target.id == 'damage_dicepool') {
+    pool = damage_dicepool;
+  }
+
+  results = [];
+  //console.log(pool);
+  for (let j=0; j<pool.length; j++) {
+    //console.log(pool[j]);
+    results.push(Math.floor(Math.random()*pool[j])+1);
+  }
+  //console.log(results);
+
+  //var dicePoolDisplay = document.getElementById('dicepool');
+  let dicePoolDisplay = e.target;
+  dicePoolDisplay.innerHTML = "";
+  for (let i=0; i<pool.length; i++) {
+    let die = document.createElement('span'); //new
+    die.classList.add('die');//new
+    die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
+    //die.innerText = results[i];
+    dicePoolDisplay.appendChild(die);//new
+    roll_animation(die, pool[i], results[i]);
+    //die.innerText = results[i];
+  }
+
+  let result_display = document.getElementById("check_result");
+  result_display.innerText = 'roll: ';
+  result_display.innerText+= results[0];
+};//roll_dice
 
 /*
 var load_stats = function() {
@@ -508,18 +701,8 @@ var updateDiceDisplay = function() {
 
   var dicePoolDisplay = document.getElementById('dicepool');//new
   dicePoolDisplay.innerHTML="";
-  //
-  // var posPoolDisplay = document.getElementById('pospool');
-  // var ctx = posPoolDisplay.getContext('2d');
-  //
-  // ctx.clearRect(0, 0, 600, DICE_SIZE);
-  //
-  // var startx = 0;
-  //ctx.fillStyle = "#00FF00";
+
   for (var i=0; i<num_dice; i++) {
-    // ctx.fillStyle = dice_pallete[i % dice_pallete.length];
-    // ctx.fillRect(startx, 0, DICE_SIZE, DICE_SIZE);
-    // startx+= DICE_SIZE + OFFSET;
 
     var die = document.createElement('span'); //new
     die.classList.add('die');//new

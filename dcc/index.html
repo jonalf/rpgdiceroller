@@ -11,9 +11,25 @@
     <h1>DCC Char Sheet</h1>
 
     <div class="container">
-      <div class="containter" id="dicepool">
+      <div class="containter" id="check_dicepool">
       </div>
-    </div> <!--dicepool area -->
+      <hr class="innerbreak">
+      <div class="container" id="roll_controls">
+        <label for="advantage">Advantage:</label>
+        <input type="checkbox" name="advantage" id="advantage">
+        <label for="disadvantage">Disadvantage:</label>
+        <input type="checkbox" name="disadvantage" id="disadvantage">
+        <button commandfor="check_dicepool" command="--roll_dice">Roll Check</button>
+        <span id="check_result"></span>
+      </div>
+    </div>
+    <div class="container">
+      <div class="containter" id="damage_dicepool">
+      </div>
+      <hr class="innerbreak">
+      <button commandfor="damage_dicepool" command="--roll_dice">Roll Damage</button>
+    </div>
+     <!--dicepool area -->
 
     <!-- char info -->
     <div class="container">
@@ -51,6 +67,7 @@
       <table id="attack">
         <thead>
           <tr>
+            <th scope="row">Select</th>
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
