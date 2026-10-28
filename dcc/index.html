@@ -33,6 +33,7 @@
         <label for="disadvantage">Disadvantage:</label>
         <input type="checkbox" name="disadvantage" id="disadvantage">
         <button commandfor="check_dicepool" command="--roll_dice">Roll Check</button>
+        <span id="check_bonus"></span>
         <span id="check_result"></span>
       </div>
     </div>
@@ -55,6 +56,7 @@
         <button onclick="add_die('damage')">+ Die</button>
         <button onclick="remove_die('damage')">- Die</button>
         <button commandfor="damage_dicepool" command="--roll_dice">Roll Damage</button>
+        <span id="damage_bonus"></span>
         <span id="damage_result"></span>
       </div>
     </div>
@@ -100,7 +102,7 @@
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
-            <th scope="row">Mod</th>
+            <!-- <th scope="row">Mod</th> -->
             <th scope="row">Damage</th>
             <th scope="row">Notes</th>
             <th scope="row">Grind</th>
@@ -126,7 +128,7 @@
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
-            <th scope="row">Mod</th>
+            <!-- <th scope="row">Mod</th> -->
             <th scope="row">Damage</th>
             <th scope="row">Notes</th>
             <th scope="row">Grind</th>

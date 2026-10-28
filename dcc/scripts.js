@@ -61,7 +61,7 @@ let char_stats = {
 
 
 const STAT_NAMES = ["strength", "intelligence", "constitution", "dexterity", "charisma"];
-const SKILL_HEADERS = ['name', 'rank', 'stat', 'mod', 'damage', 'notes', 'grind_bank', 'marked'];
+const SKILL_HEADERS = ['name', 'rank', 'stat', 'damage', 'notes', 'grind_bank', 'marked'];
 const SKILL_TYPES = ['attack', 'defense', 'other'];
 const STAT_BREAKPOINTS = [3, 6, 10, 20, 50, 100, 150, 200, 300];
 
@@ -107,7 +107,7 @@ const compute_stats = function(stats) {
         stats['dr']+= dr;
       }//dr
     for (let stat_bonus of Object.keys(item['stat_bonus'])) {
-      print(stat_bonus);
+      console.log(stat_bonus);
       let bonus = item['stat_bonus'][stat_bonus];
       if (isInt(bonus)) {
         stats[stat_bonus+"_bonus"]+= parseInt(bonus);
@@ -249,6 +249,7 @@ const make_health_box = function(conmod, i) {
   let health_container = document.createElement("div");
   health_container.classList.add("vertical");
   health_container.classList.add("health-box");
+  //health_container.classList.add("diagonal-line-container");
 
   let health_box = document.createElement("span");
   let health_check = document.createElement("input");
@@ -263,9 +264,15 @@ const make_health_box = function(conmod, i) {
 
   health_container.appendChild(health_box);
   health_container.innerHTML+= '<span style="font-size: 0.70em;">' + ((i+1) * 10) + "%</span>";
+
+  //health_container.addEventListener('click', mark_health);
   return health_container;
 };//make_health_box
 
+const mark_health = function(e) {
+  console.log(e.target);
+  e.target.classList.add("injured");
+};
 
 const populate_skills = function(type, skills) {
   var skill_table = document.getElementById(type+'_skill_body');
@@ -356,6 +363,11 @@ const select_skill = function(e) {
   let num = skill_info[1];
 
   let skill = char_stats['skills'][type][num];
+  let rank = parseInt(skill['rank']);
+  let mod = char_stats[skill['stat']+"_mod"];
+
+  let bonus_display = document.getElementById('check_bonus');
+  bonus_display.innerHTML = "+" + (rank + mod);
   updateDiceDisplay('check');
 
   damage_dicepool = []
@@ -366,9 +378,11 @@ const select_skill = function(e) {
     for (let i=0; i<num_dice; i++) {
       damage_dicepool.push(dice_value);
     }
+    bonus_display = document.getElementById('damage_bonus');
+    bonus_display.innerHTML = "+" + rank;
     updateDiceDisplay('damage');
   }
-  console.log(skill);
+  //console.log(skill);
 };
 
 const toggle_advantage = function(e) {
@@ -643,6 +657,10 @@ var roll_dice = function(e) {
     pool = damage_dicepool;
     type = 'damage';
   }
+  let bonus = document.getElementById(type+'_bonus').innerText;
+  if (isInt(bonus)) {
+    bonus = parseInt(bonus);
+  }
 
   results = [];
   //console.log(pool);
@@ -663,7 +681,7 @@ var roll_dice = function(e) {
     //die.innerText = results[i]; //roll_animation will set final value
   }
 
-  let result = calculate_result(results, type);
+  let result = calculate_result(results, type) + bonus;
   let result_display = document.getElementById(type+"_result");
   result_display.innerText = 'roll: ';
   result_display.innerText+= result;
@@ -733,7 +751,7 @@ let mike_stats = {
   'intelligence_base' : 4,
   'constitution_base' : 9,
   'dexterity_base' : 2,
-  'charisma_base' : 300,
+  'charisma_base' : 3,
 
   /* other stuff */
   'mana' : 0,
@@ -784,6 +802,11 @@ let mike_stats = {
      'skill_bonus' : [],
      'stat_bonus' : {'constitution' : 2},
      'notes': ""},
+   {'name' : 'Beret',
+     'dr': 0,
+     'skill_bonus' : [],
+     'stat_bonus' : {'intelligence' : 2},
+     'notes': ""}
   ],
 
   'skills' : {
@@ -796,7 +819,7 @@ let mike_stats = {
        'grind_bank': 1,
        'notes' : ''},
      {'name' : 'improvised weapons',
-      'rank' : 3,
+      'rank' : 4,
       'stat': 'strength',
       'marked': false,
       'damage' : '1d4',
@@ -812,7 +835,7 @@ let mike_stats = {
        'grind_bank': '',
        'notes' : ''},
      {'name' : 'shield block',
-      'rank' : 2,
+      'rank' : 3,
       'stat': 'strength',
       'marked': false,
       'damage' : '',
