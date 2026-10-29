@@ -69,7 +69,10 @@ const setup = function() {
   if ( window.location.hash ) {
     set_stats( window.location.hash );
   }
-  char_stats = compute_stats(mike_stats);
+  else {
+    char_stats = mike_stats;
+  }
+  char_stats = compute_stats(char_stats);
 
   populate_info(char_stats['info']);
   make_health_bar(char_stats['health']);
@@ -77,12 +80,16 @@ const setup = function() {
 
   populate_skills('attack', char_stats['skills']['attack']);
   populate_skills('defense', char_stats['skills']['defense']);
+  populate_skills('other', char_stats['skills']['other']);
+  populate_inventory(char_stats['inventory']);
 
   //add listeners
   let attack_table = document.getElementById("attack_skill_body");
   attack_table.addEventListener('command',  make_blank_skill_row);
   let defense_table = document.getElementById("defense_skill_body");
   defense_table.addEventListener('command',  make_blank_skill_row);
+  let other_table = document.getElementById("other_skill_body");
+  other_table.addEventListener('command',  make_blank_skill_row);
   let check_pool = document.getElementById("check_dicepool");
   check_pool.addEventListener('command',  roll_dice);
   let damage_pool = document.getElementById("damage_dicepool");
@@ -101,16 +108,17 @@ const compute_stats = function(stats) {
     //console.log(item);
     if ('quantity' in item && isInt(item['quantity']) ) {
       quantity = parseInt(item['quantity']);
+      //console.log("\t"+ quantity);
     }//quantity
     if ('dr' in item && isInt(item['dr'])) {
         let dr = parseInt(item['dr']) * quantity;
         stats['dr']+= dr;
       }//dr
     for (let stat_bonus of Object.keys(item['stat_bonus'])) {
-      console.log(stat_bonus);
+      //console.log(stat_bonus);
       let bonus = item['stat_bonus'][stat_bonus];
       if (isInt(bonus)) {
-        stats[stat_bonus+"_bonus"]+= parseInt(bonus);
+        stats[stat_bonus+"_bonus"]+= parseInt(bonus) * quantity;
       }
     }//stat bonuses
     for (let skill_bonus of item['skill_bonus']) {
@@ -121,12 +129,13 @@ const compute_stats = function(stats) {
         if (current_skill['name'] == skill_bonus['name']) {
           let bonus = skill_bonus['bonus'];
           if (isInt(bonus)) {
-            current_skill['rank']+= parseInt(bonus);
+            current_skill['rank']+= parseInt(bonus) * quantity;
             added = true;
           }
         }//added skill
       }//current skill loop
       if (!added) {
+        /* needs to be completed, add new skill that does not exist yet */
         console.log(skill_bonus);
       }//add new skill
     }//skill bonuses
@@ -155,9 +164,92 @@ const compute_stats = function(stats) {
   stats['mana'] = stats['intelligence'];
   stats['health'] = stats['constitution_mod'] * 10;
 
-  console.log(stats);
+  //console.log(stats);
   return stats;
 };//compute_stats
+
+const populate_inventory = function(inventory) {
+  let count = 0;
+  let inventory_containter = document.getElementById("inventory");
+  for (item of inventory) {
+    let itemid = "item"+count;
+    //console.log(item);
+    let item_element = document.createElement("details");
+    item_element.innerHTML = '<summary>'+item['name']+  " " + item['quantity'] + '</summary>';
+    let property_list = document.createElement("ul");
+    property_list.id = itemid;
+    property_list.classList.add('inventory-item');
+
+    for (let key of Object.keys(item)) {
+      let property = item[key];
+
+      if (typeof property != 'object') {
+        let property_item = document.createElement("li");
+        property_item.innerText = key + ": ";
+        let property_value = document.createElement("input");
+        property_value.classList.add('invisible-textbox');
+        property_value.id = itemid+"_"+key;
+        property_value.value = property;
+        property_item.appendChild(property_value);
+        property_list.appendChild(property_item);
+        //console.log(property_value);
+      }//non-data sturcture porperty
+      else if (Array.isArray(property)) {
+          let property_type = key.split('_')[0];
+          let spcount = 0;
+          for (let sub_prop of property) {
+            let spid = itemid + "_" + property_type + spcount;
+            let property_item = document.createElement("li");
+            let sub_name = document.createElement("input")
+            sub_name.classList.add('invisible-textbox');
+            sub_name.id = spid + "_name";
+            sub_name.value = sub_prop['name'];
+            property_item.appendChild(sub_name);
+
+            sub_name = document.createElement("input")
+            sub_name.classList.add('invisible-textbox');
+            sub_name.id = spid + "_type";
+            sub_name.value = sub_prop['type'];
+            property_item.appendChild(sub_name);
+
+            sub_name = document.createElement("input")
+            sub_name.classList.add('invisible-textbox');
+            sub_name.id = spid + "_bonus";
+            sub_name.value = sub_prop['bonus'];
+            property_item.appendChild(sub_name);
+
+            //console.log(property_item);
+            property_list.appendChild(property_item);
+            spcount++;
+          }//loop through array memebers
+      }//array version
+      else {
+        let property_type = key.split('_')[0];
+        let spcount = 0;
+        for (let sub_property of Object.keys(property)) {
+          let propid = itemid + '_' + property_type + spcount;
+          let property_item = document.createElement("li");
+          let sub_name = document.createElement("input");
+          sub_name.classList.add('invisible-textbox');
+          sub_name.id = propid + '_name';
+          sub_name.value = sub_property;
+          property_item.appendChild(sub_name);
+          let sub_value = document.createElement("input");
+          sub_value.classList.add('invisible-textbox');
+          sub_value.id = propid + '_value'
+          sub_value.value = property[sub_property];
+          property_item.appendChild(sub_value);
+          property_list.appendChild(property_item);
+          spcount++;
+        }//
+      }//object version
+    }//item properties
+
+    item_element.appendChild(property_list);
+    inventory_containter.appendChild(item_element);
+    count++;
+  }
+};//populate_inventory
 
 const populate_info = function(info) {
   //info = stats['info'];
@@ -538,8 +630,69 @@ var get_stats = function() {
       }//loop over skill rows
     }//if there are skills
   }//loop over kill types
+
+
+  //grab inventory
+  new_stats['inventory'] = collect_inventory(document.getElementsByClassName("inventory-item"), new_stats['skills']);
+
   return new_stats;
 };//get_stats
+
+const collect_inventory = function(inventory_nodes, current_skills) {
+  let new_inventory = [];
+  //console.log(inventory_nodes);
+  for (let item of inventory_nodes) {
+    let blank_item = {'name': '', 'quantity': 0, 'dr' : 0,
+      'skill_bonus':[], 'stat_bonus' :{}, 'notes':''};
+    let itemid = item.id;
+    blank_item['name'] = document.getElementById(itemid+'_name').value;
+    blank_item['notes'] = document.getElementById(itemid+'_notes').value;
+    let quantity = document.getElementById(itemid+'_quantity').value;
+    if (isInt(quantity)) {
+      blank_item['quantity'] = parseInt(quantity);
+    }
+    let dr = document.getElementById(itemid+'_dr').value;
+    if (isInt(dr)) {
+      blank_item['dr'] = parseInt(dr);
+    }
+    //get skills
+    let skills = document.querySelectorAll('[id^="'+itemid+'_skill"]');
+    for (let skillcount=0; skillcount < skills.length/3; skillcount++) {
+      let new_skill = {}
+      let skill_name = document.getElementById(itemid+'_skill'+skillcount+"_name").value;
+      let skill_type = document.getElementById(itemid+'_skill'+skillcount+"_type").value;
+      let skill_bonus = document.getElementById(itemid+'_skill'+skillcount+"_bonus").value;
+      if (isInt(skill_bonus)) {
+        skill_bonus = parseInt(skill_bonus);
+      }
+      new_skill['name'] = skill_name;
+      new_skill['type'] = skill_type;
+      new_skill['bonus'] = skill_bonus;
+      blank_item['skill_bonus'].push(new_skill);
+
+      //subtract bonus from actual skill.
+      for (let cskill of current_skills[skill_type]) {
+        if (cskill['name'] == skill_name) {
+          cskill['rank']-= skill_bonus;
+        }
+      }//subtract bonus skill ranks
+    }
+    //get stats
+    let stats = document.querySelectorAll('[id^="'+itemid+'_stat"]');
+    console.log(stats);
+    for (let statcount=0; statcount < stats.length/2; statcount++) {
+      let stat_name = document.getElementById(itemid+'_stat'+statcount+"_name").value;
+      let stat_bonus = document.getElementById(itemid+'_stat'+statcount+"_value").value;
+      if (isInt(stat_bonus)) {
+        stat_bonus = parseInt(stat_bonus);
+      }
+      blank_item['stat_bonus'][stat_name] = stat_bonus;
+    }
+    new_inventory.push(blank_item);
+  }//loop thoguth inventory
+  return new_inventory;
+};//collect_inventory
+
 
 const collect_skill = function(skill) {
   let skill_dict = {}
@@ -770,7 +923,8 @@ let mike_stats = {
   },
 
   'inventory' : [
-    {'name' : 'Gimp Mask of Sadomasichism',
+    {'name' : 'Mask',
+      'quantity' : 1,
      'dr': 1,
      'skill_bonus' : [
        {'name': 'catcher',
@@ -783,26 +937,31 @@ let mike_stats = {
      'stat_bonus' : {},
      'notes': ""},
     {'name' : 'Garbage Can Lid',
+      'quantity' : 1,
      'dr': 1,
      'skill_bonus' : [],
      'stat_bonus' : {},
      'notes': ""},
    {'name' : 'LL Bean Duck Boots',
+     'quantity' : 1,
     'dr': 1,
     'skill_bonus' : [],
     'stat_bonus' : {},
     'notes': ""},
    {'name' : 'Leather Gloves',
      'dr': 1,
+     'quantity' : 1,
      'skill_bonus' : [],
      'stat_bonus' : {},
      'notes': ""},
    {'name' : 'Earring',
+     'quantity' : 1,
      'dr': 0,
      'skill_bonus' : [],
      'stat_bonus' : {'constitution' : 2},
      'notes': ""},
    {'name' : 'Beret',
+     'quantity' : 1,
      'dr': 0,
      'skill_bonus' : [],
      'stat_bonus' : {'intelligence' : 2},
@@ -842,7 +1001,30 @@ let mike_stats = {
       'grind_bank': 0,
       'notes' : ''},
     ],
-    'other': []
+    'other': [
+      {'name' : 'catcher',
+       'rank' : 4,
+       'stat': '',
+       'marked': false,
+       'damage' : '',
+       'grind_bank': '',
+       'notes' : '+5 DR'},
+     {'name' : 'detect lies',
+      'rank' : 3,
+      'rank_base' : 3,
+      'stat': 'intelligence',
+      'marked': true,
+      'damage' : '',
+      'grind_bank': 0,
+      'notes' : ''},
+    {'name' : 'perception',
+     'rank' : 3,
+     'stat': 'intelligence',
+     'marked': true,
+     'damage' : '',
+     'grind_bank': '',
+     'notes' : ''},
+    ]
   },
   'notes' : ""
 };
