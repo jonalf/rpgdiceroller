@@ -8,7 +8,27 @@
 
 <body>
   <div class="container">
-    <h1>DCC Char Sheet</h1>
+    <!-- char info -->
+    <div class="container">
+      <label for="char_name">Name: </label>
+      <input id="char_name" placeholder="Character Name" class="invisible-textbox">
+      <label for="char_race">Race: </label>
+      <input id="char_race" placeholder="Race" class="invisible-textbox">
+      <label for="char_class">Class: </label>
+      <input id="char_class" placeholder="Class" class="invisible-textbox">
+    </div>
+
+    <br>
+    <div class="containter">
+      <label for="char_level">Level: </label>
+      <input id="char_level" placeholder="lvl" class="invisible-textbox">
+      <label for="char_crawler_number">Crawler: </label>
+      <input id="char_crawler_number" placeholder="Crawler Number" class="invisible-textbox">
+      <label for="char_floor">Floor: </label>
+      <input id="char_floor" placeholder="Floor" class="invisible-textbox">
+    </div>
+    <!-- char info -->
+
 
      <!--dicepool area -->
     <div class="container">
@@ -62,26 +82,6 @@
     </div>
 
 
-    <!-- char info -->
-    <div class="container">
-      <label for="char_name">Name: </label>
-      <input id="char_name" placeholder="Character Name" class="invisible-textbox">
-      <label for="char_race">Race: </label>
-      <input id="char_race" placeholder="Race" class="invisible-textbox">
-      <label for="char_class">Class: </label>
-      <input id="char_class" placeholder="Class" class="invisible-textbox">
-    </div>
-
-    <br>
-    <div class="containter">
-      <label for="char_level">Level: </label>
-      <input id="char_level" placeholder="lvl" class="invisible-textbox">
-      <label for="char_crawler_number">Crawler: </label>
-      <input id="char_crawler_number" placeholder="Crawler Number" class="invisible-textbox">
-      <label for="char_floor">Floor: </label>
-      <input id="char_floor" placeholder="Floor" class="invisible-textbox">
-    </div>
-
     <hr class="innerbreak">
     <div class="container" id="health">
     </div>
@@ -90,8 +90,34 @@
     <div class="container" id="stats">
     </div>
 
+
     <hr class="innerbreak">
-    <div class="container" id="attack_skills">
+    <div class="container">
+      <div class="vertical">
+        <span>Attack Skills</span>
+        <ul id="attack_skills" class="skill">
+        </ul>
+        <button commandfor="attack_skills" command="--add-skill">+ Attack Skill</button>
+      </div>
+
+      <div class="vertical">
+        <span>Defense Skills</span>
+        <ul id="defense_skills" class="skill">
+        </ul>
+        <button commandfor="defense_skills" command="--add-skill">+ Defense Skill</button>
+      </div>
+
+      <div class="vertical">
+        <span>Other Skills</span>
+        <ul id="other_skills" class="skill">
+        </ul>
+        <button commandfor="other_skills" command="--add-skill">+ Other Skill</button>
+      </div>
+    </div> <!--skills div -->
+
+    <!--
+    <hr class="innerbreak">
+    <div class="container" id="attack_skillz">
       <h3>Attack Skills</h3>
       <hr class="innerbreak">
 
@@ -102,7 +128,6 @@
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
-            <!-- <th scope="row">Mod</th> -->
             <th scope="row">Damage</th>
             <th scope="row">Notes</th>
             <th scope="row">Grind</th>
@@ -113,7 +138,6 @@
         </tbody>
       </table>
       <hr class="innerbreak">
-      <button commandfor="attack_skill_body" command="--add-skill">+ Attack Skill</button>
     </div>
 
     <hr class="innerbreak">
@@ -128,7 +152,6 @@
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
-            <!-- <th scope="row">Mod</th> -->
             <th scope="row">Damage</th>
             <th scope="row">Notes</th>
             <th scope="row">Grind</th>
@@ -154,7 +177,6 @@
             <th scope="row">Name</th>
             <th scope="row">Rank</th>
             <th scope="row">Stat</th>
-            <!-- <th scope="row">Mod</th> -->
             <th scope="row">Damage</th>
             <th scope="row">Notes</th>
             <th scope="row">Grind</th>
@@ -167,7 +189,7 @@
       <hr class="innerbreak">
       <button commandfor="other_skill_body" command="--add-skill">+ Other Skill</button>
     </div>
-
+-->
     <hr class="innerbreak">
     <div class="container">
       <h3>Inventory</h3>

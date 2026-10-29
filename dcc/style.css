@@ -7,11 +7,11 @@
 }
 
 body {
-    font-family: "Kabel", sans-serif;
+    /*font-family: "Kabel", sans-serif;*/
     /*background: radial-gradient(rgb(112, 111, 179), rgb(56, 48, 71));*/
     background-color: black;
     color: #fcdf03;
-    //text-shadow: 1px 1px 2px black;
+    /*text-shadow: 1px 1px 2px black;*/
     font-size: 24px;
 }
 
@@ -19,6 +19,20 @@ input {
   field-sizing: content;
   min-width: 50px;
   max-width: 350px;
+}
+
+.skill {
+  list-style: none;
+  padding: 0px;
+
+  details {
+    display: inline;
+
+    summary {
+      display: inline-block;
+    }
+  }
+
 }
 
 #health {
@@ -30,7 +44,7 @@ input {
 }
 
 .injured {
-  background: rgba(0, 0, 0, 1);
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .stat-box {
@@ -39,11 +53,7 @@ input {
 
 .health-box {
   border: 1px solid black;
-}
-.health-check {
-  height: 90%;
-  min-width: 30px;
-  /*margin-left: 0px;*/
+  width: 2em;
 }
 
 .container {
