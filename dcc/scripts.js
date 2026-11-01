@@ -342,20 +342,10 @@ const make_health_box = function(conmod, i) {
   health_container.classList.add("vertical");
   health_container.classList.add("health-box");
   health_container.classList.add("item-center");
-  //health_container.classList.add("diagonal-line-container");
 
   let health_box = document.createElement("span");
-  // let health_check = document.createElement("input");
-  // health_check.classList.add("health-check");
-  // health_check.type = "checkbox";
-  // health_check.id = "health_" + i;
-  //let health_label = document.createElement("label");
-  // health_label.htmlFor = health_check.id;
-  // health_label.innerText = conmod;
-  // health_box.appendChild(health_label);
-  health_box.innerText = conmod;
-  //health_box.appendChild(health_check);
 
+  health_box.innerText = conmod;
   health_container.appendChild(health_box);
   health_container.innerHTML+= '<span style="font-size: 0.70em;">' + ((i+1) * 10) + "%</span>";
 
@@ -364,7 +354,7 @@ const make_health_box = function(conmod, i) {
 };//make_health_box
 
 const mark_health = function(e) {
-  console.log(e.currentTarget);
+  //console.log(e.currentTarget);
 
   e.currentTarget.classList.toggle("injured");
 };
@@ -457,89 +447,7 @@ const make_blank_skill_row = function(e) {
 
   e.target.appendChild(li);
 };
-/* table version of skills */
-// const populate_skills = function(type, skills) {
-//   var skill_table = document.getElementById(type+'_skill_body');
-//   let i = 0;
-//   for (let skill of skills) {
-//     skill_table.appendChild( make_skill_row(skill, type, i) );
-//     i++;
-//   }
-// };
-//
-// const make_skill_row = function(skill, type, i) {
-//   let row = document.createElement("tr");
-//   let skillid = type+'_'+i;
-//   let mod = '';
-//   if (skill['stat']) {
-//     mod = char_stats[skill['stat']+"_mod"];
-//   }
-//
-//   //add select box
-//   let cell = document.createElement('td');
-//   let checkbox = document.createElement('input');
-//   checkbox.type = "radio";
-//   checkbox.value = skillid;
-//   checkbox.name = 'selected_skill';
-//   checkbox.addEventListener('change', select_skill);
-//   cell.appendChild(checkbox);
-//   row.appendChild(cell);
-//
-//
-//   for (let header of SKILL_HEADERS) {
-//     cell = document.createElement('td');
-//
-//     if (header == 'name') {
-//       cell = document.createElement('th');
-//       cell.scope = "row";
-//     }
-//     let cell_data = document.createElement("input");
-//     cell_data.classList.add("invisible-textbox");
-//     cell_data.name = skillid;
-//     cell_data.id = skillid+'_'+header;
-//
-//     if (header == 'mod') { cell_data.value = mod; }
-//     else { cell_data.value = skill[header]; }
-//
-//     cell.appendChild(cell_data);
-//     row.appendChild(cell);
-//   }//loop over headers
-//
-//   return row;
-// };
-//
-// const make_blank_skill_row = function(e) {
-//   let row = document.createElement("tr");
-//   let skillid = e.target.id.split('_')[0] + '_' + e.target.rows.length;
-//   let cell = document.createElement('td');
-//   let checkbox = document.createElement('input');
-//   checkbox.type = "radio";
-//   checkbox.value = skillid;
-//   checkbox.name = 'selected_skill';
-//   checkbox.addEventListener('change', select_skill);
-//   cell.appendChild(checkbox);
-//   row.appendChild(cell);
-//
-//   for (let header of SKILL_HEADERS) {
-//     let cell = document.createElement('td');
-//
-//     if (header == 'name') {
-//       cell = document.createElement('th');
-//       cell.scope = "row";
-//     }
-//     let cell_data = document.createElement("input");
-//     cell_data.classList.add("invisible-textbox");
-//     cell_data.name = skillid;
-//     cell_data.id = skillid+"_"+header;
-//
-//     // if (header == 'mod') { cell_data.value = mod; }
-//     // else { cell_data.value = skill[header]; }
-//
-//     cell.appendChild(cell_data);
-//     row.appendChild(cell);
-//   }//loop over headers
-//   e.target.appendChild(row);
-// };
+
 
 const select_skill = function(e) {
   let skill_info = e.target.value.split('_');
