@@ -1,0 +1,691 @@
+/* Modern RPG character sheet
+   CSS-only redesign. Existing HTML, IDs, classes, and JavaScript hooks are preserved. */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;750&display=swap");
+
+:root {
+  color-scheme: dark;
+  --page: #101318;
+  --surface: #181e27;
+  --surface-raised: #202936;
+  --surface-soft: #252f3d;
+  --border: #354252;
+  --border-strong: #46566b;
+  --text: #e8edf4;
+  --muted: #9eacbd;
+  --accent: #72b7f2;
+  --accent-strong: #3d96df;
+  --accent-soft: rgba(83, 164, 231, 0.14);
+  --success: #48bd8a;
+  --warning: #e6b65b;
+  --danger: #e56c70;
+  --radius: 12px;
+  --radius-small: 8px;
+  --shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--page);
+}
+
+body {
+  margin: 0;
+  padding: 28px 18px 48px;
+  background:
+    radial-gradient(ellipse at 50% -15%, rgba(68, 112, 155, 0.18), transparent 55%),
+    var(--page);
+  color: var(--text);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+select,
+input,
+textarea {
+  accent-color: var(--accent);
+}
+
+button {
+  min-height: 38px;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-small);
+  background: linear-gradient(180deg, #2b394a, #222d3a);
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 140ms ease, border-color 140ms ease,
+              transform 140ms ease, box-shadow 140ms ease;
+}
+
+button:hover {
+  border-color: var(--accent);
+  background: #30445a;
+  box-shadow: 0 0 0 3px rgba(114, 183, 242, 0.10);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+select {
+  min-height: 38px;
+  padding: 7px 34px 7px 11px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background-color: var(--surface-raised);
+  color: var(--text);
+}
+
+input {
+  color: var(--text);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: 17px;
+  height: 17px;
+  margin: 0 5px;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+input[type="text"],
+input:not([type]),
+textarea {
+  min-width: 48px;
+}
+
+label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text);
+  letter-spacing: -0.035em;
+}
+
+h1 {
+  margin: 0 0 18px;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 750;
+}
+
+h3 {
+  width: 100%;
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+hr {
+  flex-basis: 100%;
+  width: 0;
+  height: 1px;
+  margin: 14px 0;
+  border: 0;
+  background: var(--border);
+}
+
+hr.innerbreak {
+  margin: 7px 0;
+  background: transparent;
+}
+
+/* Main page and existing layout wrappers */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(24, 30, 39, 0.88);
+  box-shadow: var(--shadow);
+}
+
+/* The source HTML uses this spelling in several places. Keep it supported. */
+.containter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Character identity row */
+.container > .container:first-child {
+  justify-content: flex-start;
+  gap: 8px 12px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 4px 2px;
+}
+
+.container > .containter {
+  justify-content: flex-start;
+  gap: 8px 10px;
+}
+
+.container > .containter label,
+.container > .container label {
+  margin-left: 2px;
+}
+
+.container > .containter input,
+.container > .container input.invisible-textbox {
+  min-height: 36px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-bottom-color: var(--border-strong);
+  border-radius: 5px 5px 0 0;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+/* Inline editable fields stay visually quiet until focused. */
+.invisible-textbox {
+  width: auto;
+  min-width: 52px;
+  max-width: min(350px, 100%);
+  padding: 3px 6px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  transition: background 140ms ease, border-color 140ms ease;
+}
+
+.invisible-textbox:hover {
+  border-color: var(--border);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.invisible-textbox:focus {
+  border-color: var(--accent);
+  background: var(--surface-raised);
+  outline: none;
+}
+
+.invisible-textbox[readonly] {
+  color: var(--accent);
+  cursor: default;
+}
+
+/* Dice pools and roll controls */
+#check_dicepool,
+#damage_dicepool {
+  flex: 1 1 100%;
+  min-height: 66px;
+  padding: 8px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-small);
+  background: rgba(8, 12, 18, 0.28);
+}
+
+#roll_controls,
+#damage_roll_controls {
+  flex: 1 1 100%;
+  justify-content: center;
+  gap: 9px;
+  padding: 4px;
+}
+
+#roll_controls label,
+#damage_roll_controls label {
+  margin-left: 4px;
+}
+
+#check_bonus,
+#damage_bonus {
+  min-width: 42px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface-raised);
+  color: var(--warning);
+  font-weight: 700;
+  text-align: center;
+}
+
+#check_result,
+#damage_result {
+  min-width: 54px;
+  padding: 6px 12px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+  color: #b9dcfb;
+  font-size: 1.1rem;
+  font-weight: 750;
+  text-align: center;
+}
+
+.die {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin: 3px;
+  border: 2px solid rgba(255, 255, 255, 0.68);
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.30), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 750;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+/* Health: JavaScript toggles .injured on the existing health-box elements. */
+#health {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: stretch;
+  gap: 4px;
+  width: 100%;
+  padding: 9px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: #fff;
+  text-shadow: none;
+}
+
+.health-box {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 58px;
+  padding: 6px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #3bb77e, #23875c);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 140ms ease, opacity 140ms ease, transform 140ms ease;
+}
+
+.health-box:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.health-box span:last-child {
+  font-size: 0.68em !important;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.health-box.injured {
+  border-color: rgba(255, 255, 255, 0.10);
+  background: linear-gradient(180deg, #47515e, #303946);
+  color: #aab5c2;
+  opacity: 0.68;
+}
+
+/* Character statistics */
+#stats {
+  justify-content: stretch;
+  gap: 9px;
+}
+
+.stat-box {
+  display: flex;
+  flex: 1 1 105px;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  min-height: 106px;
+  margin: 0;
+  padding: 12px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: linear-gradient(180deg, var(--surface-raised), var(--surface));
+  text-align: center;
+}
+
+.stat-box > span:first-child {
+  color: var(--muted);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.stat-box > span:nth-child(2) {
+  margin-top: 5px;
+  color: var(--text);
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.stat-box > span:last-child {
+  color: var(--success);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.stat-box .invisible-textbox {
+  width: 48px;
+  text-align: center;
+}
+
+/* Skills: keep the three existing columns and native details behavior. */
+.container > .vertical:has(> #attack_skills),
+.container > .vertical:has(> #defense_skills),
+.container > .vertical:has(> #other_skills) {
+  flex: 1 1 290px;
+  align-self: stretch;
+  min-width: min(100%, 260px);
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.container > .vertical > span:first-child {
+  display: block;
+  margin: 0 0 10px;
+  color: var(--accent);
+  font-size: 0.95rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.skill {
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.skill > li {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0 0 7px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.skill > li > input[type="radio"] {
+  flex: 0 0 auto;
+  margin: 9px 2px 0 0;
+}
+
+.skill details {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.skill summary,
+#inventory summary {
+  padding: 5px 3px;
+  color: var(--text);
+  font-weight: 650;
+  cursor: pointer;
+  list-style-position: inside;
+}
+
+.skill summary:hover,
+#inventory summary:hover {
+  color: var(--accent);
+}
+
+.skill details[open] summary,
+#inventory details[open] summary {
+  margin-bottom: 8px;
+  color: var(--accent);
+}
+
+.skill details ul,
+.inventory-item {
+  margin: 7px 0 2px;
+  padding: 10px 10px 10px 28px;
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.skill details ul li,
+.inventory-item li {
+  padding: 3px 0;
+}
+
+.skill details .invisible-textbox {
+  width: min(100%, 190px);
+}
+
+/* Inventory */
+#inventory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 245px), 1fr));
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+}
+
+#inventory details {
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: var(--surface);
+}
+
+#inventory details[open] {
+  border-color: var(--border-strong);
+  background: var(--surface-raised);
+}
+
+.inventory-item {
+  padding-left: 25px;
+}
+
+.inventory-item .invisible-textbox {
+  max-width: 100%;
+}
+
+#inventory button {
+  min-height: 32px;
+  margin: 5px 5px 0 0;
+  padding: 5px 10px;
+  font-size: 0.82rem;
+}
+
+/* Save/export area */
+#data-url {
+  display: block;
+  width: 100%;
+  min-height: 82px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-small);
+  background: #111720;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  resize: vertical;
+}
+
+#data-url:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+/* Utility classes already used by the page */
+.vertical {
+  display: flex;
+  flex-direction: column;
+  padding-right: 5px;
+}
+
+.item-center {
+  align-items: center;
+}
+
+.item-left {
+  align-items: flex-start;
+}
+
+.box-label {
+  margin-left: 5px;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+.marked {
+  background-color: rgba(156, 104, 220, 0.22);
+}
+
+.box-holder {
+  min-width: 0;
+}
+
+#data-url {
+  overflow: auto;
+}
+
+/* Responsive layout */
+@media (max-width: 760px) {
+  body {
+    padding: 12px 9px 30px;
+    font-size: 14px;
+  }
+
+  .container {
+    gap: 9px;
+    padding: 11px;
+  }
+
+  .container > .container:first-child,
+  .container > .containter {
+    justify-content: flex-start;
+  }
+
+  #health {
+    gap: 2px;
+    padding: 5px;
+  }
+
+  .health-box {
+    min-height: 50px;
+    padding: 5px 1px;
+    font-size: 0.88rem;
+  }
+
+  .stat-box {
+    flex-basis: calc(33.333% - 8px);
+    min-width: 76px;
+  }
+
+  #roll_controls,
+  #damage_roll_controls {
+    justify-content: flex-start;
+  }
+
+  #roll_controls button,
+  #damage_roll_controls button {
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-width: 430px) {
+  body {
+    padding-right: 6px;
+    padding-left: 6px;
+  }
+
+  .container {
+    padding: 9px;
+  }
+
+  #health {
+    gap: 1px;
+  }
+
+  .health-box {
+    min-height: 44px;
+    font-size: 0.78rem;
+  }
+
+  .health-box span:last-child {
+    font-size: 0.58em !important;
+  }
+
+  .die {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stat-box {
+    flex-basis: calc(50% - 8px);
+  }
+
+  #roll_controls,
+  #damage_roll_controls {
+    gap: 6px;
+  }
+
+  #roll_controls label,
+  #damage_roll_controls label {
+    font-size: 0.82rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

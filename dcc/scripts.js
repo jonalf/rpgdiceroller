@@ -623,7 +623,13 @@ const make_skill_li = function(skill, type, i) {
     let detail_li = document.createElement('li');
     detail_li.innerText = header + ': ';
     let cell_data = document.createElement("input");
-    cell_data.classList.add("invisible-textbox");
+    if (header == 'marked') {
+      cell_data.type = 'checkbox';
+      cell_data.checked = skill['marked'];
+    }
+    else {
+      cell_data.classList.add("invisible-textbox");
+    }
     if (header == 'rank') {
       cell_data.readOnly = true;
     }
@@ -700,6 +706,10 @@ const update_skill = function(e) {
   if (isInt(value)) {
     value = parseInt(value);
   }
+  if (option == 'marked') {
+    trigger.value = trigger.checked;
+    value = trigger.value == 'true';
+  }
   //console.log(skill_parts);
   if (num >= char_stats['skills'][type].length) {
     add_new_skill(type);
@@ -752,7 +762,7 @@ const select_skill = function(e) {
       damage_dicepool.push(dice_value);
     }
     bonus_display = document.getElementById('damage_bonus');
-    bonus_display.innerHTML = "+" + rank;
+    bonus_display.innerHTML = "+" + mod;
     updateDiceDisplay('damage');
   }
   //console.log(skill);
@@ -910,7 +920,7 @@ var get_stats = function() {
       let skill_count = 0;
       for (let skill of skills) {
         let skill_dict = collect_skill(skill_type, skill_count);
-        rankbase(skill_dict);
+        //rankbase(skill_dict);
         new_stats['skills'][skill_type].push(skill_dict);
         skill_count++;
       }//loop over skill rows
@@ -989,6 +999,9 @@ const collect_skill = function(skill_type, skill_count) {
     let value = "";
     if (element) {
       value = element.value;
+      if (header == 'marked') {
+        value = element.checked == 'true';
+      }
       if (isInt(value)) {
         value = parseInt(value);
       }
