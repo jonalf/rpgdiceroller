@@ -1,0 +1,456 @@
+@import url("https://fonts.googleapis.com/css2?family=Bungee&family=Chakra+Petch:wght@400;500;600;700&display=swap");
+
+@font-face {
+  font-family: "Kabel";
+  src: url("Kabel.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- tokens ---------- */
+:root {
+  --bg: #15102a;
+  --panel: #1f1840;
+  --panel-2: #2a2155;
+  --line: #4a3d8f;
+  --gold: #fcdf03;
+  --cream: #f4eed2;
+  --muted: #a69ed6;
+  --marked: #8e44ff;
+  --ink: #15102a;
+  --display: "Bungee", "Impact", sans-serif;
+  --body: "Chakra Petch", system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 16px 8px 40px;
+  background-color: var(--bg);
+  background-image: radial-gradient(rgba(252, 223, 3, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--cream);
+  font: 500 20px/1.35 var(--body);
+}
+
+br { display: none; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+/* ---------- layout primitives ---------- */
+.container, .containter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1170px;
+  margin: 0 auto;
+  padding: 0 15px 10px;
+}
+
+/* sections of the sheet become panels */
+body > .container > .container:not([id]),
+body > .container > .containter:not([id]) {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.8em 1em;
+  margin-bottom: 14px;
+}
+
+/* name plate: info row + level row join into one card */
+body > .container > .container:first-child:not([id]) {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  padding-bottom: 0.2em;
+}
+body > .container > .containter:not([id]) {
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  padding-top: 0.2em;
+}
+
+/* skills: the three columns are the panels, not their wrapper */
+body > .container > .container:has(> .vertical > .skill) {
+  background: none;
+  border: 0;
+  padding: 0;
+  align-items: stretch;
+}
+
+/* textarea wrapper stays bare */
+body > .container > .container:has(> #data-url) {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+h1 { font-size: 2.25em; }
+
+h3 {
+  width: 100%;
+  margin: 0 0 0.3em;
+  text-align: center;
+  font: 400 1.1em var(--display);
+  color: var(--gold);
+}
+
+hr {
+  flex-basis: 100%;
+  width: 0;
+  margin: 0;
+  border: 0;
+}
+.innerbreak {
+  border: none;
+  margin: 3px;
+}
+hr:not(.innerbreak) {
+  border-top: 1px solid var(--line);
+  margin: 1em 0;
+}
+
+.vertical {
+  display: flex;
+  flex-direction: column;
+  padding-right: 5px;
+}
+
+.item-center { align-items: center; }
+.item-left { align-items: start; }
+
+.box-label {
+  margin-left: 5px;
+  font-size: 1em;
+}
+.marked { background-color: var(--marked); }
+.box-holder { }
+.type-label {
+  margin-right: 50px;
+  font-size: 2em;
+}
+#dicepool {
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 5px;
+}
+
+/* ---------- form controls ---------- */
+label {
+  margin: 0 0.3em 0 0.9em;
+  font-size: 0.7em;
+  color: var(--muted);
+}
+
+input:not([type="checkbox"]):not([type="radio"]) {
+  field-sizing: content;
+  min-width: 3ch;
+  max-width: 350px;
+}
+
+.invisible-textbox {
+  background: transparent;
+  font: inherit;
+  color: var(--cream);
+  border: 0;
+  border-bottom: 1px dashed var(--line);
+  border-radius: 0;
+  padding: 0 0.2em;
+  transition: border-color 0.15s, background 0.15s;
+}
+.invisible-textbox:hover { border-bottom-color: var(--muted); }
+.invisible-textbox:focus,
+.invisible-textbox:focus-visible {
+  outline: 0;
+  border-bottom: 1px solid var(--gold);
+  background: rgba(252, 223, 3, 0.08);
+}
+.invisible-textbox::placeholder { color: var(--muted); opacity: 0.6; }
+.invisible-textbox[readonly] { color: var(--muted); border-bottom-style: dotted; }
+
+input[type="checkbox"] {
+  width: 1.05em;
+  height: 1.05em;
+  margin: 0 0.3em;
+  vertical-align: -0.12em;
+  accent-color: var(--gold);
+}
+
+input[type="radio"] {
+  appearance: none;
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  margin: 0.2em 0.6em 0 0;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+input[type="radio"]:checked {
+  background: radial-gradient(var(--gold) 0 45%, transparent 50%);
+}
+
+button {
+  font: 600 0.75em var(--body);
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 6px;
+  padding: 0.35em 0.9em;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+}
+button:hover { background: var(--gold); color: var(--ink); }
+button:active { transform: translateY(1px); }
+
+button[command="--roll_dice"] {
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.85em;
+  padding: 0.45em 1.1em;
+  box-shadow: 0 3px 0 #a38f00;
+}
+button[command="--roll_dice"]:hover { background: #fff176; }
+
+button[command="--add-skill"],
+button[command="--add-item"] {
+  color: var(--muted);
+  border: 1px dashed var(--line);
+}
+button[command="--add-skill"]:hover,
+button[command="--add-item"]:hover { border-color: var(--gold); }
+
+select {
+  font: inherit;
+  font-size: 0.85em;
+  color: var(--cream);
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.3em 0.5em;
+}
+
+/* ---------- name plate ---------- */
+#char_name {
+  font: 400 1.7em/1.2 var(--display);
+  color: var(--gold);
+  max-width: 100%;
+}
+#char_level, #char_floor, #char_gold, #char_crawler_number {
+  text-align: center;
+  font-weight: 700;
+}
+#char_gold { color: var(--gold); }
+
+/* ---------- dice ---------- */
+#check_dicepool, #damage_dicepool {
+  min-height: 64px;
+  padding: 0 0 5px;
+}
+#roll_controls, #damage_roll_controls {
+  gap: 0.5em 0.8em;
+  padding-top: 0.3em;
+}
+#check_bonus, #damage_bonus {
+  font-weight: 700;
+  color: var(--cream);
+}
+#check_result, #damage_result {
+  display: inline-block;
+  min-width: 4.5em;
+  font: 400 1.2em var(--display);
+  color: var(--gold);
+}
+
+.die {
+  display: inline-grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  margin: 5px 3px 0;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  box-shadow: inset 0 -5px 0 rgba(0, 0, 0, 0.25), 0 3px 8px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font: 700 0.8em/1 var(--body);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- health ---------- */
+#health {
+  width: fit-content;
+  background: linear-gradient(to right, #d7263d, #e09f1f 55%, #2f9e5b);
+  padding: 0;
+  margin-bottom: 14px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.health-box {
+  width: 2.2em;
+  padding: 0.2em 0;
+  border: 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.35);
+  line-height: 1.25;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.health-box:last-child { border-right: 0; }
+.health-box:hover {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.12));
+}
+.health-box > span:first-child { font-weight: 700; }
+.injured { background: rgba(12, 8, 28, 0.72); }
+
+/* ---------- stats ---------- */
+#stats {
+  gap: 0.6em;
+  padding-bottom: 0;
+  margin-bottom: 14px;
+}
+.stat-box {
+  align-items: center;
+  min-width: 6em;
+  margin: 0;
+  padding: 0.5em 0.9em 0.6em;
+  text-align: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.stat-box > span:first-child { font-size: 0.7em; color: var(--muted); }
+.stat-box > span:nth-child(2) { font-size: 0.85em; color: var(--muted); }
+.stat-box > span:nth-child(2) input { text-align: center; font-weight: 700; color: var(--cream); }
+.stat-box > span:last-child:not(:first-child) {
+  font: 400 1.6em/1.1 var(--display);
+  color: var(--gold);
+}
+.stat-box > input {
+  text-align: center;
+  font: 400 1.5em/1.2 var(--display);
+  color: var(--gold);
+}
+
+/* ---------- skills ---------- */
+.vertical:has(> .skill) {
+  flex: 1 1 16em;
+  align-items: stretch;
+  margin: 6px;
+  padding: 0.7em 0.9em 0.9em;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.vertical:has(> .skill) > span {
+  margin-bottom: 0.5em;
+  font: 400 0.8em var(--display);
+  color: var(--gold);
+}
+
+.skill {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.6em;
+}
+.skill > li {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 5px;
+  padding: 0.3em 0.5em;
+  background: var(--panel);
+  border: 1px solid transparent;
+  border-left: 3px solid var(--line);
+  border-radius: 6px;
+}
+.skill > li:has(> input[type="radio"]:checked) {
+  border-color: var(--gold);
+  background: #2e2760;
+}
+.skill > li:has(input[type="checkbox"]:checked) { border-left-color: var(--marked); }
+.skill details {
+  display: block;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- details / inventory ---------- */
+summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--cream);
+}
+summary::-webkit-details-marker { display: none; }
+summary::before {
+  content: "\25B8";
+  display: inline-block;
+  width: 1em;
+  color: var(--gold);
+  transition: transform 0.15s;
+}
+details[open] > summary::before { transform: rotate(90deg); }
+summary:hover { color: var(--gold); }
+
+details > ul {
+  list-style: none;
+  margin: 0.4em 0 0.3em;
+  padding: 0 0 0 1em;
+  font-size: 0.8em;
+  color: var(--muted);
+}
+details > ul > li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+  padding: 0.15em 0;
+}
+
+#inventory {
+  flex: 1 1 100%;
+  padding: 0;
+}
+#inventory > details {
+  margin-bottom: 6px;
+  padding: 0.5em 0.8em;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+#inventory > details > button { margin: 0.2em 0.4em 0 0; }
+
+/* ---------- save ---------- */
+#data-url {
+  width: 100%;
+  min-height: 5em;
+  overflow: auto;
+  resize: vertical;
+  padding: 0.6em 0.8em;
+  font: 0.6em/1.4 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+/* ---------- small screens / motion ---------- */
+@media (max-width: 600px) {
+  body { font-size: 17px; padding: 10px 4px 30px; }
+  .container, .containter { padding-left: 8px; padding-right: 8px; }
+  #char_name { font-size: 1.35em; }
+  .health-box { width: 1.7em; }
+  .stat-box { min-width: 5em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}

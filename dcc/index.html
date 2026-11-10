@@ -34,7 +34,7 @@
 
      <!--dicepool area -->
     <div class="container">
-      <div class="containter" id="check_dicepool">
+      <div class="container" id="check_dicepool">
       </div>
       <hr class="innerbreak">
       <div class="container" id="roll_controls">
@@ -50,21 +50,23 @@
         </select>
         <button onclick="add_die('check')">+ Die</button>
         <button onclick="remove_die('check')">- Die</button>
-        <label for="advantage">Advantage:</label>
-        <input type="checkbox" name="advantage" id="advantage">
-        <label for="disadvantage">Disadvantage:</label>
-        <input type="checkbox" name="disadvantage" id="disadvantage">
+        <!-- <label for="advantage">Advantage:</label>
+        <input type="checkbox" name="advantage" id="advantage"> -->
+        <span name="advantage" id="advantage" class="rollmod">Advantage</span>
+        <span name="disadvantage" id="disadvantage" class="rollmod">Disadvantage</span>
+        <!--<label for="disadvantage">Disadvantage:</label>
+        <input type="checkbox" name="disadvantage" id="disadvantage">-->
         <button commandfor="check_dicepool" command="--roll_dice">Roll Check</button>
         <span id="check_bonus"></span>
         <span id="check_result"></span>
       </div>
     </div>
     <div class="container">
-      <div class="containter" id="damage_dicepool">
+      <div class="container" id="damage_dicepool">
       </div>
       <hr class="innerbreak">
 
-      <div class="containter" id="damage_roll_controls">
+      <div class="container" id="damage_roll_controls">
         <select name="damage_add_die" id="damage_add_die">
           <option value="2">d2</option>
           <option value="4">d4</option>

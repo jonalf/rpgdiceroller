@@ -33,7 +33,7 @@ body {
   background-image: radial-gradient(rgba(252, 223, 3, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
   color: var(--cream);
-  font: 500 20px/1.35 var(--body);
+  font: 500 22px/1.35 var(--body);
 }
 
 br { display: none; }
@@ -69,7 +69,9 @@ body > .container > .container:first-child:not([id]) {
   border-radius: 12px 12px 0 0;
   padding-bottom: 0.2em;
 }
-body > .container > .containter:not([id]) {
+body > .container > .containter:not([id]),
+body > .container > .container:first-child + br + .container:not([id]),
+body > .container > .container:first-child + .container:not([id]) {
   border-top: 0;
   border-radius: 0 0 12px 12px;
   padding-top: 0.2em;
@@ -268,6 +270,24 @@ select {
   color: var(--gold);
 }
 
+.rollmod {
+  border: 1px solid white;
+  border-radius: 6px;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  padding: 4px;
+  font: 600 0.75em var(--body);
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+}
+.selected_mod {
+  background-color: #43f080;
+  color: black;
+}
+.rollmod:hover { background: var(--gold); color: var(--ink); }
+.rollmod:active { transform: translateY(1px); }
+
+
 .die {
   display: inline-grid;
   place-items: center;
@@ -295,7 +315,7 @@ select {
   overflow: hidden;
 }
 .health-box {
-  width: 2.2em;
+  width: 3em;
   padding: 0.2em 0;
   border: 0;
   border-right: 1px solid rgba(0, 0, 0, 0.35);
@@ -328,11 +348,11 @@ select {
   border: 1px solid var(--line);
   border-radius: 10px;
 }
-.stat-box > span:first-child { font-size: 0.7em; color: var(--muted); }
-.stat-box > span:nth-child(2) { font-size: 0.85em; color: var(--muted); }
+.stat-box > span:first-child { font-size: 0.9em; color: var(--muted); }
+.stat-box > span:nth-child(2) { font-size: 0.9em; color: var(--muted); }
 .stat-box > span:nth-child(2) input { text-align: center; font-weight: 700; color: var(--cream); }
 .stat-box > span:last-child:not(:first-child) {
-  font: 400 1.6em/1.1 var(--display);
+  font: 400 1.4em/1.1 var(--display);
   color: var(--gold);
 }
 .stat-box > input {
@@ -441,6 +461,54 @@ details > ul > li {
   border: 1px solid var(--line);
   border-radius: 8px;
 }
+
+/* ---------- roll panels: compact, side by side when there's room ---------- */
+body > .container { column-gap: 14px; }
+
+body > .container > .container:has(> #check_dicepool),
+body > .container > .container:has(> #damage_dicepool) {
+  flex: 1 1 16em;
+  width: auto;
+  max-width: none;
+  margin: 0 0 14px;
+  padding: 0.5em 0.7em;
+  align-self: stretch;
+  align-content: flex-start;
+}
+#check_dicepool, #damage_dicepool {
+  min-height: 46px;
+  padding: 0 0 2px;
+}
+#roll_controls, #damage_roll_controls {
+  gap: 0.3em 0.5em;
+  padding: 0.2em 0 0;
+  font-size: 0.85em;
+}
+#roll_controls label, #damage_roll_controls label { margin: 0; }
+#check_result, #damage_result { min-width: 4em; }
+.die {
+  width: 50px;
+  height: 50px;
+  margin: 3px 2px 0;
+  border-radius: 8px;
+  font-size: 0.7em;
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.25), 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- die shapes (needs die.dataset.sides in scripts.js) ---------- */
+.die[data-sides] {
+  border: 0;
+  box-shadow: none;
+  background-image: linear-gradient(155deg, rgba(255, 255, 255, 0.25), transparent 45%, rgba(0, 0, 0, 0.3));
+}
+.die[data-sides="2"]   { border-radius: 50%; }
+.die[data-sides="4"]   { clip-path: polygon(50% 2%, 98% 94%, 2% 94%); padding-top: 0.7em; }
+.die[data-sides="6"]   { border-radius: 8px; }
+.die[data-sides="8"]   { clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+.die[data-sides="10"]  { clip-path: polygon(50% 0, 100% 40%, 50% 100%, 0 40%); }
+.die[data-sides="12"]  { clip-path: polygon(50% 0, 100% 38%, 81% 100%, 19% 100%, 0 38%); }
+.die[data-sides="20"]  { clip-path: polygon(50% 0, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%); }
+.die[data-sides="100"] { clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); }
 
 /* ---------- small screens / motion ---------- */
 @media (max-width: 600px) {

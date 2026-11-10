@@ -91,9 +91,9 @@ const setup = function() {
   let damage_pool = document.getElementById("damage_dicepool");
   damage_pool.addEventListener('command',  roll_dice);
   let advantage = document.getElementById("advantage");
-  advantage.addEventListener('change', toggle_advantage);
+  advantage.addEventListener('click', toggle_advantage);
   let disadvantage = document.getElementById("disadvantage");
-  disadvantage.addEventListener('change', toggle_disadvantage);
+  disadvantage.addEventListener('click', toggle_disadvantage);
 };
 
 const repopulate_page = function() {
@@ -769,8 +769,11 @@ const select_skill = function(e) {
 };
 
 const toggle_advantage = function(e) {
-  let ad_state = e.target.checked;
-  let disad_state = document.getElementById('disadvantage').checked;
+  //console.log(e.target);
+  e.target.classList.toggle('selected_mod');
+  let ad_state = e.target.classList.contains('selected_mod');
+  //let disad_state = document.getElementById('disadvantage').checked;
+  let disad_state = document.getElementById('disadvantage').classList.contains('selected_mod');
 
   if (ad_state && !disad_state) {
     check_dicepool.push(20);
@@ -787,8 +790,11 @@ const toggle_advantage = function(e) {
   updateDiceDisplay('check');
 };
 const toggle_disadvantage = function(e) {
-  let disad_state = e.target.checked;
-  let ad_state = document.getElementById('advantage').checked;
+  e.target.classList.toggle('selected_mod');
+  let disad_state = e.target.classList.contains('selected_mod');
+  //let disad_state = e.target.checked;
+  //let ad_state = document.getElementById('advantage').checked;
+  let ad_state = document.getElementById('advantage').classList.contains('selected_mod');
 
   if (disad_state && !ad_state) {
     check_dicepool.push(20);
@@ -1047,6 +1053,7 @@ const updateDiceDisplay = function(type) {
 
     var die = document.createElement('span'); //new
     die.classList.add('die');//new
+    die.dataset.sides = pool[i];
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
     die.innerText = "d" + pool[i];
     dicePoolDisplay.appendChild(die);//new
@@ -1127,6 +1134,7 @@ var roll_dice = function(e) {
   for (let i=0; i<pool.length; i++) {
     let die = document.createElement('span');
     die.classList.add('die');//new
+    die.dataset.sides = pool[i];
     die.style.backgroundColor = dice_pallete[i % dice_pallete.length];
     dicePoolDisplay.appendChild(die);
     roll_animation(die, pool[i], results[i]);
@@ -1136,7 +1144,7 @@ var roll_dice = function(e) {
   let result = calculate_result(results, type) + bonus;
   let result_display = document.getElementById(type+"_result");
   result_display.innerText = 'roll: ';
-  result_display.innerText+= result;
+  result_display.innerText+= ' ' + result;
 };//roll_dice
 
 const calculate_result = function(results, type) {
