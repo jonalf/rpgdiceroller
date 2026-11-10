@@ -175,6 +175,17 @@ input:not([type="checkbox"]):not([type="radio"]) {
 .invisible-textbox::placeholder { color: var(--muted); opacity: 0.6; }
 .invisible-textbox[readonly] { color: var(--muted); border-bottom-style: dotted; }
 
+textarea.invisible-textbox {
+  flex: 1 1 0;
+  min-width: 8em;
+  max-width: 100%;
+  field-sizing: content;
+  resize: none;
+  overflow: hidden;
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
 input[type="checkbox"] {
   width: 1.05em;
   height: 1.05em;
@@ -438,6 +449,23 @@ details > ul > li {
 #inventory {
   flex: 1 1 100%;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* repeat(N ...) sets N columns*/
+  gap: 6px 10px;
+  align-items: start;
+}
+#inventory > details {
+  margin: 0;
+  padding: 0.5em 0.8em;
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+/*
+single column inventory
+#inventory {
+  flex: 1 1 100%;
+  padding: 0;
 }
 #inventory > details {
   margin-bottom: 6px;
@@ -446,6 +474,7 @@ details > ul > li {
   border: 1px solid var(--line);
   border-radius: 8px;
 }
+*/
 #inventory > details > button { margin: 0.2em 0.4em 0 0; }
 
 /* ---------- save ---------- */
@@ -521,4 +550,7 @@ body > .container > .container:has(> #damage_dicepool) {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
+}
+@media (max-width: 600px) {
+  #inventory { grid-template-columns: 1fr; }
 }

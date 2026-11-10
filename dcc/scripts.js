@@ -71,7 +71,8 @@ const setup = function() {
     set_stats( window.location.hash );
   }
   else {
-    char_stats = mike_stats;
+    //leave blank to allow for new chars
+    //char_stats = mike_stats;
   }
   char_stats = compute_stats(char_stats);
   //console.log(char_stats.dr);
@@ -228,7 +229,7 @@ const populate_inventory = function(inventory) {
       if (typeof property != 'object') {
         let property_item = document.createElement("li");
         property_item.innerText = key + ": ";
-        let property_value = document.createElement("input");
+        let property_value =  document.createElement(key == 'notes' ? 'textarea' : 'input');//document.createElement("input");
         property_value.classList.add('invisible-textbox');
         property_value.id = itemid+"_"+key;
         property_value.value = property;
@@ -322,7 +323,7 @@ const make_blank_inventory_item = function(e) {
   for (let prop of input_properties) {
     let prop_item = document.createElement('li');
     prop_item.innerText = prop + ': ';
-    let prop_value = document.createElement('input');
+    let prop_value = document.createElement(prop == 'notes' ? 'textarea' : 'input');//document.createElement('input');
     prop_value.classList.add('invisible-textbox');
     prop_value.id = itemid + '_' + prop;
     prop_value.addEventListener('change', update_item);
@@ -622,7 +623,7 @@ const make_skill_li = function(skill, type, i) {
   for (let header of SKILL_HEADERS) {
     let detail_li = document.createElement('li');
     detail_li.innerText = header + ': ';
-    let cell_data = document.createElement("input");
+    let cell_data = document.createElement(header == 'notes' ? 'textarea' : 'input');//document.createElement("input");
     if (header == 'marked') {
       cell_data.type = 'checkbox';
       cell_data.checked = skill['marked'];
@@ -677,7 +678,7 @@ const make_blank_skill_row = function(e) {
   for (let header of SKILL_HEADERS) {
     let detail_li = document.createElement('li');
     detail_li.innerText = header + ': ';
-    let cell_data = document.createElement("input");
+    let cell_data = document.createElement(header == 'notes' ? 'textarea' : 'input');//document.createElement("input");
     cell_data.classList.add("invisible-textbox");
     cell_data.name = skillid;
     cell_data.id = skillid+'_'+header;
@@ -1017,15 +1018,52 @@ const collect_skill = function(skill_type, skill_count) {
   return skill_dict;
 };//collect_skill
 
+/*
 const encode_stats = function() {
   let new_stats = get_stats();
   let encode_string = btoa(JSON.stringify(new_stats));
   return encode_string;
 };
+*/
+const encode_stats = function() {
+  let new_stats = get_stats();
+  let json_string = JSON.stringify(new_stats);
+
+  // 1. Convert string to UTF-8 bytes and then to a binary string
+  const bytes = new TextEncoder().encode(json_string);
+  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join("");
+
+  // 2. Standard Base64 encode
+  let base64 = btoa(binString);
+
+  // 3. Make it URL-Safe
+  let urlSafeBase64 = base64
+    .replace(/\+/g, '-') // Replace + with -
+    .replace(/\//g, '_') // Replace / with _
+    .replace(/=+$/, '');  // Strip padding = characters
+
+  return urlSafeBase64;
+};
 
 const set_stats = function() {
   let stat_string = window.location.hash.substr(1);
-  char_stats =  JSON.parse(atob(stat_string));
+
+  let base64 = stat_string
+    .replace(/-/g, '+') // Replace - back to +
+    .replace(/_/g, '/'); // Replace _ back to /
+
+  // 2. Restore padding (=) if it was stripped
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+
+  // 3. Convert back to binary string
+  const binString = atob(base64);
+
+  // 4. Convert binary string to UTF-8 bytes and decode to JSON string
+  const bytes = Uint8Array.from(binString, (m) => m.codePointAt(0));
+  let json_string = new TextDecoder().decode(bytes);
+  char_stats =  JSON.parse(json_string);
   //console.log(char_stats);
 };
 
@@ -1231,114 +1269,324 @@ let mike_stats = {
   },
 
   'inventory' : [
-    {'name' : 'Mask',
-      'quantity' : 1,
-     'dr': 1,
-     'skill_bonus' : [
-       {'name': 'catcher',
-        'type': 'other',
-        'bonus': 1},
-       {'name': 'shield block',
-        'type': 'defense',
-        'bonus': 1}
-      ],
-     'stat_bonus' : {},
-     'notes': ""},
-    {'name' : 'Garbage Can Lid',
-      'quantity' : 1,
-     'dr': 1,
-     'skill_bonus' : [],
-     'stat_bonus' : {},
-     'notes': ""},
-   {'name' : 'LL Bean Duck Boots',
-     'quantity' : 1,
-    'dr': 1,
-    'skill_bonus' : [],
-    'stat_bonus' : {},
-    'notes': ""},
-   {'name' : 'Leather Gloves',
-     'dr': 1,
-     'quantity' : 1,
-     'skill_bonus' : [],
-     'stat_bonus' : {},
-     'notes': ""},
-   {'name' : 'Earring',
-     'quantity' : 1,
-     'dr': 0,
-     'skill_bonus' : [],
-     'stat_bonus' : {'constitution' : 2},
-     'notes': ""},
-   {'name' : 'Beret',
-     'quantity' : 1,
-     'dr': 0,
-     'skill_bonus' : [],
-     'stat_bonus' : {'intelligence' : 2},
-     'notes': ""}
-  ],
-
-  'skills' : {
-    'attack': [
-      {'name' : 'longsword',
-       'rank' : 0,
-       'rankbase' : 5,
-       'stat': 'strength',
-       'marked': false,
-       'damage' : '2d8',
-       'grind_bank': 1,
-       'notes' : ''},
-     {'name' : 'improvised weapons',
-      'rank' : 0,
-      'rankbase' : 4,
-      'stat': 'strength',
-      'marked': false,
-      'damage' : '1d4',
-      'grind_bank': 1,
-      'notes' : ''},
-   ],
-    'defense': [
-      {'name' : 'evade',
-       'rank' : '',
-       'rankbase' : '',
-       'stat': 'dexterity',
-       'marked': '',
-       'damage' : '',
-       'grind_bank': '',
-       'notes' : ''},
-     {'name' : 'shield block',
-      'rank' : 0,
-      'rankbase' : 3,
-      'stat': 'strength',
-      'marked': false,
-      'damage' : '',
-      'grind_bank': 0,
-      'notes' : ''},
+  {
+    "name": "Gimp Mask of Sadomasichism ",
+    "quantity": 1,
+    "dr": 1,
+    "skill_bonus": [
+      {
+        "name": "Catcher",
+        "type": "other",
+        "bonus": 1
+      },
+      {
+        "name": "Shield Block",
+        "type": "defense",
+        "bonus": 1
+      }
     ],
-    'other': [
-      {'name' : 'catcher',
-       'rank' : 0,
-       'rankbase' : 4,
-       'stat': '',
-       'marked': false,
-       'damage' : '',
-       'grind_bank': '',
-       'notes' : '+5 DR'},
-     {'name' : 'detect lies',
-      'rank' : 0,
-      'rankbase' : 3,
-      'stat': 'intelligence',
-      'marked': true,
-      'damage' : '',
-      'grind_bank': 0,
-      'notes' : ''},
-    {'name' : 'perception',
-     'rank' : 0,
-     'rankbase' : 3,
-     'stat': 'intelligence',
-     'marked': true,
-     'damage' : '',
-     'grind_bank': '',
-     'notes' : ''},
-    ]
+    "stat_bonus": {},
+    "notes": ""
   },
+  {
+    "name": "Garbage Can Lid",
+    "quantity": 1,
+    "dr": 1,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "LL Bean Duck Boots",
+    "quantity": 1,
+    "dr": 1,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "Leather Gloves",
+    "dr": 1,
+    "quantity": 1,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "Earring",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {
+      "constitution": 2
+    },
+    "notes": ""
+  },
+  {
+    "name": "Beret",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {
+      "intelligence": 2
+    },
+    "notes": ""
+  },
+  {
+    "name": "Healing Potion",
+    "quantity": 10,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "Heal 5 slots"
+  },
+  {
+    "name": "Bandages",
+    "quantity": 4,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "spend an Action to remove the Blood Trail Debuff"
+  },
+  {
+    "name": "Torch",
+    "quantity": 20,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "provides bright light for 20 feet and dim light for another 20 feet. It burns out in about an hour"
+  },
+  {
+    "name": "Basic Dynamite",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "1d6 Bludgeoning damage 0ft Blast radius +5ft Splash"
+  },
+  {
+    "name": "Misc. Junk",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "Crawler Biscuits",
+    "quantity": 100,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "8\" Sharpened Serving Tray",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "Long Kitchen Knife",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "edged weapon"
+  },
+  {
+    "name": "Pen",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "just a pen"
+  },
+  {
+    "name": "Notebook",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": ""
+  },
+  {
+    "name": "Cutlas",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "Edged weapon from chocolate poop pirates"
+  },
+  {
+    "name": "Leatherman",
+    "quantity": 1,
+    "dr": 0,
+    "skill_bonus": [],
+    "stat_bonus": {},
+    "notes": "Don't leave home without it"
+  }
+],
+
+'skills' : {
+"attack": [
+  {
+    "name": "Longsword",
+    "rank": 5,
+    "rankbase": 5,
+    "stat": "strength",
+    "marked": false,
+    "damage": "2d8",
+    "grind_bank": 1,
+    "notes": ""
+  },
+  {
+    "name": "Improvised Weapons",
+    "rank": 4,
+    "rankbase": 4,
+    "stat": "strength",
+    "marked": true,
+    "damage": "1d4",
+    "grind_bank": 1,
+    "notes": ""
+  }
+],
+"defense": [
+  {
+    "name": "Evade",
+    "rank": "0",
+    "rankbase": "",
+    "stat": "dexterity",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Shield Block",
+    "rank": 4,
+    "rankbase": 3,
+    "stat": "strength",
+    "marked": true,
+    "damage": "",
+    "grind_bank": 0,
+    "notes": ""
+  },
+],
+"other": [
+  {
+    "name": "Catcher",
+    "rank": 5,
+    "rankbase": 4,
+    "stat": "",
+    "marked": false,
+    "damage": "",
+    "grind_bank": "",
+    "notes": "+5 DR"
+  },
+  {
+    "name": "Detect Lies",
+    "rank": 3,
+    "rankbase": 3,
+    "stat": "intelligence",
+    "marked": true,
+    "damage": "",
+    "grind_bank": 0,
+    "notes": ""
+  },
+  {
+    "name": "Perception",
+    "rank": 3,
+    "rankbase": 3,
+    "stat": "intelligence",
+    "marked": true,
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "First Aid",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "intelligence",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": "On Success, the patient regains 1 Health Bar slot. Each higher degree of Success heals 1 additional slot. UPGRADES Rank 5: If you spend 5 minutes, the patient also heals a Minor Injury Debuff. Rank 10: If you spend 10 minutes, the patient also heals a Long-Term Minor Injury Debuff. Rank 15: The patient regains 1 additional Health Bar slot. If you spend 15 minutes, the patient also heals a Major Injury Debuff."
+  },
+  {
+    "name": "Ambush",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "intelligence",
+    "marked": false,
+    "damage": "",
+    "grind_bank": "",
+    "notes": "When a Mob is moving toward you, even if they are aware of your general presence, make an Int-Opposed Skill Check. On Success, you gain a surprise Action against the Mob before combat starts. As an unseen attacker, you Attack with Advantage. UPGRADES Rank 5: If you Attack with your Surprise Action, add an Ambush Rank damage die to your Surprise Attack damage. Rank 10: When other crawlers in your party roll this skill untrained, they roll as normal (not with Disadvantage). Rank 15: You gain a second bonus Action as a sur‑ prise Action. This bonus Action can’t be an Attack."
+  },
+  {
+    "name": "Endurance",
+    "rank": 2,
+    "rankbase": 2,
+    "stat": "intelligence",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Streetwise",
+    "rank": 2,
+    "rankbase": 2,
+    "stat": "intelligence",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Investigation",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "intelligence",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Repair",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "intelligence",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Climbing",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "strength",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  },
+  {
+    "name": "Swimming",
+    "rank": 1,
+    "rankbase": 1,
+    "stat": "strength",
+    "marked": "",
+    "damage": "",
+    "grind_bank": "",
+    "notes": ""
+  }
+]
+},
   'notes' : ""
 };
