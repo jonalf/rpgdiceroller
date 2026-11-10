@@ -1211,7 +1211,7 @@ const calculate_result = function(results, type) {
     if (d20pool.length == 1) {
       total+= d20pool[0];
     }
-    else if (document.getElementById('advantage').checked) {
+    else if (document.getElementById('advantage').classList.contains('selected_mod')) {
       total+= Math.max(...d20pool);
     }
     else {
