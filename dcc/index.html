@@ -26,8 +26,10 @@
       <input id="char_level" placeholder="lvl" class="invisible-textbox">
       <label for="char_floor">Floor: </label>
       <input id="char_floor" placeholder="Floor" class="invisible-textbox">
-      <label for="char_floor">Gold: </label>
+      <label for="char_gold">Gold: </label>
       <input id="char_gold" placeholder="$" class="invisible-textbox">
+      <label for="char_popularity">Popularity: </label>
+      <input id="char_popularity" placeholder="0" class="invisible-textbox">
     </div>
     <!-- char info -->
 
@@ -130,11 +132,14 @@
       <button commandfor="inventory" command="--add-item">+ item</button>
     </div>
 
+    <div class="container">
+      <textarea id="char_notes" placeholder="notes" class="bigtextbox"></textarea>
+    </div>
 
     <hr>
     <button onclick="make_data_url()">Save Stats</button>
     <hr class="innerbreak">
-    <div class="container"><textarea id="data-url"></textarea></div>
+    <div class="container"><textarea id="data-url" class="bigtextbox"></textarea></div>
 
   </div>
 

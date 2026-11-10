@@ -86,7 +86,7 @@ body > .container > .container:has(> .vertical > .skill) {
 }
 
 /* textarea wrapper stays bare */
-body > .container > .container:has(> #data-url) {
+body > .container > .container:has(> .bigtextbox) {
   background: none;
   border: 0;
   padding: 0;
@@ -478,6 +478,19 @@ single column inventory
 #inventory > details > button { margin: 0.2em 0.4em 0 0; }
 
 /* ---------- save ---------- */
+.bigtextbox {
+  width: 100%;
+  min-height: 5em;
+  overflow: auto;
+  resize: vertical;
+  padding: 0.6em 0.8em;
+  font: 0.6em/1.4 ui-monospace, Menlo, Consolas, monospace;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+/*
 #data-url {
   width: 100%;
   min-height: 5em;
@@ -490,7 +503,7 @@ single column inventory
   border: 1px solid var(--line);
   border-radius: 8px;
 }
-
+*/
 /* ---------- roll panels: compact, side by side when there's room ---------- */
 body > .container { column-gap: 14px; }
 

@@ -48,7 +48,8 @@ let char_stats = {
     'level' : 1,
     'class' : '',
     'floor' : 1,
-    'gold' : 0
+    'gold' : 0,
+    'popularity' : 0
   },
 
   'skills' : {
@@ -106,6 +107,7 @@ const repopulate_page = function() {
   populate_skills('defense', char_stats['skills']['defense']);
   populate_skills('other', char_stats['skills']['other']);
   populate_inventory(char_stats['inventory']);
+  document.getElementById('char_notes').value = char_stats['notes'];
 };
 
 const compute_stats = function(stats) {
@@ -880,7 +882,8 @@ var get_stats = function() {
       'level' : 1,
       'class' : '',
       'floor' : 1,
-      'gold' : 0
+      'gold' : 0,
+      'popularity' : 0
     },
 
     'inventory' : [],
@@ -938,6 +941,8 @@ var get_stats = function() {
   //grab inventory
   new_stats['inventory'] = collect_inventory(document.getElementsByClassName("inventory-item"), new_stats['skills']);
 
+  //grab notes
+  new_stats['notes'] = document.getElementById('char_notes').value;
   return new_stats;
 };//get_stats
 
@@ -1001,15 +1006,17 @@ const collect_skill = function(skill_type, skill_count) {
   let skill_dict = {}
   let skill_id = skill_type+'_'+skill_count;
   for (let header of SKILL_HEADERS) {
-    //console.log("\t"+header + " " + skill_id);
+    console.log("\t"+header + " " + skill_id);
     let element = document.getElementById(skill_id+"_"+header);
+    //console.log(element);
     let value = "";
     if (element) {
       value = element.value;
       if (header == 'marked') {
-        value = element.checked == 'true';
+        console.log(element.checked);
+        value = element.checked;
       }
-      if (isInt(value)) {
+      else if (isInt(value)) {
         value = parseInt(value);
       }
     }
@@ -1265,7 +1272,8 @@ let mike_stats = {
     'level' : 9,
     'class' : '',
     'floor' : 1,
-    'gold' : 36
+    'gold' : 36,
+    'popularity' : 6
   },
 
   'inventory' : [
