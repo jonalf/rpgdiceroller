@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Draggable details</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 600px; margin: 2rem auto; }
+  #list details { border: 1px solid #ccc; border-radius: 6px; margin-bottom: 8px; background: #fff; }
+  #list summary { cursor: grab; padding: 10px 12px; user-select: none; }
+  #list details > :not(summary) { padding: 0 12px 12px; }
+  #list details.dragging { opacity: 0.4; }
+</style>
+</head>
+<body>
+
+<div id="list">
+  <details><summary>Item 1</summary><p>Some content</p><input placeholder="You can type here"></details>
+  <details><summary>Item 2</summary><p>More content</p><ul><li>One</li><li>Two</li></ul></details>
+  <details><summary>Item 3</summary><p>Even more content</p><button>A button</button></details>
+  <details><summary>Item 4</summary><p>Last one</p></details>
+</div>
+
+<script>
+const list = document.getElementById('list');
+let dragged = null;
+
+// Only allow dragging when the press starts on a summary,
+// so selecting text / using inputs inside the content still works.
+list.addEventListener('pointerdown', e => {
+  const summary = e.target.closest('summary');
+  const item = summary && summary.parentElement;
+  if (item && item.parentElement === list) item.draggable = true;
+});
+
+list.addEventListener('dragstart', e => {
+  dragged = e.target.closest('details');
+  if (!dragged || dragged.parentElement !== list) return;
+  dragged.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', ''); // required by Firefox
+});
+
+list.addEventListener('dragover', e => {
+  if (!dragged) return;
+  e.preventDefault();
+  const after = getInsertionPoint(e.clientY);
+  if (after == null) list.appendChild(dragged);
+  else if (after !== dragged) list.insertBefore(dragged, after);
+});
+
+list.addEventListener('dragend', () => {
+  if (!dragged) return;
+  dragged.classList.remove('dragging');
+  dragged.draggable = false;
+  dragged = null;
+});
+
+// Find the direct-child details whose midpoint is just below the cursor.
+function getInsertionPoint(y) {
+  const others = [...list.children].filter(el => el !== dragged);
+  return others.find(el => {
+    const box = el.getBoundingClientRect();
+    return y < box.top + box.height / 2;
+  }) ?? null;
+}
+</script>
+</body>
+</html>

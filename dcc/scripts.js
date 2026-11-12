@@ -10,6 +10,7 @@ const baseColor = {
 let dice_pallete;
 let check_dicepool = [20];
 let damage_dicepool = [];
+let dragged = null;
 
 let char_stats = {
   /* full computed stats */
@@ -86,8 +87,14 @@ const setup = function() {
   defense_table.addEventListener('command',  make_blank_skill_row);
   let other_table = document.getElementById("other_skills");
   other_table.addEventListener('command',  make_blank_skill_row);
+
   let inventory = document.getElementById("inventory");
   inventory.addEventListener('command',  make_blank_inventory_item);
+  inventory.addEventListener('pointerdown', inventory_drag_init);
+  inventory.addEventListener('dragstart', inventory_drag_start);
+  inventory.addEventListener('dragover', inventory_dragover);
+  inventory.addEventListener('dragend', inventory_dragend);
+
   let check_pool = document.getElementById("check_dicepool");
   check_pool.addEventListener('command',  roll_dice);
   let damage_pool = document.getElementById("damage_dicepool");
@@ -97,6 +104,82 @@ const setup = function() {
   let disadvantage = document.getElementById("disadvantage");
   disadvantage.addEventListener('click', toggle_disadvantage);
 };
+
+const inventory_drag_init = function(e) {
+ const summary = e.target.closest('summary');
+ const item = summary && summary.parentElement;
+ if (item && item.parentElement === document.getElementById('inventory')) {
+    item.draggable = true;
+ }
+};
+const inventory_drag_start = function(e) {
+  dragged = e.target.closest('details');
+  if (!dragged || dragged.parentElement !== document.getElementById('inventory')) return;
+  dragged.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', ''); // required by Firefox
+};
+const inventory_dragover = function(e) {
+  let inventory =  document.getElementById('inventory');
+  if (!dragged) return;
+  e.preventDefault();
+  const after = getInsertionPoint(e.clientY, inventory);
+  if (after == null) inventory.appendChild(dragged);
+  else if (after !== dragged) inventory.insertBefore(dragged, after);
+};
+// Find the direct-child details whose midpoint is just below the cursor.
+const getInsertionPoint = function(y, inventory) {
+  const others = [...inventory.children].filter(el => el !== dragged);
+  return others.find(el => {
+    const box = el.getBoundingClientRect();
+    return y < box.top + box.height / 2;
+  }) ?? null;
+};
+const inventory_dragend = function(e) {
+  if (!dragged) return;
+  dragged.classList.remove('dragging');
+  dragged.draggable = false;
+  dragged = null;
+  //console.log(e.currentTarget.children);
+  renumber_inventory(e.currentTarget.children);
+};
+const renumber_inventory = function(inventory_list) {
+  let count = 0;
+  for (let item of inventory_list) {
+    let item_number = item.id.split('_')[0].replace('item', '');
+    if (item_number != count) {
+      //console.log(item);
+      renumber_item(item, count);
+    }
+    count++;
+  }
+  char_stats['inventory'] = collect_inventory(document.getElementsByClassName("inventory-item"), char_stats['skills']);
+};
+const renumber_item = function(item, count) {
+  let newid = 'item' + count;
+  let oldid = item.id.split('_')[0];
+  //console.log('\t', newid, oldid);
+  for (let section of item.children) {
+    if (section.id && section.id.includes(oldid)) {
+      //console.log(section);
+      section.id = section.id.replace(oldid, newid);
+      if (section.tagName == 'UL') {
+        //console.log('\nLIST TIME');
+        for (let li of section.children) {
+          //console.log(li);
+          for (let property of li.children) {
+            if (property.id && property.id.includes(oldid)) {
+              property.id = property.id.replace(oldid, newid);
+            }
+          }//input items inside li
+        }//list items
+      }//iterate over ul
+      //console.log(section);
+    }//if id needs the change
+  }//top level children
+  item.id = item.id.replace(oldid, newid);
+};//renumber_item
+
 
 const repopulate_page = function() {
   populate_info(char_stats['info']);
@@ -307,10 +390,12 @@ const populate_inventory = function(inventory) {
     stat_button.addEventListener('click', new_item_stat);
     item_element.appendChild(skill_button);
     item_element.appendChild(stat_button);
+
     inventory_containter.appendChild(item_element);
     count++;
   }
 };//populate_inventory
+
 
 const make_blank_inventory_item = function(e) {
   let inventory_container = e.target;
