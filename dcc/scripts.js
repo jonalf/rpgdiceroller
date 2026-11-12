@@ -68,6 +68,11 @@ const SKILL_HEADERS = ['name', 'rank', 'rankbase', 'stat', 'damage', 'notes', 'g
 const SKILL_TYPES = ['attack', 'defense', 'other'];
 const STAT_BREAKPOINTS = [3, 6, 10, 20, 50, 100, 150, 200, 300];
 
+const custom_setup = function() {
+  char_stats = compute_stats(mike_stats);
+  repopulate_page();
+};
+
 const setup = function() {
   if ( window.location.hash ) {
     set_stats( window.location.hash );
@@ -83,10 +88,24 @@ const setup = function() {
   //add listeners
   let attack_table = document.getElementById("attack_skills");
   attack_table.addEventListener('command',  make_blank_skill_row);
+  attack_table.addEventListener('command',  make_blank_skill_row);
+  attack_table.addEventListener('pointerdown', skill_drag_init);
+  attack_table.addEventListener('dragstart', skill_drag_start)
+  attack_table.addEventListener('dragover', skill_dragover);
+  attack_table.addEventListener('dragend', skill_dragend);
   let defense_table = document.getElementById("defense_skills");
   defense_table.addEventListener('command',  make_blank_skill_row);
+  defense_table.addEventListener('command',  make_blank_skill_row);
+  defense_table.addEventListener('pointerdown', skill_drag_init);
+  defense_table.addEventListener('dragstart', skill_drag_start)
+  defense_table.addEventListener('dragover', skill_dragover);
+  defense_table.addEventListener('dragend', skill_dragend);
   let other_table = document.getElementById("other_skills");
   other_table.addEventListener('command',  make_blank_skill_row);
+  other_table.addEventListener('pointerdown', skill_drag_init);
+  other_table.addEventListener('dragstart', skill_drag_start)
+  other_table.addEventListener('dragover', skill_dragover);
+  other_table.addEventListener('dragend', skill_dragend);
 
   let inventory = document.getElementById("inventory");
   inventory.addEventListener('command',  make_blank_inventory_item);
@@ -121,18 +140,24 @@ const inventory_drag_start = function(e) {
 };
 const inventory_dragover = function(e) {
   let inventory =  document.getElementById('inventory');
-  if (!dragged) return;
+  if (!dragged) { return; }
   e.preventDefault();
-  const after = getInsertionPoint(e.clientY, inventory);
-  if (after == null) inventory.appendChild(dragged);
-  else if (after !== dragged) inventory.insertBefore(dragged, after);
+  const after = getInsertionPoint(e.clientX, e.clientY, inventory);
+  if (after == null) {
+    inventory.appendChild(dragged);
+  }
+  else if (after !== dragged) {
+    inventory.insertBefore(dragged, after);
+  }
 };
 // Find the direct-child details whose midpoint is just below the cursor.
-const getInsertionPoint = function(y, inventory) {
-  const others = [...inventory.children].filter(el => el !== dragged);
+const getInsertionPoint = function(x, y, container) {
+  //console.log(x, y);
+  const others = [...container.children].filter(el => el !== dragged);
   return others.find(el => {
     const box = el.getBoundingClientRect();
-    return y < box.top + box.height / 2;
+    return (y < box.top + box.height / 2);
+    //return (y > box.top && y < box.bottom) && (x > box.left && x < box.right);
   }) ?? null;
 };
 const inventory_dragend = function(e) {
@@ -180,6 +205,89 @@ const renumber_item = function(item, count) {
   item.id = item.id.replace(oldid, newid);
 };//renumber_item
 
+const skill_drag_init = function(e) {
+ const summary = e.target.closest('summary');
+ // console.log(summary);
+ // console.log(summary.parentElement);
+ const item = summary && summary.parentElement;
+ if (item ) {
+    item.draggable = true;
+ }
+};
+const skill_drag_start = function(e) {
+  dragged = e.target.closest('li');
+  //console.log(e.target);
+  if (!dragged) return;
+  dragged.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', ''); // required by Firefox
+};
+const skill_dragover = function(e) {
+  if (!dragged) { return; }
+  // console.log(e);
+  // console.log(dragged);
+  let skill_type = dragged.parentElement.id.split('_')[0];
+  let skill_container =  document.getElementById(skill_type+'_skills');
+  e.preventDefault();
+  const after = getInsertionPoint(e.clientX, e.clientY, skill_container);
+  if (after == null) {
+    skill_container.appendChild(dragged);
+  }
+  else if (after !== dragged) {
+    skill_container.insertBefore(dragged, after);
+  }
+};
+const skill_dragend = function(e) {
+  if (!dragged) return;
+  dragged.classList.remove('dragging');
+  dragged.draggable = false;
+  dragged = null;
+  console.log(e.currentTarget);
+  renumber_skills(e.currentTarget.children);
+};
+
+const renumber_skills = function(skill_list) {
+  let count = 0;
+  for (let li of skill_list) {
+    let skill_number = li.childNodes[0].value.split('_')[1];
+    //console.log(count, skill_number);
+    if (skill_number != count) {
+      console.log(li);
+      renumber_skill(li, count, skill_number);
+    }
+    count++;
+  }
+  //char_stats['inventory'] = collect_inventory(document.getElementsByClassName("inventory-item"), char_stats['skills']);
+  char_stats['skills'] = collect_skills();
+};
+
+const renumber_skill = function(skill, count, skill_number) {
+  let newid = '_' + count + '_';
+  let oldid = '_' + skill_number + '_';
+  //console.log('\t', newid, oldid);
+  for (let section of skill.children) {
+    //hanlde radio button value
+    if (section.value && section.value.split('_')[1] == skill_number) {
+      section.value = section.value.split('_')[0] + '_' + count;
+    }
+    //deal with deatisl element
+    if (section.id && section.id.includes(oldid)) {
+      //console.log(section);
+      section.id = section.id.replace(oldid, newid);
+      let innerlist = section.childNodes[1].childNodes;
+      console.log(innerlist);
+      for (let li of innerlist) {
+        //console.log(li);
+        for (let property of li.children) {
+          if (property.id && property.id.includes(oldid)) {
+            property.id = property.id.replace(oldid, newid);
+            property.name = property.name.split('_')[0] + '_' + count;
+          }
+        }//input items inside li
+      }//list items
+    }//if id needs the change
+  }//top level children
+};//renumber_skill
 
 const repopulate_page = function() {
   populate_info(char_stats['info']);
@@ -1020,7 +1128,7 @@ var get_stats = function() {
         skill_count++;
       }//loop over skill rows
     }//if there are skills
-  }//loop over kill types
+  }//loop over skill types
 
 
   //grab inventory
@@ -1030,6 +1138,25 @@ var get_stats = function() {
   new_stats['notes'] = document.getElementById('char_notes').value;
   return new_stats;
 };//get_stats
+
+const collect_skills = function() {
+  new_skills = {};
+  for (let skill_type of SKILL_TYPES) {
+    new_skills[skill_type] = [];
+    if ( document.getElementById(skill_type+"_skills") ) {
+      let skills = document.getElementById(skill_type+"_skills").children;
+      let skill_count = 0;
+      for (let skill of skills) {
+        let skill_dict = collect_skill(skill_type, skill_count);
+        //rankbase(skill_dict);
+        new_skills[skill_type].push(skill_dict);
+        skill_count++;
+      }//loop over skill rows
+    }//if there are skills
+  }//loop over skill types
+  return new_skills;
+};
+
 
 const collect_inventory = function(inventory_nodes, current_skills) {
   let new_inventory = [];
@@ -1173,6 +1300,9 @@ const updateDiceDisplay = function(type) {
   if (type == 'damage') {
     pool = damage_dicepool;
   }
+  else {
+    document.getElementById('damage_dicepool').innerHTML="";
+  }
 
   dice_pallete = createScientificPalettes(baseColor)['unknown'];
 
@@ -1314,372 +1444,378 @@ const isInt = function(str) {
 
 
 let mike_stats = {
-  /* full computed stats */
-  'strength' : 0,
-  'intelligence' : 0,
-  'constitution' : 0,
-  'dexterity' : 0,
-  'charisma' : 0,
-
-  /* computed modifiers */
-  'strength_mod' : 0,
-  'intelligence_mod' : 0,
-  'constitution_mod' : 0,
-  'dexterity_mod' : 0,
-  'charisma_mod' : 0,
-
-  /* stat bonuses */
-  'strength_bonus' : 0,
-  'intelligence_bonus' : 0,
-  'constitution_bonus' : 0,
-  'dexterity_bonus' : 0,
-  'charisma_bonus' : 0,
-
-
-  /* base stats */
-  'strength_base' : 5,
-  'intelligence_base' : 4,
-  'constitution_base' : 9,
-  'dexterity_base' : 2,
-  'charisma_base' : 3,
-
-  /* other stuff */
-  'mana' : 0,
-  'evade' : 0,
-  'dr' : 0,
-  'health': 0,
-  'injured': 0,
-
-  'info' : {
-    'name' : 'Mike Waters',
-    'race' : 'Human',
-    'crawler_number' : 13162193,
-    'level' : 9,
-    'class' : '',
-    'floor' : 1,
-    'gold' : 36,
-    'popularity' : 6
+  "strength": 7,
+  "intelligence": 6,
+  "constitution": 11,
+  "dexterity": 2,
+  "charisma": 5,
+  "strength_mod": 3,
+  "intelligence_mod": 3,
+  "constitution_mod": 4,
+  "dexterity_mod": 1,
+  "charisma_mod": 2,
+  "strength_base": 5,
+  "intelligence_base": 4,
+  "constitution_base": 9,
+  "dexterity_base": 2,
+  "charisma_base": 3,
+  "strength_bonus": 2,
+  "intelligence_bonus": 2,
+  "constitution_bonus": 2,
+  "dexterity_bonus": 0,
+  "charisma_bonus": 2,
+  "mana": 6,
+  "evade": 1,
+  "dr": 5,
+  "health": 40,
+  "injured": 0,
+  "info": {
+    "name": "Mike Waters",
+    "race": "Human",
+    "crawler_number": 13162193,
+    "level": 13,
+    "class": "",
+    "floor": 1,
+    "gold": 1436,
+    "popularity": 6
   },
-
-  'inventory' : [
-  {
-    "name": "Gimp Mask of Sadomasichism ",
-    "quantity": 1,
-    "dr": 1,
-    "skill_bonus": [
+  "inventory": [
+    {
+      "name": "Gimp Mask of Sadomasichism ",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [
+        {
+          "name": "Catcher",
+          "type": "other",
+          "bonus": 1
+        },
+        {
+          "name": "Shield Block",
+          "type": "defense",
+          "bonus": 1
+        }
+      ],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Healing Potion",
+      "quantity": 4,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "Heal 5 slots"
+    },
+    {
+      "name": "Frisbee Pie Tin",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "Returns when thrown - acts as shield"
+    },
+    {
+      "name": "Bandages",
+      "quantity": 4,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "spend an Action to remove the Blood Trail Debuff"
+    },
+    {
+      "name": "Monacle",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {
+        "strength": 2,
+        "charisma": 2
+      },
+      "notes": ""
+    },
+    {
+      "name": "Torch",
+      "quantity": 20,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "provides bright light for 20 feet and dim light for another 20 feet. It burns out in about an hour"
+    },
+    {
+      "name": "Earring",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {
+        "constitution": 2
+      },
+      "notes": ""
+    },
+    {
+      "name": "Crawler Biscuits",
+      "quantity": 100,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Beret",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {
+        "intelligence": 2
+      },
+      "notes": ""
+    },
+    {
+      "name": "Misc. Junk",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "LL Bean Duck Boots",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Basic Dynamite",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "1d6 Bludgeoning damage 0ft Blast radius +5ft Splash"
+    },
+    {
+      "name": "Leather Gloves",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "8\" Sharpened Serving Tray",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Garbage Can Lid",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Pen",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "just a pen"
+    },
+    {
+      "name": "Cutlas",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "Edged weapon from chocolate poop pirates"
+    },
+    {
+      "name": "Notebook",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": ""
+    },
+    {
+      "name": "Long Kitchen Knife",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "edged weapon"
+    },
+    {
+      "name": "Leatherman",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "Don't leave home without it"
+    }
+  ],
+  "skills": {
+    "attack": [
       {
-        "name": "Catcher",
-        "type": "other",
-        "bonus": 1
+        "name": "Longsword",
+        "rank": 5,
+        "rankbase": 5,
+        "stat": "strength",
+        "damage": "2d8",
+        "notes": "",
+        "grind_bank": 1,
+        "marked": false
+      },
+      {
+        "name": "Improvised Weapons",
+        "rank": 5,
+        "rankbase": 5,
+        "stat": "strength",
+        "damage": "2d4",
+        "notes": "",
+        "grind_bank": 1,
+        "marked": false
+      }
+    ],
+    "defense": [
+      {
+        "name": "Evade",
+        "rank": "0",
+        "rankbase": "",
+        "stat": "dexterity",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": false
       },
       {
         "name": "Shield Block",
-        "type": "defense",
-        "bonus": 1
+        "rank": -19,
+        "rankbase": 4,
+        "stat": "strength",
+        "damage": "",
+        "notes": "Rank 5: You may also use this Skill against Spells and magical damage.\n\nRank 10: On a Critical Hit, you may make a Shield Bash Attack as a free melee-range Interrupt Attack (instead of Advantage on your next Attack) if you wish, dealing 3d6 base damage + Str Bludgeoning.\n\nRank 15: +1d6 Shield Bash damage. Further reduce the damage you would take by your Str Mod. Example: After halving 30 damage down to 15, your Str Mod of 5 reduces it to 10 damage.\n",
+        "grind_bank": 0,
+        "marked": false
       }
     ],
-    "stat_bonus": {},
-    "notes": ""
+    "other": [
+      {
+        "name": "Catcher",
+        "rank": -19,
+        "rankbase": 4,
+        "stat": "",
+        "damage": "",
+        "notes": "+5 DR",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Detect Lies",
+        "rank": 3,
+        "rankbase": 3,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": 0,
+        "marked": true
+      },
+      {
+        "name": "Perception",
+        "rank": 3,
+        "rankbase": 3,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": true
+      },
+      {
+        "name": "First Aid",
+        "rank": 2,
+        "rankbase": 2,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "On Success, the patient regains 1 Health Bar slot. \nEach higher degree of Success heals 1 additional slot. \n\nRank 5: If you spend 5 minutes, the patient also heals a Minor Injury Debuff. \n\nRank 10: If you spend 10 minutes, the patient also heals a Long-Term Minor Injury Debuff. \n\nRank 15: The patient regains 1 additional Health Bar slot. If you spend 15 minutes, the patient also heals a Major Injury Debuff.",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Ambush",
+        "rank": 1,
+        "rankbase": 1,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "When a Mob is moving toward you, even if they are aware of your general presence, make an Int-Opposed Skill Check. On Success, you gain a surprise Action against the Mob before combat starts. As an unseen attacker, you Attack with Advantage. UPGRADES Rank 5: If you Attack with your Surprise Action, add an Ambush Rank damage die to your Surprise Attack damage. Rank 10: When other crawlers in your party roll this skill untrained, they roll as normal (not with Disadvantage). Rank 15: You gain a second bonus Action as a surâ€‘ prise Action. This bonus Action canâ€™t be an Attack.",
+        "grind_bank": "",
+        "marked": true
+      },
+      {
+        "name": "Endurance",
+        "rank": 2,
+        "rankbase": 2,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": true
+      },
+      {
+        "name": "Streetwise",
+        "rank": 2,
+        "rankbase": 2,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Investigation",
+        "rank": 2,
+        "rankbase": 2,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Repair",
+        "rank": 1,
+        "rankbase": 1,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Climbing",
+        "rank": 1,
+        "rankbase": 1,
+        "stat": "strength",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": false
+      },
+      {
+        "name": "Swimming",
+        "rank": 1,
+        "rankbase": 1,
+        "stat": "strength",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": true
+      }
+    ]
   },
-  {
-    "name": "Garbage Can Lid",
-    "quantity": 1,
-    "dr": 1,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "LL Bean Duck Boots",
-    "quantity": 1,
-    "dr": 1,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "Leather Gloves",
-    "dr": 1,
-    "quantity": 1,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "Earring",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {
-      "constitution": 2
-    },
-    "notes": ""
-  },
-  {
-    "name": "Beret",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {
-      "intelligence": 2
-    },
-    "notes": ""
-  },
-  {
-    "name": "Healing Potion",
-    "quantity": 10,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "Heal 5 slots"
-  },
-  {
-    "name": "Bandages",
-    "quantity": 4,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "spend an Action to remove the Blood Trail Debuff"
-  },
-  {
-    "name": "Torch",
-    "quantity": 20,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "provides bright light for 20 feet and dim light for another 20 feet. It burns out in about an hour"
-  },
-  {
-    "name": "Basic Dynamite",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "1d6 Bludgeoning damage 0ft Blast radius +5ft Splash"
-  },
-  {
-    "name": "Misc. Junk",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "Crawler Biscuits",
-    "quantity": 100,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "8\" Sharpened Serving Tray",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "Long Kitchen Knife",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "edged weapon"
-  },
-  {
-    "name": "Pen",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "just a pen"
-  },
-  {
-    "name": "Notebook",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": ""
-  },
-  {
-    "name": "Cutlas",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "Edged weapon from chocolate poop pirates"
-  },
-  {
-    "name": "Leatherman",
-    "quantity": 1,
-    "dr": 0,
-    "skill_bonus": [],
-    "stat_bonus": {},
-    "notes": "Don't leave home without it"
-  }
-],
-
-'skills' : {
-"attack": [
-  {
-    "name": "Longsword",
-    "rank": 5,
-    "rankbase": 5,
-    "stat": "strength",
-    "marked": false,
-    "damage": "2d8",
-    "grind_bank": 1,
-    "notes": ""
-  },
-  {
-    "name": "Improvised Weapons",
-    "rank": 4,
-    "rankbase": 4,
-    "stat": "strength",
-    "marked": true,
-    "damage": "1d4",
-    "grind_bank": 1,
-    "notes": ""
-  }
-],
-"defense": [
-  {
-    "name": "Evade",
-    "rank": "0",
-    "rankbase": "",
-    "stat": "dexterity",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Shield Block",
-    "rank": 4,
-    "rankbase": 3,
-    "stat": "strength",
-    "marked": true,
-    "damage": "",
-    "grind_bank": 0,
-    "notes": ""
-  },
-],
-"other": [
-  {
-    "name": "Catcher",
-    "rank": 5,
-    "rankbase": 4,
-    "stat": "",
-    "marked": false,
-    "damage": "",
-    "grind_bank": "",
-    "notes": "+5 DR"
-  },
-  {
-    "name": "Detect Lies",
-    "rank": 3,
-    "rankbase": 3,
-    "stat": "intelligence",
-    "marked": true,
-    "damage": "",
-    "grind_bank": 0,
-    "notes": ""
-  },
-  {
-    "name": "Perception",
-    "rank": 3,
-    "rankbase": 3,
-    "stat": "intelligence",
-    "marked": true,
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "First Aid",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "intelligence",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": "On Success, the patient regains 1 Health Bar slot. Each higher degree of Success heals 1 additional slot. UPGRADES Rank 5: If you spend 5 minutes, the patient also heals a Minor Injury Debuff. Rank 10: If you spend 10 minutes, the patient also heals a Long-Term Minor Injury Debuff. Rank 15: The patient regains 1 additional Health Bar slot. If you spend 15 minutes, the patient also heals a Major Injury Debuff."
-  },
-  {
-    "name": "Ambush",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "intelligence",
-    "marked": false,
-    "damage": "",
-    "grind_bank": "",
-    "notes": "When a Mob is moving toward you, even if they are aware of your general presence, make an Int-Opposed Skill Check. On Success, you gain a surprise Action against the Mob before combat starts. As an unseen attacker, you Attack with Advantage. UPGRADES Rank 5: If you Attack with your Surprise Action, add an Ambush Rank damage die to your Surprise Attack damage. Rank 10: When other crawlers in your party roll this skill untrained, they roll as normal (not with Disadvantage). Rank 15: You gain a second bonus Action as a sur‑ prise Action. This bonus Action can’t be an Attack."
-  },
-  {
-    "name": "Endurance",
-    "rank": 2,
-    "rankbase": 2,
-    "stat": "intelligence",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Streetwise",
-    "rank": 2,
-    "rankbase": 2,
-    "stat": "intelligence",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Investigation",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "intelligence",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Repair",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "intelligence",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Climbing",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "strength",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  },
-  {
-    "name": "Swimming",
-    "rank": 1,
-    "rankbase": 1,
-    "stat": "strength",
-    "marked": "",
-    "damage": "",
-    "grind_bank": "",
-    "notes": ""
-  }
-]
-},
-  'notes' : ""
+  "notes": "Trauma: Was horsing around while hiking in Boy Scouts and my friend fell to his death.\nLoose Ends: I took extra days off to be on a cruise. All the students and staff were inside for the collapse but not me.\nRegrets: I never had kids."
 };
