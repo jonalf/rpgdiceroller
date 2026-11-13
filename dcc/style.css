@@ -477,7 +477,9 @@ single column inventory
 */
 #inventory > details > button { margin: 0.2em 0.4em 0 0; }
 
-.dragging { opacity: 0.4; }
+.dragging {
+  opacity: 0.4;
+}
 
 /* ---------- save ---------- */
 .bigtextbox {

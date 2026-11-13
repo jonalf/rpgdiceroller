@@ -221,6 +221,7 @@ const skill_drag_start = function(e) {
   dragged.classList.add('dragging');
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', ''); // required by Firefox
+  e.dataTransfer.setDragImage(dragged, 0, 0);//needed for safari
 };
 const skill_dragover = function(e) {
   if (!dragged) { return; }
