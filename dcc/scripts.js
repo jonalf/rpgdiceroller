@@ -50,7 +50,8 @@ let char_stats = {
     'class' : '',
     'floor' : 1,
     'gold' : 0,
-    'popularity' : 0
+    'popularity' : 0,
+    'ai_favor' : 0
   },
 
   'skills' : {
@@ -1093,7 +1094,8 @@ var get_stats = function() {
       'class' : '',
       'floor' : 1,
       'gold' : 0,
-      'popularity' : 0
+      'popularity' : 0,
+      'ai_favor' : 0
     },
 
     'inventory' : [],
@@ -1495,7 +1497,8 @@ let mike_stats = {
     "class": "",
     "floor": 1,
     "gold": 1436,
-    "popularity": 6
+    "popularity": 6,
+    "ai_favor": 0
   },
   "inventory": [
     {
