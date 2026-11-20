@@ -320,54 +320,53 @@ const compute_stats = function(stats) {
   //console.log(stats['inventory']);
   for (let item of stats['inventory']) {
     let quantity = 0;
-    //console.log(item);
-    if ('quantity' in item && isInt(item['quantity']) ) {
-      quantity = parseInt(item['quantity']);
-      //console.log("\t"+ quantity);
-    }//quantity
-    if ('dr' in item && isInt(item['dr'])) {
-        //console.log('\tAdding dr');
-        let dr = parseInt(item['dr']) * quantity;
-        stats['dr']+= dr;
-        //console.log(stats['dr'])
-      }//dr
-    for (let stat_bonus of Object.keys(item['stat_bonus'])) {
-      //console.log(stat_bonus);
-      let bonus = item['stat_bonus'][stat_bonus];
-      if (isInt(bonus)) {
-        stats[stat_bonus+"_bonus"]+= parseInt(bonus) * quantity;
-      }
-    }//stat bonuses
-    for (let skill_bonus of item['skill_bonus']) {
-      //console.log(skill_bonus);
-      let added = false;
-      if (!Object.keys(stats['skills']).includes(skill_bonus['type']) ){
-        continue;
-      }
-      let skill_list = stats['skills'][skill_bonus['type']];
-      for (let current_skill of skill_list) {
-        if (current_skill['name'] == skill_bonus['name']) {
-          let bonus = skill_bonus['bonus'];
-          if (isInt(bonus)) {
-            current_skill['rank']+= parseInt(bonus) * quantity;
-            added = true;
-          }
-        }//added skill
-      }//current skill loop
-      if (!added) {
-        /* needs to be completed, add new skill that does not exist yet */
-        /* need to separate skill ranks from items vs natural skill ranks */
-        //skill_list['name']
-        //console.log("skill must be added");
+    if (item['using']) {
+      //console.log(item);
+      if ('quantity' in item && isInt(item['quantity']) ) {
+        quantity = parseInt(item['quantity']);
+        //console.log("\t"+ quantity);
+      }//quantity
+      if ('dr' in item && isInt(item['dr'])) {
+          //console.log('\tAdding dr');
+          let dr = parseInt(item['dr']) * quantity;
+          stats['dr']+= dr;
+          //console.log(stats['dr'])
+        }//dr
+      for (let stat_bonus of Object.keys(item['stat_bonus'])) {
+        //console.log(stat_bonus);
+        let bonus = item['stat_bonus'][stat_bonus];
+        if (isInt(bonus)) {
+          stats[stat_bonus+"_bonus"]+= parseInt(bonus) * quantity;
+        }
+      }//stat bonuses
+      for (let skill_bonus of item['skill_bonus']) {
         //console.log(skill_bonus);
-        add_new_skill(skill_bonus['type']);
-        //console.log(skill_list);
-        //console.log(skill_list.length);
-        skill_list[skill_list.length-1]['name'] = skill_bonus['name'];
-      }//add new skill
-    }//skill bonuses
+        let added = false;
+        if (!Object.keys(stats['skills']).includes(skill_bonus['type']) ){
+          continue;
+        }
+        let skill_list = stats['skills'][skill_bonus['type']];
+        for (let current_skill of skill_list) {
+          if (current_skill['name'] == skill_bonus['name']) {
+            let bonus = skill_bonus['bonus'];
+            if (isInt(bonus)) {
+              current_skill['rank']+= parseInt(bonus) * quantity;
+              added = true;
+            }
+          }//added skill
+        }//current skill loop
+        if (!added) {
+          //skill_list['name']
+          //console.log("skill must be added");
+          //console.log(skill_bonus);
+          add_new_skill(skill_bonus['type']);
+          //console.log(skill_list);
+          //console.log(skill_list.length);
+          skill_list[skill_list.length-1]['name'] = skill_bonus['name'];
+        }//add new skill
+      }//skill bonuses
+    }//only add if using the item
   }//inventory items
-
   for (let stat of STAT_NAMES) {
     /* calc stat values */
     let base = stats[stat+"_base"];
@@ -424,9 +423,16 @@ const populate_inventory = function(inventory) {
         let property_item = document.createElement("li");
         property_item.innerText = key + ": ";
         let property_value =  document.createElement(key == 'notes' ? 'textarea' : 'input');//document.createElement("input");
-        property_value.classList.add('invisible-textbox');
+        if (key == 'using') {
+          property_value.type = 'checkbox';
+          property_value.checked = property;
+        }
+        else {
+          property_value.classList.add('invisible-textbox');
+          property_value.value = property;
+        }
         property_value.id = itemid+"_"+key;
-        property_value.value = property;
+
         property_value.addEventListener('change', update_item);
         property_item.appendChild(property_value);
         property_list.appendChild(property_item);
@@ -515,12 +521,17 @@ const make_blank_inventory_item = function(e) {
   new_item.innerHTML = '<summary>New Item</summary>';
   let property_list = document.createElement('ul');
   property_list.id = itemid;
-  let input_properties = ['name', 'quantity', 'dr', 'notes'];
+  let input_properties = ['name', 'quantity', 'dr', 'notes', 'using'];
   for (let prop of input_properties) {
     let prop_item = document.createElement('li');
     prop_item.innerText = prop + ': ';
-    let prop_value = document.createElement(prop == 'notes' ? 'textarea' : 'input');//document.createElement('input');
-    prop_value.classList.add('invisible-textbox');
+    let prop_value = document.createElement(prop == 'notes' ? 'textarea' : 'input');
+    if (prop == 'using') {
+      prop_value.type= 'checkbox';
+    }
+    else {
+      prop_value.classList.add('invisible-textbox');
+    }
     prop_value.id = itemid + '_' + prop;
     prop_value.addEventListener('change', update_item);
     prop_item.appendChild(prop_value);
@@ -594,6 +605,10 @@ const update_item = function(e) {
     //console.log(property, stat_option, value, stat_key);
     //console.log(target_item);
   }
+  else if (property == 'using') {
+    console.log('using!');
+    target_item[property] = trigger.checked;
+  }
   else {
     target_item[property] = value;
   }//normal property
@@ -635,7 +650,8 @@ const add_new_item = function() {
       'dr': 0,
      'skill_bonus' : [],
      'stat_bonus' : {},
-     'notes': ''};
+     'notes': '',
+      'using' : false};
     char_stats['inventory'].push(new_item);
 };
 
@@ -1164,10 +1180,11 @@ const collect_inventory = function(inventory_nodes, current_skills) {
   //console.log(inventory_nodes);
   for (let item of inventory_nodes) {
     let blank_item = {'name': '', 'quantity': 0, 'dr' : 0,
-      'skill_bonus':[], 'stat_bonus' :{}, 'notes':''};
+      'skill_bonus':[], 'stat_bonus' :{}, 'notes':'', 'using': false};
     let itemid = item.id;
     blank_item['name'] = document.getElementById(itemid+'_name').value;
     blank_item['notes'] = document.getElementById(itemid+'_notes').value;
+    blank_item['using'] = document.getElementById(itemid+'_using').checked;
     let quantity = document.getElementById(itemid+'_quantity').value;
     if (isInt(quantity)) {
       blank_item['quantity'] = parseInt(quantity);
@@ -1467,9 +1484,9 @@ let mike_stats = {
   "charisma_bonus": 2,
   "mana": 6,
   "evade": 1,
-  "dr": 5,
+  "dr": 4,
   "health": 40,
-  "injured": 0,
+  "injured": 1,
   "info": {
     "name": "Mike Waters",
     "race": "Human",
@@ -1498,7 +1515,8 @@ let mike_stats = {
         }
       ],
       "stat_bonus": {},
-      "notes": ""
+      "notes": "",
+      "using": true
     },
     {
       "name": "Healing Potion",
@@ -1506,7 +1524,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "Heal 5 slots"
+      "notes": "Heal 5 slots",
+      "using": false
     },
     {
       "name": "Frisbee Pie Tin",
@@ -1514,7 +1533,8 @@ let mike_stats = {
       "dr": 1,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "Returns when thrown - acts as shield"
+      "notes": "Returns when thrown - acts as shield",
+      "using": true
     },
     {
       "name": "Bandages",
@@ -1522,7 +1542,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "spend an Action to remove the Blood Trail Debuff"
+      "notes": "spend an Action to remove the Blood Trail Debuff",
+      "using": false
     },
     {
       "name": "Monacle",
@@ -1533,7 +1554,8 @@ let mike_stats = {
         "strength": 2,
         "charisma": 2
       },
-      "notes": ""
+      "notes": "",
+      "using": true
     },
     {
       "name": "Torch",
@@ -1541,7 +1563,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "provides bright light for 20 feet and dim light for another 20 feet. It burns out in about an hour"
+      "notes": "provides bright light for 20 feet and dim light for another 20 feet. It burns out in about an hour",
+      "using": false
     },
     {
       "name": "Earring",
@@ -1551,7 +1574,8 @@ let mike_stats = {
       "stat_bonus": {
         "constitution": 2
       },
-      "notes": ""
+      "notes": "",
+      "using": true
     },
     {
       "name": "Crawler Biscuits",
@@ -1559,7 +1583,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": ""
+      "notes": "",
+      "using": false
     },
     {
       "name": "Beret",
@@ -1569,23 +1594,8 @@ let mike_stats = {
       "stat_bonus": {
         "intelligence": 2
       },
-      "notes": ""
-    },
-    {
-      "name": "Misc. Junk",
-      "quantity": 1,
-      "dr": 0,
-      "skill_bonus": [],
-      "stat_bonus": {},
-      "notes": ""
-    },
-    {
-      "name": "LL Bean Duck Boots",
-      "quantity": 1,
-      "dr": 1,
-      "skill_bonus": [],
-      "stat_bonus": {},
-      "notes": ""
+      "notes": "",
+      "using": true
     },
     {
       "name": "Basic Dynamite",
@@ -1593,7 +1603,26 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "1d6 Bludgeoning damage 0ft Blast radius +5ft Splash"
+      "notes": "1d6 Bludgeoning damage 0ft Blast radius +5ft Splash",
+      "using": false
+    },
+    {
+      "name": "LL Bean Duck Boots",
+      "quantity": 1,
+      "dr": 1,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "",
+      "using": true
+    },
+    {
+      "name": "Misc. Junk",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "",
+      "using": false
     },
     {
       "name": "Leather Gloves",
@@ -1601,7 +1630,8 @@ let mike_stats = {
       "dr": 1,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": ""
+      "notes": "",
+      "using": true
     },
     {
       "name": "8\" Sharpened Serving Tray",
@@ -1609,15 +1639,17 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": ""
+      "notes": "",
+      "using": false
     },
     {
       "name": "Garbage Can Lid",
       "quantity": 1,
-      "dr": 1,
+      "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": ""
+      "notes": "dr 1 if weilding",
+      "using": false
     },
     {
       "name": "Pen",
@@ -1625,23 +1657,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "just a pen"
-    },
-    {
-      "name": "Cutlas",
-      "quantity": 1,
-      "dr": 0,
-      "skill_bonus": [],
-      "stat_bonus": {},
-      "notes": "Edged weapon from chocolate poop pirates"
-    },
-    {
-      "name": "Notebook",
-      "quantity": 1,
-      "dr": 0,
-      "skill_bonus": [],
-      "stat_bonus": {},
-      "notes": ""
+      "notes": "just a pen",
+      "using": false
     },
     {
       "name": "Long Kitchen Knife",
@@ -1649,7 +1666,26 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "edged weapon"
+      "notes": "edged weapon",
+      "using": false
+    },
+    {
+      "name": "Notebook",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "",
+      "using": false
+    },
+    {
+      "name": "Cutlas",
+      "quantity": 1,
+      "dr": 0,
+      "skill_bonus": [],
+      "stat_bonus": {},
+      "notes": "Edged weapon from chocolate poop pirates",
+      "using": true
     },
     {
       "name": "Leatherman",
@@ -1657,7 +1693,8 @@ let mike_stats = {
       "dr": 0,
       "skill_bonus": [],
       "stat_bonus": {},
-      "notes": "Don't leave home without it"
+      "notes": "Don't leave home without it",
+      "using": false
     }
   ],
   "skills": {
@@ -1680,10 +1717,20 @@ let mike_stats = {
         "damage": "2d4",
         "notes": "",
         "grind_bank": 1,
-        "marked": false
+        "marked": true
       }
     ],
     "defense": [
+      {
+        "name": "Shield Block",
+        "rank": 5,
+        "rankbase": 4,
+        "stat": "strength",
+        "damage": "",
+        "notes": "Rank 5: You may also use this Skill against Spells and magical damage.\n\nRank 10: On a Critical Hit, you may make a Shield Bash Attack as a free melee-range Interrupt Attack (instead of Advantage on your next Attack) if you wish, dealing 3d6 base damage + Str Bludgeoning.\n\nRank 15: +1d6 Shield Bash damage. Further reduce the damage you would take by your Str Mod. Example: After halving 30 damage down to 15, your Str Mod of 5 reduces it to 10 damage.\n",
+        "grind_bank": 0,
+        "marked": true
+      },
       {
         "name": "Evade",
         "rank": "0",
@@ -1693,26 +1740,36 @@ let mike_stats = {
         "notes": "",
         "grind_bank": "",
         "marked": false
-      },
-      {
-        "name": "Shield Block",
-        "rank": -19,
-        "rankbase": 4,
-        "stat": "strength",
-        "damage": "",
-        "notes": "Rank 5: You may also use this Skill against Spells and magical damage.\n\nRank 10: On a Critical Hit, you may make a Shield Bash Attack as a free melee-range Interrupt Attack (instead of Advantage on your next Attack) if you wish, dealing 3d6 base damage + Str Bludgeoning.\n\nRank 15: +1d6 Shield Bash damage. Further reduce the damage you would take by your Str Mod. Example: After halving 30 damage down to 15, your Str Mod of 5 reduces it to 10 damage.\n",
-        "grind_bank": 0,
-        "marked": false
       }
     ],
     "other": [
       {
         "name": "Catcher",
-        "rank": -19,
+        "rank": 5,
         "rankbase": 4,
         "stat": "",
         "damage": "",
         "notes": "+5 DR",
+        "grind_bank": "",
+        "marked": true
+      },
+      {
+        "name": "Perception",
+        "rank": 3,
+        "rankbase": 3,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
+        "grind_bank": "",
+        "marked": true
+      },
+      {
+        "name": "Investigation",
+        "rank": 2,
+        "rankbase": 2,
+        "stat": "intelligence",
+        "damage": "",
+        "notes": "",
         "grind_bank": "",
         "marked": false
       },
@@ -1727,19 +1784,9 @@ let mike_stats = {
         "marked": true
       },
       {
-        "name": "Perception",
+        "name": "First Aid",
         "rank": 3,
         "rankbase": 3,
-        "stat": "intelligence",
-        "damage": "",
-        "notes": "",
-        "grind_bank": "",
-        "marked": true
-      },
-      {
-        "name": "First Aid",
-        "rank": 2,
-        "rankbase": 2,
         "stat": "intelligence",
         "damage": "",
         "notes": "On Success, the patient regains 1 Health Bar slot. \nEach higher degree of Success heals 1 additional slot. \n\nRank 5: If you spend 5 minutes, the patient also heals a Minor Injury Debuff. \n\nRank 10: If you spend 10 minutes, the patient also heals a Long-Term Minor Injury Debuff. \n\nRank 15: The patient regains 1 additional Health Bar slot. If you spend 15 minutes, the patient also heals a Major Injury Debuff.",
@@ -1752,7 +1799,7 @@ let mike_stats = {
         "rankbase": 1,
         "stat": "intelligence",
         "damage": "",
-        "notes": "When a Mob is moving toward you, even if they are aware of your general presence, make an Int-Opposed Skill Check. On Success, you gain a surprise Action against the Mob before combat starts. As an unseen attacker, you Attack with Advantage. UPGRADES Rank 5: If you Attack with your Surprise Action, add an Ambush Rank damage die to your Surprise Attack damage. Rank 10: When other crawlers in your party roll this skill untrained, they roll as normal (not with Disadvantage). Rank 15: You gain a second bonus Action as a surâ€‘ prise Action. This bonus Action canâ€™t be an Attack.",
+        "notes": "When a Mob is moving toward you, even if they are aware of your general presence, make an Int-Opposed Skill Check. On Success, you gain a surprise Action against the Mob before combat starts. As an unseen attacker, you Attack with Advantage. UPGRADES Rank 5: If you Attack with your Surprise Action, add an Ambush Rank damage die to your Surprise Attack damage. Rank 10: When other crawlers in your party roll this skill untrained, they roll as normal (not with Disadvantage). Rank 15: You gain a second bonus Action as a surÃ¢â‚¬â€˜ prise Action. This bonus Action canÃ¢â‚¬â„¢t be an Attack.",
         "grind_bank": "",
         "marked": true
       },
@@ -1774,17 +1821,7 @@ let mike_stats = {
         "damage": "",
         "notes": "",
         "grind_bank": "",
-        "marked": false
-      },
-      {
-        "name": "Investigation",
-        "rank": 2,
-        "rankbase": 2,
-        "stat": "intelligence",
-        "damage": "",
-        "notes": "",
-        "grind_bank": "",
-        "marked": false
+        "marked": true
       },
       {
         "name": "Repair",
@@ -1819,4 +1856,4 @@ let mike_stats = {
     ]
   },
   "notes": "Trauma: Was horsing around while hiking in Boy Scouts and my friend fell to his death.\nLoose Ends: I took extra days off to be on a cruise. All the students and staff were inside for the collapse but not me.\nRegrets: I never had kids."
-};
+}
